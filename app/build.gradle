@@ -1,4 +1,8 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'com.jakewharton.butterknife'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 25
@@ -17,6 +21,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -24,6 +32,23 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile "com.android.support:appcompat-v7:${rootProject.supportLibVersion}"
+    compile "com.android.support:recyclerview-v7:${rootProject.supportLibVersion}"
+    compile "com.android.support:cardview-v7:${rootProject.supportLibVersion}"
+    compile "com.android.support:design:${rootProject.supportLibVersion}"
+    compile "com.android.support:customtabs:${rootProject.supportLibVersion}"
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlinVersion"
+    compile 'com.google.dagger:dagger:2.7'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.jakewharton:butterknife:8.4.0'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    compile 'io.reactivex.rxjava2:rxjava:2.1.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    apt 'com.google.dagger:dagger-compiler:2.7'
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'
+    provided 'javax.annotation:jsr250-api:1.0'
+    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.5.1'
 }
