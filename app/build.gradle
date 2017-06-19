@@ -60,3 +60,5 @@ dependencies {
     compile "com.google.firebase:firebase-config:${rootProject.googlePlayServicesVersion}"
     compile "com.google.firebase:firebase-crash:${rootProject.googlePlayServicesVersion}"
 }
+
+apply plugin: 'com.google.gms.google-services'
