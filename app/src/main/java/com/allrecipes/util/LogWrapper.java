@@ -2,7 +2,7 @@ package com.allrecipes.util;
 
 import android.util.Log;
 
-import com.projectsetup.vlad.projectsetup.BuildConfig;
+import com.allrecipes.BuildConfig;
 
 /**
  * @author Vladimir

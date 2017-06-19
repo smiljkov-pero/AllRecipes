@@ -3,11 +3,11 @@ package com.allrecipes;
 import android.app.Application;
 
 import com.allrecipes.di.AppComponent;
-import com.projectsetup.vlad.projectsetup.di.AppComponent;
-import com.projectsetup.vlad.projectsetup.di.AppModule;
-import com.projectsetup.vlad.projectsetup.di.DaggerAppComponent;
-import com.projectsetup.vlad.projectsetup.di.NetworkApi;
-import com.projectsetup.vlad.projectsetup.di.NetworkModule;
+import com.allrecipes.di.AppModule;
+import com.allrecipes.di.DaggerAppComponent;
+import com.allrecipes.di.NetworkApi;
+import com.allrecipes.di.NetworkModule;
+
 
 /**
  * Created by Vladimir on 11/14/2016.

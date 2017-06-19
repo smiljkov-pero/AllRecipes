@@ -2,11 +2,12 @@ package com.allrecipes.di;
 
 import android.content.Context;
 
-import com.projectsetup.vlad.projectsetup.util.AppPreferences;
+import com.allrecipes.util.AppPreferences;
 
 import javax.inject.Singleton;
 
 import dagger.Component;
+
 
 /**
  * Created by Vladimir on 11/14/2016.

@@ -4,7 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.projectsetup.vlad.projectsetup.util.AppPreferences;
+
+import com.allrecipes.util.AppPreferences;
 
 import javax.inject.Singleton;
 
@@ -39,6 +40,6 @@ public class AppModule {
     @Provides
     @Singleton
     AppPreferences providePreferenceManager(SharedPreferences preferences) {
-        return new com.projectsetup.vlad.projectsetup.util.PreferenceManager(preferences);
+        return new com.allrecipes.util.PreferenceManager(preferences);
     }
 }
