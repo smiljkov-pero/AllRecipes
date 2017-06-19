@@ -38,6 +38,9 @@ dependencies {
     compile "com.android.support:design:${rootProject.supportLibVersion}"
     compile "com.android.support:customtabs:${rootProject.supportLibVersion}"
 
+    compile "com.google.android.gms:play-services-base:${rootProject.googlePlayServicesVersion}"
+    compile "com.google.android.gms:play-services-analytics:${rootProject.googlePlayServicesVersion}"
+
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlinVersion"
     compile 'com.google.dagger:dagger:2.7'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
@@ -51,4 +54,9 @@ dependencies {
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
     provided 'javax.annotation:jsr250-api:1.0'
     retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.5.1'
+
+    compile "com.google.firebase:firebase-core:${rootProject.googlePlayServicesVersion}"
+    compile "com.google.firebase:firebase-messaging:${rootProject.googlePlayServicesVersion}"
+    compile "com.google.firebase:firebase-config:${rootProject.googlePlayServicesVersion}"
+    compile "com.google.firebase:firebase-crash:${rootProject.googlePlayServicesVersion}"
 }

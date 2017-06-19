@@ -21,6 +21,7 @@ buildscript {
 
 ext {
     supportLibVersion = '25.3.1'
+    googlePlayServicesVersion = '10.2.0'
 }
 
 allprojects {
