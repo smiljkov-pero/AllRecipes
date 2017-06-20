@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'com.jakewharton.butterknife'
-apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 25
@@ -16,15 +16,35 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        all {
+            buildConfigField "String", "YOUTUBE_API_KEY", "\"AIzaSyBjbIL_VsrgXNmkJ5SODu1RBYZx4EHV7mE\""
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/LGPL2.1'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/rxjava.properties'
+    }
+}
+
+kapt {
+    generateStubs = true
 }
 
 dependencies {
@@ -41,24 +61,51 @@ dependencies {
     compile "com.google.android.gms:play-services-base:${rootProject.googlePlayServicesVersion}"
     compile "com.google.android.gms:play-services-analytics:${rootProject.googlePlayServicesVersion}"
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     compile 'com.google.dagger:dagger:2.7'
-    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+
+    compile 'com.google.code.gson:gson:2.7'
+    compile 'javax.annotation:javax.annotation-api:1.2'
+    compile "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    compile "com.squareup.retrofit2:retrofit-converters:$retrofitVersion"
+    compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    compile "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion"
+    compile "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+
     compile 'com.jakewharton:butterknife:8.4.0'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile 'io.reactivex.rxjava2:rxjava:2.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
-    apt 'com.google.dagger:dagger-compiler:2.7'
-    apt 'com.jakewharton:butterknife-compiler:8.4.0'
+    kapt 'com.google.dagger:dagger-compiler:2.7'
+    kapt 'com.jakewharton:butterknife-compiler:8.4.0'
     provided 'javax.annotation:jsr250-api:1.0'
-    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.5.1'
 
     compile "com.google.firebase:firebase-core:${rootProject.googlePlayServicesVersion}"
     compile "com.google.firebase:firebase-messaging:${rootProject.googlePlayServicesVersion}"
     compile "com.google.firebase:firebase-config:${rootProject.googlePlayServicesVersion}"
     compile "com.google.firebase:firebase-crash:${rootProject.googlePlayServicesVersion}"
+}
+
+buildscript {
+    ext.kotlin_version = '1.1.2-5'
+    repositories {
+        jcenter()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1' }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap-1.1' }
 }
 
 apply plugin: 'com.google.gms.google-services'
