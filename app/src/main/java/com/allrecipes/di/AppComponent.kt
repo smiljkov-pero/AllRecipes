@@ -1,6 +1,7 @@
 package com.allrecipes.di
 
 import android.content.Context
+import com.allrecipes.di.managers.FirebaseDatabaseManager
 
 import com.allrecipes.util.AppPreferences
 
@@ -20,6 +21,8 @@ interface AppComponent {
     fun applicationContext(): Context
 
     fun appPreferences(): AppPreferences
+
+    fun firebaseDatabaseManager(): FirebaseDatabaseManager
 
     operator fun plus(homeScreenModule: HomeScreenModule): HomeScreenComponent
 }

@@ -3,9 +3,12 @@ package com.allrecipes.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import com.allrecipes.di.managers.FirebaseDatabaseManager
 
 
 import com.allrecipes.util.AppPreferences
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 import javax.inject.Singleton
 
@@ -34,5 +37,19 @@ class AppModule(private val context: Context) {
     @Singleton
     internal fun providePreferenceManager(preferences: SharedPreferences): AppPreferences {
         return com.allrecipes.util.PreferenceManager(preferences)
+    }
+
+    @Provides
+    @Singleton
+    fun providesFirebaseDatabaseReference(): DatabaseReference {
+        return FirebaseDatabase.getInstance().reference
+    }
+
+    @Provides
+    @Singleton
+    fun providesFirebaseDatabaseManager(
+        databaseReference: DatabaseReference
+    ): FirebaseDatabaseManager {
+        return FirebaseDatabaseManager(databaseReference)
     }
 }

@@ -11,11 +11,7 @@ import dagger.Provides
 
 @Module
 class HomeScreenModule(view: HomeScreenView) {
-    private val view: WeakReference<HomeScreenView>
-
-    init {
-        this.view = WeakReference(view)
-    }
+    private val view: WeakReference<HomeScreenView> = WeakReference(view)
 
     @Provides
     fun providesHomeScreenPresenter(

@@ -90,6 +90,7 @@ dependencies {
     compile "com.google.firebase:firebase-crash:${rootProject.googlePlayServicesVersion}"
     compile "com.google.firebase:firebase-database:${rootProject.googlePlayServicesVersion}"
     compile "com.google.firebase:firebase-storage:${rootProject.googlePlayServicesVersion}"
+    compile 'com.kelvinapps:rxfirebase:0.0.15'
 }
 
 buildscript {
