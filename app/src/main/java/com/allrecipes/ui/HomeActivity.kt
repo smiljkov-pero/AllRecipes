@@ -1,17 +1,12 @@
 package com.allrecipes.ui
 
 import android.os.Bundle
-import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.*
-import android.widget.TextView
 import com.allrecipes.R
 import com.allrecipes.di.managers.FirebaseDatabaseManager
-
 import com.allrecipes.presenters.HomeScreenPresenter
 import com.allrecipes.ui.views.HomeScreenView
+import kotlinx.android.synthetic.main.activity_home.*
 import javax.inject.Inject
-import android.widget.LinearLayout
-
 
 class HomeActivity : BaseActivity(), HomeScreenView {
 
@@ -30,18 +25,21 @@ class HomeActivity : BaseActivity(), HomeScreenView {
 
         firebaseDatabaseManager.getCategories().subscribe(
                 { categories ->
-                    val root = LinearLayout(this)
+                    categories.forEach { println(it.name) }
+                    /*val root = LinearLayout(this)
                     root.orientation = LinearLayout.VERTICAL
                     categories.forEach {
                         val textView: TextView = TextView(this)
                         textView.text = it.name
                         root.addView(textView)
 
-                        setContentView(root)
-                    }
+                        setContentView(root)*/
                 },
                 { error -> print("error $error") }
         )
 
+        test.setOnClickListener {
+            presenter.fetchYoutubeChannelVideos()
+        }
     }
 }

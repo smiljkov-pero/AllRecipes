@@ -1,19 +1,17 @@
 package com.allrecipes.di
 
+
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import com.allrecipes.di.managers.FirebaseDatabaseManager
-
-
+import com.allrecipes.managers.GoogleYoutubeApiManager
 import com.allrecipes.util.AppPreferences
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-
-import javax.inject.Singleton
-
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
 
 /**
  * Created by vladi on 11/12/2016.
@@ -51,5 +49,11 @@ class AppModule(private val context: Context) {
         databaseReference: DatabaseReference
     ): FirebaseDatabaseManager {
         return FirebaseDatabaseManager(databaseReference)
+    }
+
+    @Provides
+    @Singleton
+    internal fun provideGoogleYoutubeApiManager(networkApi: NetworkApi): GoogleYoutubeApiManager {
+        return GoogleYoutubeApiManager(networkApi)
     }
 }

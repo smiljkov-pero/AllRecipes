@@ -2,12 +2,9 @@ package com.allrecipes.di
 
 import android.content.Context
 import com.allrecipes.di.managers.FirebaseDatabaseManager
-
 import com.allrecipes.util.AppPreferences
-
-import javax.inject.Singleton
-
 import dagger.Component
+import javax.inject.Singleton
 
 /**
  * Created by Vladimir on 11/14/2016.
@@ -15,8 +12,6 @@ import dagger.Component
 @Singleton
 @Component(modules = arrayOf(NetworkModule::class, AppModule::class))
 interface AppComponent {
-
-    val networkApi: NetworkApi
 
     fun applicationContext(): Context
 
