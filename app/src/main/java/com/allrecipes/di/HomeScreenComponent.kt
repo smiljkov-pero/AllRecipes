@@ -1,6 +1,6 @@
 package com.allrecipes.di
 
-import com.allrecipes.ui.HomeActivity
+import com.allrecipes.ui.home.activity.HomeActivity
 
 import dagger.Subcomponent
 

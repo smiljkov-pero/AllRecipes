@@ -9,7 +9,7 @@ import com.allrecipes.di.HomeScreenComponent;
 import com.allrecipes.di.HomeScreenModule;
 import com.allrecipes.di.NetworkApi;
 import com.allrecipes.di.NetworkModule;
-import com.allrecipes.ui.views.HomeScreenView;
+import com.allrecipes.ui.home.views.HomeScreenView;
 
 
 /**

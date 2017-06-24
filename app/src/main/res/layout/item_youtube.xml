@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/restaurantImageWrapper"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/d1"
+    android:layout_marginLeft="@dimen/d2"
+    android:layout_marginRight="@dimen/d2"
+    android:layout_marginTop="@dimen/d1"
+    android:paddingBottom="@dimen/d1_three_quarter">
+
+    <ImageView
+        android:id="@+id/videoThumbnail"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/toolbar_layout_image_height"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/d2"
+        android:layout_marginRight="@dimen/d2"
+        android:layout_marginTop="@dimen/d1_quarter"
+        android:ellipsize="end"
+        android:gravity="start"
+        android:lines="1"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="@color/md_black_1000"
+        android:textSize="@dimen/s2_quarter"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/restaurantImage"/>
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/d2"
+        android:layout_marginRight="@dimen/d2"
+        android:layout_marginTop="@dimen/d0_eighth"
+        android:ellipsize="end"
+        android:gravity="start"
+        android:maxLines="2"
+        android:textColor="@color/md_black_1000"
+        android:textSize="@dimen/s1_three_quarter"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvVendorName"/>
+
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,103 @@
+<resources>
+
+    <!-- OnBoarding -->
+    <dimen name="on_boarding_plate_margin_top">@dimen/d12</dimen>
+    <dimen name="on_boarding_plate_digit_width">@dimen/d12</dimen>
+    <dimen name="on_boarding_plate_digit_height">@dimen/d16</dimen>
+    <dimen name="on_boarding_plate_text_size">@dimen/s2_quarter</dimen>
+
+    <dimen name="menu_product_add_to_card">@dimen/s1_three_quarter</dimen>
+
+    <!-- NavDrawer width -->
+    <dimen name="navdrawer_width">320dp</dimen>
+
+    <!-- Map margins -->
+    <dimen name="maps_margins">-100dp</dimen>
+
+    <!-- Cart option top margin -->
+    <dimen name="cart_option_top_margin">-5dp</dimen>
+
+    <!-- Dimensions -->
+    <dimen name="d0">0dp</dimen>
+    <dimen name="d0_eighth">1dp</dimen>
+    <dimen name="d0_quarter">2dp</dimen>
+    <dimen name="d0_half">4dp</dimen>
+    <dimen name="d0_three_quarter">6dp</dimen>
+    <dimen name="d1">8dp</dimen>
+    <dimen name="d1_quarter">10dp</dimen>
+    <dimen name="d1_half">12dp</dimen>
+    <dimen name="d1_three_quarter">14dp</dimen>
+    <dimen name="d2">16dp</dimen>
+    <dimen name="d2_quarter">18dp</dimen>
+    <dimen name="d2_half">20dp</dimen>
+    <dimen name="d3">24dp</dimen>
+    <dimen name="d3_half">28dp</dimen>
+    <dimen name="d4">32dp</dimen>
+    <dimen name="d4_quarter">34dp</dimen>
+    <dimen name="d4_half">36dp</dimen>
+    <dimen name="d4_three_quarter">38dp</dimen>
+    <dimen name="d5">40dp</dimen>
+    <dimen name="d5_half">44dp</dimen>
+    <dimen name="d6">48dp</dimen>
+    <dimen name="d6_half">52dp</dimen>
+    <dimen name="d7">56dp</dimen>
+    <dimen name="d8">64dp</dimen>
+    <dimen name="d9">72dp</dimen>
+    <dimen name="d10">80dp</dimen>
+    <dimen name="d11">88dp</dimen>
+    <dimen name="d12">96dp</dimen>
+    <dimen name="d13">104dp</dimen>
+    <dimen name="d14">112dp</dimen>
+    <dimen name="d15">120dp</dimen>
+    <dimen name="d16">128dp</dimen>
+    <dimen name="d17">136dp</dimen>
+    <dimen name="d18">144dp</dimen>
+    <dimen name="d19">152dp</dimen>
+    <dimen name="d20">160dp</dimen>
+    <dimen name="d21">180dp</dimen>
+    <dimen name="d22">198dp</dimen>
+    <dimen name="d23">228dp</dimen>
+
+    <dimen name="negative_d1">-8dp</dimen>
+
+    <dimen name="tutorial_home_message_right_margin">-56dp</dimen>
+    <dimen name="tutorial_home_focus_dx">-10dp</dimen>
+    <dimen name="flexible_space_image_toolbar_margin_start">64dp</dimen>
+    <dimen name="toolbar_layout_image_height">200dp</dimen>
+    <dimen name="restaurant_product_add_button_width">192dp</dimen>
+    <dimen name="payment_cart_background_height">100dp</dimen>
+    <dimen name="payment_cart_height">200dp</dimen>
+    <dimen name="payment_cart_width">240dp</dimen>
+    <dimen name="vendor_item_tag_width">59dp</dimen>
+    <dimen name="home_screen_delivery_pickup_wrapper_height">188dp</dimen>
+    <dimen name="home_screen_delivery_pickup_wrapper_bottom">11dp</dimen>
+
+    <!-- Texts -->
+    <dimen name="s0_quarter">2sp</dimen>
+    <dimen name="s0_half">4sp</dimen>
+    <dimen name="s1">8sp</dimen>
+    <dimen name="s1_one_quarter">10sp</dimen>
+    <dimen name="s1_half">12sp</dimen>
+    <dimen name="s1_three_quarter">14sp</dimen>
+    <dimen name="s2">16sp</dimen>
+    <dimen name="s2_quarter">18sp</dimen>
+    <dimen name="s2_half">20sp</dimen>
+    <dimen name="s3">24sp</dimen>
+    <dimen name="s3_half">28sp</dimen>
+    <dimen name="s4">32sp</dimen>
+    <dimen name="s5">40sp</dimen>
+    <dimen name="s6">48sp</dimen>
+    <dimen name="s7">56sp</dimen>
+    <dimen name="s8">64sp</dimen>
+    <dimen name="s9">72sp</dimen>
+    <dimen name="s10">80sp</dimen>
+    <dimen name="s11">88sp</dimen>
+    <dimen name="s12">96sp</dimen>
+    <dimen name="s13">104sp</dimen>
+    <dimen name="s14">112sp</dimen>
+    <dimen name="vendor_item_time_small">9sp</dimen>
+
+    <dimen name="menu_product_image_size">100dp</dimen>
+
+
+</resources>

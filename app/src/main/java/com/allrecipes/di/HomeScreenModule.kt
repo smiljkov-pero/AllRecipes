@@ -2,7 +2,7 @@ package com.allrecipes.di
 
 import com.allrecipes.managers.GoogleYoutubeApiManager
 import com.allrecipes.presenters.HomeScreenPresenter
-import com.allrecipes.ui.views.HomeScreenView
+import com.allrecipes.ui.home.views.HomeScreenView
 
 import java.lang.ref.WeakReference
 
@@ -15,8 +15,8 @@ class HomeScreenModule(view: HomeScreenView) {
 
     @Provides
     fun providesHomeScreenPresenter(
-            googleYoutubeApiManager: GoogleYoutubeApiManager
+        googleYoutubeApiManager: GoogleYoutubeApiManager
     ): HomeScreenPresenter {
-        return HomeScreenPresenter(googleYoutubeApiManager)
+        return HomeScreenPresenter(view.get(), googleYoutubeApiManager)
     }
 }
