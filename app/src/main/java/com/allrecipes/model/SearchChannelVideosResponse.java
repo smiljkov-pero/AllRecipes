@@ -23,5 +23,5 @@ public class SearchChannelVideosResponse {
     public PageInfo pageInfo;
 
     @SerializedName("items")
-    public ArrayList<YoutubeItem> items;
+    public ArrayList<Youtube> items;
 }

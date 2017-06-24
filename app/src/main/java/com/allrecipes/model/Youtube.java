@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by PeroSmiljkov on 20.06.17.
  */
 
-public class YoutubeItem {
+public class Youtube {
     @SerializedName("id")
     public YoutubeId id;
 

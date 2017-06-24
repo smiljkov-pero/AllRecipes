@@ -3,7 +3,6 @@ package com.allrecipes.ui.home.activity
 import android.os.Bundle
 import android.os.SystemClock
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.allrecipes.R
 import com.allrecipes.di.managers.FirebaseDatabaseManager
@@ -12,8 +11,9 @@ import com.allrecipes.ui.BaseActivity
 import com.allrecipes.ui.home.viewholders.HomeScreenItem
 import com.allrecipes.ui.home.viewholders.HomeScreenItemFactory
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper
-import com.allrecipes.model.YoutubeItem
+import com.allrecipes.model.Youtube
 import com.allrecipes.ui.home.views.HomeScreenView
+import com.allrecipes.util.ToastUtils
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.adapters.FooterAdapter
 import com.mikepenz.fastadapter.adapters.GenericItemAdapter
@@ -88,14 +88,14 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         if (SystemClock.elapsedRealtime() > lastClickTime + DOUBLE_CLICK_TIMEOUT) {
             lastClickTime = SystemClock.elapsedRealtime()
             if (item.type == R.id.home_screen_video_item) {
-                onItemRestaurantClick(v, item as YoutubeItem)
+                onItemRestaurantClick(v, item.model.t as Youtube)
             }
         }
 
         true
     }
 
-    private fun onItemRestaurantClick(v: View, item: YoutubeItem) {
+    private fun onItemRestaurantClick(v: View, item: Youtube) {
 
     }
 
@@ -130,13 +130,19 @@ class HomeActivity : BaseActivity(), HomeScreenView {
     }
 
     private fun initSwipeRefresh() {
-        restaurants_swipe_container.setOnRefreshListener({
+        swipeContainer.setOnRefreshListener({
             presenter.fetchYoutubeChannelVideos()
         })
     }
 
-    override fun addYoutubeItemToAdapter(item: YoutubeItem) {
+    override fun addYoutubeItemToAdapter(item: Youtube) {
         homeScreenItemAdapter
                 .addModel(HomeScreenModelItemWrapper(item, R.id.home_screen_video_item))
+    }
+
+
+    override fun showLoading() {
+        super.showLoading()
+        swipeContainer.isRefreshing = false
     }
 }

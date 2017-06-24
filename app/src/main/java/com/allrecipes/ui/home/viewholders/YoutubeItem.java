@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.allrecipes.R;
+import com.allrecipes.model.Youtube;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
@@ -15,13 +17,11 @@ import butterknife.ButterKnife;
 
 public class YoutubeItem extends HomeScreenItem {
 
-    private com.allrecipes.model.YoutubeItem item;
+    private Youtube item;
 
-    YoutubeItem(
-        HomeScreenModelItemWrapper wrapper
-    ) {
+    YoutubeItem(HomeScreenModelItemWrapper wrapper) {
         super(wrapper);
-        this.item = (com.allrecipes.model.YoutubeItem) wrapper.getT();
+        this.item = (Youtube) wrapper.getT();
     }
 
     @Override
@@ -46,11 +46,15 @@ public class YoutubeItem extends HomeScreenItem {
         Resources resources = viewHolder.context.getResources();
 
         adjustYoutubeImage(viewHolder, item);
+        viewHolder.name.setText(item.snippet.title);
+        viewHolder.description.setText(item.snippet.description);
     }
 
-    private void adjustYoutubeImage(final ViewHolder holder, com.allrecipes.model.YoutubeItem item) {
+    private void adjustYoutubeImage(final ViewHolder holder, Youtube item) {
             Glide.with(holder.context)
-                .load(item.snippet.thumbnails.defaultThumbnail.url)
+                .load(item.snippet.thumbnails.highThumbnail.url)
+                .fitCenter()
+                .centerCrop()
                 //.placeholder(R.drawable.restaurant_placeholder)
                 .into(holder.restaurantImage);
     }
@@ -59,6 +63,10 @@ public class YoutubeItem extends HomeScreenItem {
 
         @BindView(R.id.videoThumbnail)
         ImageView restaurantImage;
+        @BindView(R.id.name)
+        TextView name;
+        @BindView(R.id.description)
+        TextView description;
 
         private final Context context;
 

@@ -63,7 +63,7 @@
     <dimen name="tutorial_home_message_right_margin">-56dp</dimen>
     <dimen name="tutorial_home_focus_dx">-10dp</dimen>
     <dimen name="flexible_space_image_toolbar_margin_start">64dp</dimen>
-    <dimen name="toolbar_layout_image_height">200dp</dimen>
+    <dimen name="toolbar_layout_image_height">183dp</dimen>
     <dimen name="restaurant_product_add_button_width">192dp</dimen>
     <dimen name="payment_cart_background_height">100dp</dimen>
     <dimen name="payment_cart_height">200dp</dimen>
