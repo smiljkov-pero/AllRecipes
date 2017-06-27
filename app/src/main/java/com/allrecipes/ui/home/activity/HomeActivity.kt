@@ -1,7 +1,11 @@
 package com.allrecipes.ui.home.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
+import android.support.v4.app.ActivityCompat
+import android.support.v4.app.ActivityOptionsCompat
+import android.support.v4.util.Pair
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.allrecipes.R
@@ -12,6 +16,8 @@ import com.allrecipes.ui.home.viewholders.HomeScreenItem
 import com.allrecipes.ui.home.viewholders.HomeScreenItemFactory
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper
 import com.allrecipes.model.Youtube
+import com.allrecipes.ui.VideoActivity
+import com.allrecipes.ui.home.viewholders.YoutubeItem
 import com.allrecipes.ui.home.views.HomeScreenView
 import com.allrecipes.util.ToastUtils
 import com.mikepenz.fastadapter.FastAdapter
@@ -26,6 +32,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
 
     private val DOUBLE_CLICK_TIMEOUT = 1000
     private var lastClickTime: Long = 0
+    private val REQ_CODE_RESTAURANT = 998
 
     lateinit var fastAdapter: FastAdapter<HomeScreenItem>
     lateinit var footerAdapter: FooterAdapter<ProgressItem>
@@ -88,15 +95,18 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         if (SystemClock.elapsedRealtime() > lastClickTime + DOUBLE_CLICK_TIMEOUT) {
             lastClickTime = SystemClock.elapsedRealtime()
             if (item.type == R.id.home_screen_video_item) {
-                onItemRestaurantClick(v, item.model.t as Youtube)
+                onItemRestaurantClick(v, item as YoutubeItem)
             }
         }
 
         true
     }
 
-    private fun onItemRestaurantClick(v: View, item: Youtube) {
+    private fun onItemRestaurantClick(v: View, item: YoutubeItem) {
+        val intent = VideoActivity.newIntent(this, item.item)
 
+        startRestaurantActivityWithTransition(v, intent)
+        overridePendingTransition(0, 0)
     }
 
     private fun createOnVendorsScrollListener() {
@@ -144,5 +154,13 @@ class HomeActivity : BaseActivity(), HomeScreenView {
     override fun showLoading() {
         super.showLoading()
         swipeContainer.isRefreshing = false
+    }
+
+    internal fun startRestaurantActivityWithTransition(v: View, intent: Intent) {
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+            this,
+            Pair<View, String>(v.findViewById(R.id.videoThumbnail), "VideoImageTransition")
+        )
+        ActivityCompat.startActivityForResult(this, intent, REQ_CODE_RESTAURANT, options.toBundle())
     }
 }

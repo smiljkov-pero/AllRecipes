@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.mikepenz.fastadapter.IAdapter
 import android.R.raw
+import android.os.Build
 import com.allrecipes.util.ToastUtils
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
 
@@ -69,5 +70,9 @@ open class BaseActivity : AppCompatActivity() {
 
     fun showToast(txt: String) {
         ToastUtils.showToast(baseContext, txt)
+    }
+
+    fun isAtLeastLollipop(): Boolean {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
     }
 }

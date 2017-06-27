@@ -24,6 +24,10 @@ public class YoutubeItem extends HomeScreenItem {
         this.item = (Youtube) wrapper.getT();
     }
 
+    public Youtube getItem() {
+        return item;
+    }
+
     @Override
     public int getType() {
         return R.id.home_screen_video_item;
@@ -56,13 +60,13 @@ public class YoutubeItem extends HomeScreenItem {
                 .fitCenter()
                 .centerCrop()
                 //.placeholder(R.drawable.restaurant_placeholder)
-                .into(holder.restaurantImage);
+                .into(holder.videoThumbnail);
     }
 
     protected static class ViewHolder extends HomeScreenItem.ViewHolder {
 
         @BindView(R.id.videoThumbnail)
-        ImageView restaurantImage;
+        ImageView videoThumbnail;
         @BindView(R.id.name)
         TextView name;
         @BindView(R.id.description)
