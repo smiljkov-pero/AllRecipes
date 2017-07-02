@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import com.allrecipes.BuildConfig;
 import com.allrecipes.R;
-import com.allrecipes.model.Youtube;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;

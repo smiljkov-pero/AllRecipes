@@ -9,7 +9,10 @@ import com.allrecipes.di.HomeScreenComponent;
 import com.allrecipes.di.HomeScreenModule;
 import com.allrecipes.di.NetworkApi;
 import com.allrecipes.di.NetworkModule;
+import com.allrecipes.di.VideoDetailsScreenComponent;
+import com.allrecipes.di.VideoDetailsScreenModule;
 import com.allrecipes.ui.home.views.HomeScreenView;
+import com.allrecipes.ui.videodetails.views.VideoDetailsView;
 
 
 /**
@@ -33,5 +36,11 @@ public class App extends Application {
 
     public HomeScreenComponent createHomeScreenComponent(HomeScreenView homeScreenView) {
         return appComponent.plus(new HomeScreenModule(homeScreenView));
+    }
+
+    public VideoDetailsScreenComponent createVideoDetailsScreenComponent(
+        VideoDetailsView homeScreenView
+    ) {
+        return appComponent.plus(new VideoDetailsScreenModule(homeScreenView));
     }
 }

@@ -20,4 +20,6 @@ interface AppComponent {
     fun firebaseDatabaseManager(): FirebaseDatabaseManager
 
     operator fun plus(homeScreenModule: HomeScreenModule): HomeScreenComponent
+
+    operator fun plus(videoDetailsScreenModule: VideoDetailsScreenModule): VideoDetailsScreenComponent
 }

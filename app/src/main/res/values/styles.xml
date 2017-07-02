@@ -8,4 +8,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="ToolbarNormalStyle" parent="@style/AllRecipesTheme">
+        <item name="colorControlNormal">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="isLightTheme">false</item>
+    </style>
+
 </resources>

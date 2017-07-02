@@ -120,6 +120,7 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.7'
     kapt 'com.jakewharton:butterknife-compiler:8.4.0'
     provided 'javax.annotation:jsr250-api:1.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 
     compile files('libs/YouTubeAndroidPlayerApi.jar')
 }

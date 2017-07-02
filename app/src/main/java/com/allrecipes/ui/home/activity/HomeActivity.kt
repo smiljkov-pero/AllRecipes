@@ -7,7 +7,9 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.util.Pair
 import android.support.v7.widget.LinearLayoutManager
+import android.text.TextUtils
 import android.view.View
+import butterknife.OnTextChanged
 import com.allrecipes.R
 import com.allrecipes.di.managers.FirebaseDatabaseManager
 import com.allrecipes.presenters.HomeScreenPresenter
@@ -15,11 +17,9 @@ import com.allrecipes.ui.BaseActivity
 import com.allrecipes.ui.home.viewholders.HomeScreenItem
 import com.allrecipes.ui.home.viewholders.HomeScreenItemFactory
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper
-import com.allrecipes.model.Youtube
-import com.allrecipes.ui.VideoActivity
+import com.allrecipes.ui.videodetails.activity.VideoActivity
 import com.allrecipes.ui.home.viewholders.YoutubeItem
 import com.allrecipes.ui.home.views.HomeScreenView
-import com.allrecipes.util.ToastUtils
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.adapters.FooterAdapter
 import com.mikepenz.fastadapter.adapters.GenericItemAdapter
@@ -40,6 +40,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
     lateinit var homeScreenItemFactory: HomeScreenItemFactory
     lateinit var layoutManager: LinearLayoutManager
     lateinit var onVendorsScrollListener: EndlessRecyclerOnScrollListener
+    var searchCriteria = ""
 
     @Inject
     lateinit var presenter: HomeScreenPresenter
@@ -52,7 +53,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         setContentView(R.layout.activity_home)
         getApp().createHomeScreenComponent(this).inject(this)
 
-        presenter.fetchYoutubeChannelVideos()
+        presenter.fetchYoutubeChannelVideos(null, "")
 
         firebaseDatabaseManager.getCategories().subscribe(
                 { categories ->
@@ -115,13 +116,13 @@ class HomeActivity : BaseActivity(), HomeScreenView {
                 removeBottomListProgress()
                 if (existRestaurantItemsInAdapter()) {
                     addFooterLoadingView()
-                    //presenter.onLoadMore(currentPage, area, currentFilterSettings, searchCriteria)
+                    presenter.onLoadMore(searchCriteria)
                 }
             }
         }
     }
 
-    fun removeBottomListProgress() {
+    override fun removeBottomListProgress() {
         footerAdapter.clear()
     }
 
@@ -141,13 +142,12 @@ class HomeActivity : BaseActivity(), HomeScreenView {
 
     private fun initSwipeRefresh() {
         swipeContainer.setOnRefreshListener({
-            presenter.fetchYoutubeChannelVideos()
+            presenter.fetchYoutubeChannelVideos(null, "")
         })
     }
 
-    override fun addYoutubeItemToAdapter(item: Youtube) {
-        homeScreenItemAdapter
-                .addModel(HomeScreenModelItemWrapper(item, R.id.home_screen_video_item))
+    override fun addYoutubeItemToAdapter(item: com.allrecipes.model.YoutubeItem) {
+        homeScreenItemAdapter.addModel(HomeScreenModelItemWrapper(item, R.id.home_screen_video_item))
     }
 
 
@@ -162,5 +162,15 @@ class HomeActivity : BaseActivity(), HomeScreenView {
             Pair<View, String>(v.findViewById(R.id.videoThumbnail), "VideoImageTransition")
         )
         ActivityCompat.startActivityForResult(this, intent, REQ_CODE_RESTAURANT, options.toBundle())
+    }
+
+    @OnTextChanged(R.id.search_edit_text)
+    internal fun onSearchTextChanged(text: CharSequence) {
+        //search_clear_button.visibility = if (text.isNotEmpty()) View.VISIBLE else View.GONE
+        val prevSearchCriteria = if (searchCriteria == null) "" else searchCriteria
+        searchCriteria = if (text.length < 3) "" else text.toString()
+        if (!TextUtils.equals(searchCriteria, prevSearchCriteria)) {
+            presenter.fetchYoutubeChannelVideos(null, searchCriteria)
+        }
     }
 }

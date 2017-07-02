@@ -1,8 +1,6 @@
 package com.allrecipes.ui
 
-import android.animation.Animator
-import android.animation.ObjectAnimator
-import android.media.Image
+import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
@@ -11,14 +9,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import com.allrecipes.App
 import com.allrecipes.R
-import com.bumptech.glide.Glide
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.mikepenz.fastadapter.IAdapter
-import android.R.raw
-import android.os.Build
 import com.allrecipes.util.ToastUtils
+import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
-
+import com.google.firebase.analytics.FirebaseAnalytics
 
 
 open class BaseActivity : AppCompatActivity() {

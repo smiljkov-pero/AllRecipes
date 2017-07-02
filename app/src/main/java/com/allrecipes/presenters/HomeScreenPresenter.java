@@ -2,7 +2,7 @@ package com.allrecipes.presenters;
 
 import com.allrecipes.managers.GoogleYoutubeApiManager;
 import com.allrecipes.model.SearchChannelVideosResponse;
-import com.allrecipes.model.Youtube;
+import com.allrecipes.model.YoutubeItem;
 import com.allrecipes.ui.home.views.HomeScreenView;
 
 import java.lang.ref.WeakReference;
@@ -15,22 +15,28 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
 
     private final GoogleYoutubeApiManager googleYoutubeApiManager;
 
+    private String pageToken;
+
     public HomeScreenPresenter(HomeScreenView view, GoogleYoutubeApiManager googleYoutubeApiManager) {
         super(new WeakReference<>(view));
         this.googleYoutubeApiManager = googleYoutubeApiManager;
     }
 
-    public void fetchYoutubeChannelVideos() {
-        getView().showLoading();
-        googleYoutubeApiManager.fetchChannelVideos("UCJFp8uSYCjXOMnkUyb3CQ3Q", null, 30, "date")
+    public void fetchYoutubeChannelVideos(final String currectPageToken, String searchCriteria) {
+        if (currectPageToken == null) {
+            getView().showLoading();
+        }
+        googleYoutubeApiManager.fetchChannelVideos("UCJFp8uSYCjXOMnkUyb3CQ3Q", currectPageToken, 20, "date", searchCriteria)
             .subscribe(new Consumer<SearchChannelVideosResponse>() {
                 @Override
                 public void accept(@NonNull SearchChannelVideosResponse searchChannelVideosResponse) throws Exception {
-                    List<Youtube> items = searchChannelVideosResponse.items;
-                    for (Youtube item : items) {
+                    List<YoutubeItem> items = searchChannelVideosResponse.items;
+                    for (YoutubeItem item : items) {
                         getView().addYoutubeItemToAdapter(item);
                     }
+                    pageToken = searchChannelVideosResponse.nextPageToken;
                     getView().hideLoading();
+                    getView().removeBottomListProgress();
                 }
             }, new Consumer<Throwable>() {
                 @Override
@@ -40,5 +46,9 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
                 }
             });
 
+    }
+
+    public void onLoadMore(String searchCriteria) {
+        fetchYoutubeChannelVideos(pageToken, searchCriteria);
     }
 }

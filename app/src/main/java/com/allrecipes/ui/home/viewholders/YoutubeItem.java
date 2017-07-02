@@ -2,13 +2,14 @@ package com.allrecipes.ui.home.viewholders;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.allrecipes.R;
-import com.allrecipes.model.Youtube;
 import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -17,14 +18,14 @@ import butterknife.ButterKnife;
 
 public class YoutubeItem extends HomeScreenItem {
 
-    private Youtube item;
+    private com.allrecipes.model.YoutubeItem item;
 
     YoutubeItem(HomeScreenModelItemWrapper wrapper) {
         super(wrapper);
-        this.item = (Youtube) wrapper.getT();
+        this.item = (com.allrecipes.model.YoutubeItem) wrapper.getT();
     }
 
-    public Youtube getItem() {
+    public com.allrecipes.model.YoutubeItem getItem() {
         return item;
     }
 
@@ -47,20 +48,20 @@ public class YoutubeItem extends HomeScreenItem {
     public void bindView(HomeScreenItem.ViewHolder holder, List payloads) {
         super.bindView(holder, payloads);
         YoutubeItem.ViewHolder viewHolder = ((YoutubeItem.ViewHolder) holder);
-        Resources resources = viewHolder.context.getResources();
 
         adjustYoutubeImage(viewHolder, item);
         viewHolder.name.setText(item.snippet.title);
         viewHolder.description.setText(item.snippet.description);
     }
 
-    private void adjustYoutubeImage(final ViewHolder holder, Youtube item) {
-            Glide.with(holder.context)
-                .load(item.snippet.thumbnails.highThumbnail.url)
-                .fitCenter()
-                .centerCrop()
-                //.placeholder(R.drawable.restaurant_placeholder)
-                .into(holder.videoThumbnail);
+    private void adjustYoutubeImage(final ViewHolder holder, com.allrecipes.model.YoutubeItem item) {
+        Picasso.with(holder.context)
+            .load(item.snippet.thumbnails.highThumbnail.url)
+            .fit()
+            .centerCrop()
+            //.placeholder(R.drawable.restaurant_placeholder)
+            .config(Bitmap.Config.RGB_565)
+            .into(holder.videoThumbnail);
     }
 
     protected static class ViewHolder extends HomeScreenItem.ViewHolder {

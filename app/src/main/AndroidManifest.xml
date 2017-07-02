@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.VideoActivity"
+            android:name=".ui.videodetails.activity.VideoActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AllRecipesTheme"

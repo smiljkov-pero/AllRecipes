@@ -5,11 +5,10 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by PeroSmiljkov on 20.06.17.
- */
+import java.util.List;
 
 public class YoutubeSnipped implements Parcelable {
+
     @SerializedName("publishedAt")
     public String publishedAt;
 
@@ -22,8 +21,23 @@ public class YoutubeSnipped implements Parcelable {
     @SerializedName("channelTitle")
     public String channelTitle;
 
+    @SerializedName("channelId")
+    public String channelId;
+
+    @SerializedName("tags")
+    public List<String> tags;
+
     @SerializedName("thumbnails")
     public YoutubeThumbnailTypes thumbnails;
+
+    @SerializedName("categoryId")
+    public long categoryId;
+
+    @SerializedName("contentDetails")
+    public ContentDetails contentDetails;
+
+    public YoutubeSnipped() {
+    }
 
     @Override
     public int describeContents() {
@@ -36,10 +50,11 @@ public class YoutubeSnipped implements Parcelable {
         dest.writeString(this.title);
         dest.writeString(this.description);
         dest.writeString(this.channelTitle);
+        dest.writeString(this.channelId);
+        dest.writeStringList(this.tags);
         dest.writeParcelable(this.thumbnails, flags);
-    }
-
-    public YoutubeSnipped() {
+        dest.writeLong(this.categoryId);
+        dest.writeParcelable(this.contentDetails, flags);
     }
 
     protected YoutubeSnipped(Parcel in) {
@@ -47,10 +62,14 @@ public class YoutubeSnipped implements Parcelable {
         this.title = in.readString();
         this.description = in.readString();
         this.channelTitle = in.readString();
+        this.channelId = in.readString();
+        this.tags = in.createStringArrayList();
         this.thumbnails = in.readParcelable(YoutubeThumbnailTypes.class.getClassLoader());
+        this.categoryId = in.readLong();
+        this.contentDetails = in.readParcelable(ContentDetails.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<YoutubeSnipped> CREATOR = new Parcelable.Creator<YoutubeSnipped>() {
+    public static final Creator<YoutubeSnipped> CREATOR = new Creator<YoutubeSnipped>() {
         @Override
         public YoutubeSnipped createFromParcel(Parcel source) {
             return new YoutubeSnipped(source);

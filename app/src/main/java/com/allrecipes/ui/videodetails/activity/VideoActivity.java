@@ -1,14 +1,12 @@
-package com.allrecipes.ui;
+package com.allrecipes.ui.videodetails.activity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
+import android.text.Html;
 import android.transition.Transition;
 import android.view.View;
 import android.view.Window;
@@ -20,17 +18,27 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.allrecipes.R;
-import com.allrecipes.model.Youtube;
+import com.allrecipes.model.YoutubeItem;
+import com.allrecipes.model.YoutubeSnipped;
+import com.allrecipes.model.video.VideoItem;
+import com.allrecipes.presenters.VideoDetailsScreenPresenter;
+import com.allrecipes.ui.BaseActivity;
+import com.allrecipes.ui.YoutubePlayerActivity;
+import com.allrecipes.ui.videodetails.views.VideoDetailsView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class VideoActivity extends BaseActivity {
+public class VideoActivity extends BaseActivity implements VideoDetailsView {
 
     private static final String KEY_VIDEO = "KEY_VIDEO";
 
@@ -43,10 +51,13 @@ public class VideoActivity extends BaseActivity {
     @BindView(R.id.description)
     TextView description;
 
-    private Youtube video;
+    @Inject
+    VideoDetailsScreenPresenter presenter;
+
+    private YoutubeItem video;
     private boolean isAnimationStarted = false;
 
-    public static Intent newIntent(Context context, Youtube video) {
+    public static Intent newIntent(Context context, YoutubeItem video) {
         Intent intent = new Intent(context, VideoActivity.class);
         intent.putExtra(KEY_VIDEO, video);
 
@@ -57,6 +68,7 @@ public class VideoActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
+        getApp().createVideoDetailsScreenComponent(this).inject(this);
         ButterKnife.bind(this);
 
         setStatusBarColor(android.R.color.transparent);
@@ -118,27 +130,25 @@ public class VideoActivity extends BaseActivity {
             video = savedInstanceState.getParcelable(KEY_VIDEO);
         }
 
-        Glide.with(this)
-            .load(video.snippet.thumbnails.highThumbnail.url)
-            .centerCrop()
-            .dontAnimate()
-            .listener(new RequestListener<String, GlideDrawable>() {
-                @Override
-                public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                    supportStartPostponedEnterTransition();
-                    return false;
-                }
+        presenter.fetchVideo(video.id.videoId);
 
-                @Override
-                public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                    supportStartPostponedEnterTransition();
-                    return false;
-                }
-            })
-            .into(videoThumbnail);
+        Picasso.with(this)
+                .load(video.snippet.thumbnails.highThumbnail.url)
+                //.placeholder(R.drawable.restaurant_placeholder)
+                .noFade()
+                .into(videoThumbnail, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        supportStartPostponedEnterTransition();
+                    }
+
+                    @Override
+                    public void onError() {
+                        supportStartPostponedEnterTransition();
+                    }
+                });
         setSupportActionBar(toolbar);
         setTitleToolbar(video.snippet.title);
-        description.setText(video.snippet.description);
     }
 
     @Override
@@ -161,7 +171,7 @@ public class VideoActivity extends BaseActivity {
     public static void setTransparentStatusBar(View decorView) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             decorView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
             );
         }
     }
@@ -175,15 +185,22 @@ public class VideoActivity extends BaseActivity {
     }
 
     private void setTitleToolbar(String title) {
+        setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(title);
-        toolbar.setTitle(title);
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(title);
+        }
     }
 
     @OnClick(R.id.video_thumbnail)
     void onThumbnailClick() {
         startActivity(YoutubePlayerActivity.newIntent(this, video.id.videoId));
+    }
+
+    @Override
+    public void setVideoDetails(YoutubeSnipped item) {
+        description.setText(Html.fromHtml(item.description.replace("\n", "<br>")));
     }
 }

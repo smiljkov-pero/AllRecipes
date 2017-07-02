@@ -5,11 +5,7 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by PeroSmiljkov on 20.06.17.
- */
-
-public class Youtube implements Parcelable {
+public class YoutubeItem implements Parcelable {
 
     @SerializedName("id")
     public YoutubeId id;
@@ -28,23 +24,23 @@ public class Youtube implements Parcelable {
         dest.writeParcelable(this.snippet, flags);
     }
 
-    public Youtube() {
+    public YoutubeItem() {
     }
 
-    protected Youtube(Parcel in) {
+    protected YoutubeItem(Parcel in) {
         this.id = in.readParcelable(YoutubeId.class.getClassLoader());
         this.snippet = in.readParcelable(YoutubeSnipped.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<Youtube> CREATOR = new Parcelable.Creator<Youtube>() {
+    public static final Parcelable.Creator<YoutubeItem> CREATOR = new Parcelable.Creator<YoutubeItem>() {
         @Override
-        public Youtube createFromParcel(Parcel source) {
-            return new Youtube(source);
+        public YoutubeItem createFromParcel(Parcel source) {
+            return new YoutubeItem(source);
         }
 
         @Override
-        public Youtube[] newArray(int size) {
-            return new Youtube[size];
+        public YoutubeItem[] newArray(int size) {
+            return new YoutubeItem[size];
         }
     };
 }
