@@ -3,6 +3,7 @@ package com.allrecipes.managers;
 import com.allrecipes.BuildConfig;
 import com.allrecipes.di.NetworkApi;
 import com.allrecipes.model.SearchChannelVideosResponse;
+import com.allrecipes.model.playlist.YoutubePlaylistsResponse;
 import com.allrecipes.model.video.YoutubeVideoResponse;
 
 import java.util.HashMap;
@@ -49,6 +50,18 @@ public class GoogleYoutubeApiManager {
         params.put("part", "snippet,contentDetails");
 
         return networkApi.fetchVideo(BuildConfig.YOUTUBE_API_KEY, params)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<YoutubePlaylistsResponse> fetchPlaylists(String channelId,
+                                                               int maxResults) {
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("channelId", channelId);
+        params.put("part", "snippet,contentDetails");
+        params.put("maxResults", maxResults);
+
+        return networkApi.fetchPlaylists(BuildConfig.YOUTUBE_API_KEY, params)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread());
     }

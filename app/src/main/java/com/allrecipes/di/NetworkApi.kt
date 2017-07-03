@@ -1,6 +1,7 @@
 package com.allrecipes.di
 
 import com.allrecipes.model.SearchChannelVideosResponse
+import com.allrecipes.model.playlist.YoutubePlaylistsResponse
 import com.allrecipes.model.video.YoutubeVideoResponse
 
 import io.reactivex.Observable
@@ -25,4 +26,10 @@ interface NetworkApi {
         @Query("key") key: String,
         @QueryMap queryParams: HashMap<String, Object>
     ): Observable<YoutubeVideoResponse>
+
+    @GET("playlists")
+    fun fetchPlaylists(
+        @Query("key") key: String,
+        @QueryMap queryParams: HashMap<String, Object>
+    ): Observable<YoutubePlaylistsResponse>
 }

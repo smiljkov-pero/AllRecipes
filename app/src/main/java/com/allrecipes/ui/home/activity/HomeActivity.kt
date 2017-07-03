@@ -17,9 +17,9 @@ import com.allrecipes.ui.BaseActivity
 import com.allrecipes.ui.home.viewholders.HomeScreenItem
 import com.allrecipes.ui.home.viewholders.HomeScreenItemFactory
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper
-import com.allrecipes.ui.videodetails.activity.VideoActivity
 import com.allrecipes.ui.home.viewholders.YoutubeItem
 import com.allrecipes.ui.home.views.HomeScreenView
+import com.allrecipes.ui.videodetails.activity.VideoActivity
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.adapters.FooterAdapter
 import com.mikepenz.fastadapter.adapters.GenericItemAdapter
@@ -57,15 +57,11 @@ class HomeActivity : BaseActivity(), HomeScreenView {
 
         firebaseDatabaseManager.getCategories().subscribe(
                 { categories ->
-                    categories.forEach { println(it.name) }
-                    /*val root = LinearLayout(this)
-                    root.orientation = LinearLayout.VERTICAL
                     categories.forEach {
-                        val textView: TextView = TextView(this)
-                        textView.text = it.name
-                        root.addView(textView)
-
-                        setContentView(root)*/
+                        println(it.name)
+                        presenter.fetchPlaylists(it.channelId)
+                    }
+                    TODO("save categories/ present them !")
                 },
                 { error -> print("error $error") }
         )

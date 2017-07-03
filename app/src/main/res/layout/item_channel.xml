@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/restaurantImageWrapper"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/d1"
+    android:layout_marginLeft="@dimen/d2"
+    android:layout_marginRight="@dimen/d2"
+    android:layout_marginTop="@dimen/d1"
+    android:paddingBottom="@dimen/d1_three_quarter">
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:gravity="start"
+        android:lines="1"
+        android:maxLines="1"
+        android:text="Channel Name"
+        android:textColor="@color/dark_text"
+        android:textSize="@dimen/s2_quarter"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/videoThumbnail"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/toolbar_layout_image_height"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="@dimen/d1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name"/>
+
+
+</android.support.constraint.ConstraintLayout>

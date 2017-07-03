@@ -14,6 +14,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         all {
@@ -123,6 +124,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
 
     compile files('libs/YouTubeAndroidPlayerApi.jar')
+    compile 'com.android.support:multidex:1.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
