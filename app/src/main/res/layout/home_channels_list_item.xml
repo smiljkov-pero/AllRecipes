@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/listDeliveryWholeView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/d2_half"
+    android:paddingLeft="@dimen/d2"
+    android:paddingRight="@dimen/d2"
+    android:paddingTop="@dimen/d2_half">
+
+    <RelativeLayout
+        android:id="@+id/typeContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/d1_quarter">
+
+        <ImageView
+            android:id="@+id/typeIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/typeName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d1_three_quarter"
+            android:layout_marginStart="@dimen/d1_three_quarter"
+            android:layout_toEndOf="@+id/typeIcon"
+            android:layout_toRightOf="@+id/typeIcon"
+            android:textAllCaps="true"
+            android:textColor="@color/dark_text"
+            android:textSize="@dimen/s1_three_quarter"/>
+
+        <ImageView
+            android:id="@+id/selectedCurrentAddressIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="end"
+            android:src="@drawable/ic_checkmark_pink"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/address_item_street_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/address_item_street"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:textColor="@color/light_dark_text"
+            android:textSize="@dimen/s1_three_quarter"/>
+
+        <ImageView
+            android:id="@+id/selectedAddressIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_checkmark_pink"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/address_item_city"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/light_dark_text"
+        android:textSize="@dimen/s1_three_quarter"/>
+
+</LinearLayout>

@@ -1,5 +1,9 @@
 package com.allrecipes.ui.home.activity
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
@@ -7,25 +11,31 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.util.Pair
 import android.support.v7.widget.LinearLayoutManager
+import android.text.Editable
 import android.text.TextUtils
+import android.text.TextWatcher
 import android.view.View
-import butterknife.OnTextChanged
+import android.view.inputmethod.InputMethodManager
+import android.widget.AdapterView
 import com.allrecipes.R
 import com.allrecipes.di.managers.FirebaseDatabaseManager
 import com.allrecipes.presenters.HomeScreenPresenter
 import com.allrecipes.ui.BaseActivity
+import com.allrecipes.ui.home.adapters.ChannelsListDropdownAdapter
 import com.allrecipes.ui.home.viewholders.HomeScreenItem
 import com.allrecipes.ui.home.viewholders.HomeScreenItemFactory
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper
 import com.allrecipes.ui.home.viewholders.YoutubeItem
 import com.allrecipes.ui.home.views.HomeScreenView
 import com.allrecipes.ui.videodetails.activity.VideoActivity
+import com.allrecipes.util.KeyboardUtils
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.adapters.FooterAdapter
 import com.mikepenz.fastadapter.adapters.GenericItemAdapter
 import com.mikepenz.fastadapter_extensions.items.ProgressItem
 import com.mikepenz.fastadapter_extensions.scroll.EndlessRecyclerOnScrollListener
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.activity_video.*
 import javax.inject.Inject
 
 class HomeActivity : BaseActivity(), HomeScreenView {
@@ -41,6 +51,8 @@ class HomeActivity : BaseActivity(), HomeScreenView {
     lateinit var layoutManager: LinearLayoutManager
     lateinit var onVendorsScrollListener: EndlessRecyclerOnScrollListener
     var searchCriteria = ""
+    lateinit var addressListCloseAnimator: ObjectAnimator
+    private var isAddressesDropDownVisible = false
 
     @Inject
     lateinit var presenter: HomeScreenPresenter
@@ -68,6 +80,210 @@ class HomeActivity : BaseActivity(), HomeScreenView {
 
         initSwipeRefresh()
         initRecyclerViewAdapter()
+        searchEditText.addTextChangedListener(object: TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {
+                //search_clear_button.visibility = if (text.isNotEmpty()) View.VISIBLE else View.GONE
+                val prevSearchCriteria = if (searchCriteria == null) "" else searchCriteria
+                searchCriteria = if (text!!.length < 3) "" else text.toString()
+                if (!TextUtils.equals(searchCriteria, prevSearchCriteria)) {
+                    presenter.fetchYoutubeChannelVideos(null, searchCriteria)
+                }
+            }
+        })
+
+        list.setOnTouchListener(View.OnTouchListener { v, event ->
+            if (containerTopAddressList != null && containerTopAddressList.getVisibility() == View.VISIBLE) {
+                closeAddressListOverlay()
+            }
+            if (searchEditText != null) {
+                hideKeyboard(searchEditText)
+            }
+
+            false
+        })
+
+        title_text.setOnClickListener { v ->
+            KeyboardUtils.hideKeyboard(this)
+            if (isAddressListOverlayContainerVisible()) {
+                closeAddressListOverlay()
+            } else {
+                showAddressListOverlay()
+            }
+        }
+
+        initActionBar()
+    }
+
+    fun isAddressListOverlayContainerVisible(): Boolean {
+        return containerTopAddressList.visibility == View.VISIBLE
+    }
+
+    override fun onBackPressed() {
+        if (isAddressesDropDownVisible) {
+            closeAddressListOverlay()
+            return
+        }
+
+        super.onBackPressed()
+    }
+
+    override fun onStop() {
+        if (addressListCloseAnimator != null) {
+            addressListCloseAnimator.removeAllListeners()
+        }
+        super.onStop()
+    }
+
+    private fun hideKeyboard(view: View) {
+        val inputMethodManger = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManger.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    fun initAddressListOverlayAdapter(addresses: List<String>, selectedPosition: Int) {
+        dropdown_addresses_listview.adapter = ChannelsListDropdownAdapter(applicationContext, addresses, selectedPosition)
+        dropdown_addresses_listview.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+            //presenter.handleAddressListClick(addresses[position])
+        }
+        trans_overlay.setOnTouchListener(View.OnTouchListener { v, event ->
+            closeAddressListOverlay()
+            true
+        })
+        trans_overlay.isClickable = true
+        trans_overlay.isFocusable = true
+        trans_overlay.isFocusableInTouchMode = true
+    }
+
+    fun closeAddressListOverlay() {
+        val duration = resources.getInteger(android.R.integer.config_mediumAnimTime)
+        alphaAnimateHideAddressListTransitionOverlay(duration)
+        animateTranslationYHideAddressList(duration)
+    }
+
+    fun showAddressListOverlay() {
+        dropdown_addresses_listview.translationY = (-dropdown_addresses_listview.measuredHeight).toFloat()
+        showAndAnimateAddressList()
+    }
+
+    fun changeActionBarIconToClear() {
+        val actionBar = supportActionBar
+        title_text.visibility = View.VISIBLE
+        activity_toolbar.setNavigationOnClickListener(View.OnClickListener({
+            closeAddressListOverlay()
+        }))
+    }
+
+    private fun showAndAnimateAddressList() {
+        isAddressesDropDownVisible = true
+        containerTopAddressList.setVisibility(View.VISIBLE)
+        app_bar.visibility = View.INVISIBLE
+        val duration = resources.getInteger(android.R.integer.config_mediumAnimTime)
+        changeActionBarIconToClear()
+
+        alphaAnimateShowAddressListTransitionOverlay(duration)
+        animateTranslationYShowAddressList(duration)
+
+        if (title_text != null) {
+            title_text.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_small_arrow_down_white, 0)
+        }
+    }
+
+    private fun animateTranslationYShowAddressList(duration: Int) {
+        dropdown_addresses_listview.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+        val height:Float = (-dropdown_addresses_listview.measuredHeight).toFloat()
+        val addressListAnimator = ObjectAnimator
+                .ofFloat(dropdown_addresses_listview, "translationY", height, 0f)
+                .setDuration(duration.toLong())
+        addressListAnimator.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                super.onAnimationEnd(animation)
+                if (dropdown_addresses_listview != null) {
+                    dropdown_addresses_listview.setLayerType(View.LAYER_TYPE_NONE, null)
+                }
+            }
+        })
+        addressListAnimator.start()
+    }
+
+    private fun animateTranslationYHideAddressList(duration: Int) {
+        dropdown_addresses_listview.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+        val height:Float = (-dropdown_addresses_listview.measuredHeight).toFloat()
+        addressListCloseAnimator = ObjectAnimator
+                .ofFloat(dropdown_addresses_listview, "translationY", 0f, height)
+        addressListCloseAnimator.duration = duration.toLong()
+        addressListCloseAnimator.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                super.onAnimationEnd(animation)
+                if (dropdown_addresses_listview != null) {
+                    dropdown_addresses_listview.setLayerType(View.LAYER_TYPE_NONE, null)
+                }
+                isAddressesDropDownVisible = false
+                changeActionBarDefaultDrawerIcon()
+                if (containerTopAddressList != null) {
+                    containerTopAddressList.setVisibility(View.INVISIBLE)
+                }
+                if (app_bar != null) {
+                    app_bar.visibility = View.VISIBLE
+                }
+                if (title_text != null) {
+                    title_text.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_small_arrow_down_white, 0)
+                }
+            }
+        })
+        addressListCloseAnimator.start()
+    }
+
+    fun changeActionBarDefaultDrawerIcon() {
+        val actionBar = supportActionBar
+        actionBar!!.setHomeAsUpIndicator(null)
+        activity_toolbar.setNavigationOnClickListener(null)
+        title_text.visibility = View.VISIBLE
+    }
+
+    private fun alphaAnimateShowAddressListTransitionOverlay(duration: Int) {
+        trans_overlay.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+        val addressListTransparentOverlayAnimator = ObjectAnimator
+                .ofFloat(trans_overlay, "alpha", 0f, 1f)
+                .setDuration(duration.toLong())
+        addressListTransparentOverlayAnimator.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                super.onAnimationEnd(animation)
+                if (trans_overlay != null) {
+                    trans_overlay.setLayerType(View.LAYER_TYPE_NONE, null)
+                }
+            }
+        })
+        addressListTransparentOverlayAnimator.start()
+    }
+
+    private fun alphaAnimateHideAddressListTransitionOverlay(duration: Int) {
+        trans_overlay.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+        val addressListTransparentOverlayAnimator = ObjectAnimator
+                .ofFloat(trans_overlay, "alpha", 0f)
+                .setDuration(duration.toLong())
+        addressListTransparentOverlayAnimator.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                super.onAnimationEnd(animation)
+                if (trans_overlay != null) {
+                    trans_overlay.setLayerType(View.LAYER_TYPE_NONE, null)
+                }
+            }
+        })
+        addressListTransparentOverlayAnimator.start()
+    }
+
+    fun initActionBar() {
+        setSupportActionBar(activity_toolbar)
+        val actionBar = supportActionBar
+        actionBar!!.setDisplayShowTitleEnabled(false)
+        actionBar.setDisplayHomeAsUpEnabled(true)
+        actionBar.setHomeButtonEnabled(true)
+        //actionBar.setHomeAsUpIndicator(resources.getDrawable(R.drawable.ic_dehaze_white_24dp))
     }
 
     private fun initRecyclerViewAdapter() {
@@ -97,6 +313,14 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         }
 
         true
+    }
+
+    override fun clearAdapterItems() {
+        homeScreenItemAdapter.clearModel()
+        homeScreenItemAdapter.notifyDataSetChanged()
+        list.removeOnScrollListener(onVendorsScrollListener)
+        createOnVendorsScrollListener()
+        list.addOnScrollListener(onVendorsScrollListener)
     }
 
     private fun onItemRestaurantClick(v: View, item: YoutubeItem) {
@@ -158,15 +382,5 @@ class HomeActivity : BaseActivity(), HomeScreenView {
             Pair<View, String>(v.findViewById(R.id.videoThumbnail), "VideoImageTransition")
         )
         ActivityCompat.startActivityForResult(this, intent, REQ_CODE_RESTAURANT, options.toBundle())
-    }
-
-    @OnTextChanged(R.id.search_edit_text)
-    internal fun onSearchTextChanged(text: CharSequence) {
-        //search_clear_button.visibility = if (text.isNotEmpty()) View.VISIBLE else View.GONE
-        val prevSearchCriteria = if (searchCriteria == null) "" else searchCriteria
-        searchCriteria = if (text.length < 3) "" else text.toString()
-        if (!TextUtils.equals(searchCriteria, prevSearchCriteria)) {
-            presenter.fetchYoutubeChannelVideos(null, searchCriteria)
-        }
     }
 }

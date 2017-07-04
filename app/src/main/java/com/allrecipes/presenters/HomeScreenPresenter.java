@@ -26,21 +26,24 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         this.googleYoutubeApiManager = googleYoutubeApiManager;
     }
 
-    public void fetchYoutubeChannelVideos(final String currectPageToken, String searchCriteria) {
-        if (currectPageToken == null) {
+    public void fetchYoutubeChannelVideos(final String currentPageToken, String searchCriteria) {
+        if (currentPageToken == null) {
             getView().showLoading();
         }
-        googleYoutubeApiManager.fetchChannelVideos("UCJFp8uSYCjXOMnkUyb3CQ3Q", currectPageToken, 20, "date", searchCriteria)
+        googleYoutubeApiManager.fetchChannelVideos("UCJFp8uSYCjXOMnkUyb3CQ3Q", currentPageToken, 20, "date", searchCriteria)
             .subscribe(new Consumer<SearchChannelVideosResponse>() {
                 @Override
                 public void accept(@NonNull SearchChannelVideosResponse searchChannelVideosResponse) throws Exception {
+                    if (currentPageToken == null) {
+                        getView().clearAdapterItems();
+                    }
+                    getView().removeBottomListProgress();
                     List<YoutubeItem> items = searchChannelVideosResponse.items;
                     for (YoutubeItem item : items) {
                         getView().addYoutubeItemToAdapter(item);
                     }
                     pageToken = searchChannelVideosResponse.nextPageToken;
                     getView().hideLoading();
-                    getView().removeBottomListProgress();
                 }
             }, new Consumer<Throwable>() {
                 @Override

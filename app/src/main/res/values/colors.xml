@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#2A93D5</color>
+    <color name="colorPrimaryDark">#3F51B5</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="dark_text">#4A4A4A</color>
-    <color name="light_dark_text">#9492A0</color>
+    <color name="dark_text">#333333</color>
+    <color name="light_dark_text">#888888</color>
+    <color name="disabled_gray_text">#c2c2c2</color>
     <color name="white">#FFFFFF</color>
+
+    <color name="light_grey1">#AED9DA</color>
+    <color name="light_grey2">#3DDAD7</color>
+
+    <color name="semi_transparent_black">#80000000</color>
+    <color name="listViewDivider">#e3e3e3</color>
+
+    <color name="light_grey">#ebebeb</color>
+    <color name="grey_background">#f7f7f7</color>
+    <color name="transparent">#00000000</color>
 </resources>

@@ -1,132 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.allrecipes.ui.home.activity.HomeActivity">
 
-    <android.support.design.widget.CoordinatorLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/activity_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:minHeight="?attr/actionBarSize"
+        android:transitionGroup="true"
+        app:popupTheme="@style/AppTheme"
+        app:theme="@style/ToolbarNormalStyle"
+        tools:targetApi="lollipop">
+
+        <TextView
+            android:id="@+id/title_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="Tasty"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/s3" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_grey1"/>
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.SwipeRefreshLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/swipeContainer"
+        <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:layout_height="match_parent">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/list"
+            <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/swipeContainer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:cacheColorHint="@android:color/transparent"
-                android:clipToPadding="false"
-                android:dividerHeight="@dimen/d1"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:paddingBottom="@dimen/d1"
-                android:paddingTop="@dimen/d1"
-                android:scrollingCache="false"
-                android:visibility="visible"/>
-        </android.support.v4.widget.SwipeRefreshLayout>
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/app_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white">
-
-            <RelativeLayout
-                android:id="@+id/search_layout"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/d6_half"
-                app:layout_scrollFlags="scroll|enterAlways">
-
-                <ImageView
-                    android:id="@+id/search_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="@dimen/d1"
-                    android:padding="@dimen/d1"
-                    android:src="@android:drawable/ic_menu_search"/>
-
-                <EditText
-                    android:id="@+id/search_edit_text"
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/list"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="@dimen/d1"
-                    android:layout_marginRight="@dimen/d1"
-                    android:layout_toLeftOf="@+id/search_clear_button"
-                    android:layout_toRightOf="@+id/search_icon"
-                    android:background="@null"
-                    android:gravity="left|center_vertical"
-                    android:hint="Search"
-                    android:imeOptions="actionDone"
-                    android:inputType="textNoSuggestions"
-                    android:lines="1"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:textColor="#555555"
-                    android:textSize="@dimen/s2"/>
+                    android:cacheColorHint="@android:color/transparent"
+                    android:clipToPadding="false"
+                    android:dividerHeight="@dimen/d1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:paddingBottom="@dimen/d1"
+                    android:paddingTop="@dimen/d1"
+                    android:scrollingCache="false"
+                    android:visibility="visible" />
+            </android.support.v4.widget.SwipeRefreshLayout>
 
-                <!--<RelativeLayout
-                    android:layout_width="@dimen/d7"
-                    android:layout_height="@dimen/d7"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:padding="@dimen/d1">
+            <android.support.design.widget.AppBarLayout
+                android:id="@+id/app_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white">
+
+                <RelativeLayout
+                    android:id="@+id/search_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/d6_half"
+                    app:layout_scrollFlags="scroll|enterAlways">
 
                     <ImageView
-                        android:id="@+id/filter_button"
-                        android:layout_width="@dimen/filter_button_size"
-                        android:layout_height="@dimen/filter_button_size"
-                        android:layout_gravity="center"
-                        android:padding="@dimen/d0_three_quarter"
-                        android:background="@drawable/simple_grey_ripple"
-                        android:src="@drawable/ic_filter"/>
+                        android:id="@+id/search_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/d1"
+                        android:padding="@dimen/d1"
+                        android:src="@android:drawable/ic_menu_search" />
 
-                    <FrameLayout
-                        android:id="@+id/tvFilterBadgeLayout"
-                        android:layout_width="@dimen/d2"
-                        android:layout_height="@dimen/d2"
+                    <EditText
+                        android:id="@+id/searchEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/d1"
+                        android:layout_marginRight="@dimen/d1"
+                        android:layout_toLeftOf="@+id/search_clear_button"
+                        android:layout_toRightOf="@+id/search_icon"
+                        android:background="@null"
+                        android:gravity="left|center_vertical"
+                        android:hint="Search"
+                        android:imeOptions="actionDone"
+                        android:inputType="textNoSuggestions"
+                        android:lines="1"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="#555555"
+                        android:textSize="@dimen/s2" />
+
+                    <!--<RelativeLayout
+                        android:layout_width="@dimen/d7"
+                        android:layout_height="@dimen/d7"
                         android:layout_alignParentRight="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginRight="@dimen/d0_quarter"
-                        android:layout_gravity="right|top"
-                        android:background="@drawable/shape_circle_pink"
-                        android:visibility="visible">
+                        android:layout_centerVertical="true"
+                        android:padding="@dimen/d1">
 
-                        <de.foodora.android.custom.views.FoodoraTextView
-                            android:id="@+id/tvFiltersCounter"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/s1_one_quarter"
+                        <ImageView
+                            android:id="@+id/filter_button"
+                            android:layout_width="@dimen/filter_button_size"
+                            android:layout_height="@dimen/filter_button_size"
                             android:layout_gravity="center"
-                            utils:customFont="fonts/Roboto-Regular.ttf"/>
+                            android:padding="@dimen/d0_three_quarter"
+                            android:background="@drawable/simple_grey_ripple"
+                            android:src="@drawable/ic_filter"/>
 
-                    </FrameLayout>
+                        <FrameLayout
+                            android:id="@+id/tvFilterBadgeLayout"
+                            android:layout_width="@dimen/d2"
+                            android:layout_height="@dimen/d2"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentTop="true"
+                            android:layout_marginRight="@dimen/d0_quarter"
+                            android:layout_gravity="right|top"
+                            android:background="@drawable/shape_circle_pink"
+                            android:visibility="visible">
+
+                            <de.foodora.android.custom.views.FoodoraTextView
+                                android:id="@+id/tvFiltersCounter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/s1_one_quarter"
+                                android:layout_gravity="center"
+                                utils:customFont="fonts/Roboto-Regular.ttf"/>
+
+                        </FrameLayout>
+
+                    </RelativeLayout>
+
+                    <ImageView
+                        android:id="@+id/search_clear_button"
+                        android:layout_width="@dimen/search_clear_button_width"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:background="@color/white"
+                        android:padding="@dimen/d1_quarter"
+                        android:src="@drawable/ic_clear_white_24dp"
+                        android:tint="@color/primary_text"
+                        android:visibility="gone"/>-->
 
                 </RelativeLayout>
 
-                <ImageView
-                    android:id="@+id/search_clear_button"
-                    android:layout_width="@dimen/search_clear_button_width"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:background="@color/white"
-                    android:padding="@dimen/d1_quarter"
-                    android:src="@drawable/ic_clear_white_24dp"
-                    android:tint="@color/primary_text"
-                    android:visibility="gone"/>-->
+            </android.support.design.widget.AppBarLayout>
+        </android.support.design.widget.CoordinatorLayout>
 
-            </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/containerTopAddressList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible">
 
-        </android.support.design.widget.AppBarLayout>
-    </android.support.design.widget.CoordinatorLayout>
-</android.support.constraint.ConstraintLayout>
+            <View
+                android:id="@+id/trans_overlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/semi_transparent_black" />
+
+            <ListView
+                android:id="@+id/dropdown_addresses_listview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:divider="@color/listViewDivider"
+                android:dividerHeight="@dimen/d0_eighth" />
+
+        </RelativeLayout>
+    </FrameLayout>
+</LinearLayout>
