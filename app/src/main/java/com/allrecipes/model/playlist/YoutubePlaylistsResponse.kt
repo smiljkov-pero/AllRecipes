@@ -6,8 +6,8 @@ import com.google.gson.annotations.SerializedName
 class YoutubePlaylistsResponse {
 
     @SerializedName("pageInfo")
-    lateinit var pageInfo: PageInfo
+    var pageInfo: PageInfo? = null
 
     @SerializedName("items")
-    lateinit var items: ArrayList<YoutubeChannelItem>
+    var items: ArrayList<YoutubeChannelItem>? = null
 }

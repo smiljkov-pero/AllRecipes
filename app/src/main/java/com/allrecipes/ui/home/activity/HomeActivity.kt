@@ -35,7 +35,6 @@ import com.mikepenz.fastadapter.adapters.GenericItemAdapter
 import com.mikepenz.fastadapter_extensions.items.ProgressItem
 import com.mikepenz.fastadapter_extensions.scroll.EndlessRecyclerOnScrollListener
 import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.activity_video.*
 import javax.inject.Inject
 
 class HomeActivity : BaseActivity(), HomeScreenView {
@@ -71,9 +70,9 @@ class HomeActivity : BaseActivity(), HomeScreenView {
                 { categories ->
                     categories.forEach {
                         println(it.name)
-                        presenter.fetchPlaylists(it.channelId)
+                        presenter.fetchPlaylistsAndVideos(it.channelId)
+                        TODO("save categories/ present them !")
                     }
-                    TODO("save categories/ present them !")
                 },
                 { error -> print("error $error") }
         )

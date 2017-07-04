@@ -32,4 +32,10 @@ interface NetworkApi {
         @Query("key") key: String,
         @QueryMap queryParams: HashMap<String, Object>
     ): Observable<YoutubePlaylistsResponse>
+
+    @GET("playlistItems")
+    fun fetchVideosInPlaylist(
+        @Query("key") key: String,
+        @QueryMap queryParams: HashMap<String, Object>
+    ): Observable<YoutubeVideoResponse>
 }

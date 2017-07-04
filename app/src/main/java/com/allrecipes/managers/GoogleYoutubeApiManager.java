@@ -54,14 +54,24 @@ public class GoogleYoutubeApiManager {
             .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<YoutubePlaylistsResponse> fetchPlaylists(String channelId,
-                                                               int maxResults) {
+    public Observable<YoutubePlaylistsResponse> fetchPlaylists(String channelId, int maxResults) {
         HashMap<String, Object> params = new HashMap<>();
         params.put("channelId", channelId);
         params.put("part", "snippet,contentDetails");
         params.put("maxResults", maxResults);
 
         return networkApi.fetchPlaylists(BuildConfig.YOUTUBE_API_KEY, params)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<YoutubeVideoResponse> fetchVideosInPlaylist(String playlistId, int maxResults) {
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("playlistId", playlistId);
+        params.put("part", "snippet");
+        params.put("maxResults", maxResults);
+
+        return networkApi.fetchVideosInPlaylist(BuildConfig.YOUTUBE_API_KEY, params)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread());
     }

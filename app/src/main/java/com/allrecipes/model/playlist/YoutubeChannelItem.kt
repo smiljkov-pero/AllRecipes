@@ -5,8 +5,8 @@ import com.google.gson.annotations.SerializedName
 
 class YoutubeChannelItem {
     @SerializedName("id")
-    lateinit var id: String
+    var id: String = ""
 
     @SerializedName("snippet")
-    lateinit var snippet: YoutubeSnipped
+    var snippet: YoutubeSnipped? = null
 }

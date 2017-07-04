@@ -6,14 +6,22 @@ import com.allrecipes.managers.GoogleYoutubeApiManager;
 import com.allrecipes.model.SearchChannelVideosResponse;
 import com.allrecipes.model.YoutubeItem;
 import com.allrecipes.model.playlist.YoutubeChannelItem;
+import com.allrecipes.model.playlist.YoutubePlaylistWithVideos;
 import com.allrecipes.model.playlist.YoutubePlaylistsResponse;
+import com.allrecipes.model.video.YoutubeVideoResponse;
 import com.allrecipes.ui.home.views.HomeScreenView;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
 
@@ -59,21 +67,43 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         fetchYoutubeChannelVideos(pageToken, searchCriteria);
     }
 
-    //TODO handle it properly
-    public void fetchPlaylists(String channelId) {
+    public void fetchPlaylistsAndVideos(String channelId) {
         googleYoutubeApiManager.fetchPlaylists(channelId, 50)
-            .subscribe(new Consumer<YoutubePlaylistsResponse>() {
-            @Override
-            public void accept(@NonNull YoutubePlaylistsResponse channels) throws Exception {
-                for (YoutubeChannelItem channel: channels.getItems()) {
-                    Log.d("channels", "channel info: name " +channel.getSnippet().title);
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .flatMap(new Function<YoutubePlaylistsResponse, ObservableSource<YoutubeChannelItem>>() {
+                @Override
+                public ObservableSource<YoutubeChannelItem> apply(@NonNull YoutubePlaylistsResponse youtubePlaylistsResponse) throws Exception {
+                    return Observable.fromIterable(youtubePlaylistsResponse.getItems());
                 }
+            })
+            .flatMap(new Function<YoutubeChannelItem, ObservableSource<YoutubePlaylistWithVideos>>() {
+                @Override
+                public ObservableSource<YoutubePlaylistWithVideos> apply(@NonNull YoutubeChannelItem youtubeChannelItem) throws Exception {
+                    return getVideosForEachPlaylist(youtubeChannelItem);
+                }
+            }).subscribe(new Consumer<YoutubePlaylistWithVideos>() {
+            @Override
+            public void accept(@NonNull YoutubePlaylistWithVideos youtubePlaylistWithVideos) throws Exception {
+                Log.d("playlist and videos", "playlist name: " + youtubePlaylistWithVideos.getChannel().getSnippet().title);
+                Log.d("playlist and videos", "playlist videos size: " + youtubePlaylistWithVideos.getVideosResponse().items.size());
             }
         }, new Consumer<Throwable>() {
             @Override
             public void accept(@NonNull Throwable throwable) throws Exception {
-                Log.d("channels", "channel error: " + throwable.getMessage());
+                Log.e("playlist and videos", "error fetchPlaylistsAndVideos() " + throwable.getMessage());
             }
         });
+    }
+
+    public Observable<YoutubePlaylistWithVideos> getVideosForEachPlaylist(YoutubeChannelItem channel) {
+        Observable<YoutubeVideoResponse> fetchVideosInPlaylistObservable = googleYoutubeApiManager.fetchVideosInPlaylist(channel.getId(), 50);
+        return Observable.zip(Observable.just(channel), fetchVideosInPlaylistObservable,
+            new BiFunction<YoutubeChannelItem, YoutubeVideoResponse, YoutubePlaylistWithVideos>() {
+                @Override
+                public YoutubePlaylistWithVideos apply(@NonNull YoutubeChannelItem youtubeChannelItem, @NonNull YoutubeVideoResponse youtubeVideoResponse) throws Exception {
+                    return new YoutubePlaylistWithVideos(youtubeChannelItem, youtubeVideoResponse);
+                }
+            });
     }
 }
