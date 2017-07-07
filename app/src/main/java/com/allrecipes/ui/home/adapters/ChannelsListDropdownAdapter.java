@@ -8,23 +8,24 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import com.allrecipes.R;
+import com.allrecipes.model.Category;
 
 import java.util.List;
 
-public class ChannelsListDropdownAdapter<T extends String> extends ArrayAdapter<T> {
+public class ChannelsListDropdownAdapter extends ArrayAdapter<Category> {
 
-    private final List<T> addresses;
+    private final List<Category> channels;
     private final int selectedPosition;
 
-    public ChannelsListDropdownAdapter(Context context, List<T> addressesObjects, int selectedPosition) {
-        super(context, 0, addressesObjects);
-        this.addresses = addressesObjects;
+    public ChannelsListDropdownAdapter(Context context, List<Category> channels, int selectedPosition) {
+        super(context, 0, channels);
+        this.channels = channels;
         this.selectedPosition = selectedPosition;
     }
 
     @Override
     public int getCount() {
-        return addresses.size();
+        return channels.size();
     }
 
     @NonNull
@@ -39,8 +40,8 @@ public class ChannelsListDropdownAdapter<T extends String> extends ArrayAdapter<
         } else {
             viewHolder = (ChannelsDropdownItemViewHolder) convertView.getTag();
         }
-        T addressObj = addresses.get(position);
-
+        Category channel = channels.get(position);
+        viewHolder.initItemViewDetails(getContext(), channel, selectedPosition == position);
 
         return convertView;
     }

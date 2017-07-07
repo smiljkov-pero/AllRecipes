@@ -5,4 +5,5 @@ class Category {
     lateinit var image : String
     lateinit var youtubeUrl : String
     lateinit var channelId : String
+    lateinit var description : String
 }

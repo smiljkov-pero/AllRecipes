@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
@@ -19,6 +20,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import com.allrecipes.R
 import com.allrecipes.di.managers.FirebaseDatabaseManager
+import com.allrecipes.model.Category
 import com.allrecipes.presenters.HomeScreenPresenter
 import com.allrecipes.ui.BaseActivity
 import com.allrecipes.ui.home.adapters.ChannelsListDropdownAdapter
@@ -50,7 +52,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
     lateinit var layoutManager: LinearLayoutManager
     lateinit var onVendorsScrollListener: EndlessRecyclerOnScrollListener
     var searchCriteria = ""
-    lateinit var addressListCloseAnimator: ObjectAnimator
+    private var addressListCloseAnimator: ObjectAnimator? = null
     private var isAddressesDropDownVisible = false
 
     @Inject
@@ -73,12 +75,14 @@ class HomeActivity : BaseActivity(), HomeScreenView {
                         presenter.fetchPlaylistsAndVideos(it.channelId)
                         TODO("save categories/ present them !")
                     }
+                    initAddressListOverlayAdapter(categories, 0)
                 },
                 { error -> print("error $error") }
         )
 
         initSwipeRefresh()
         initRecyclerViewAdapter()
+        var con: Context = this
         searchEditText.addTextChangedListener(object: TextWatcher {
             override fun afterTextChanged(s: Editable?) {
             }
@@ -133,9 +137,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
     }
 
     override fun onStop() {
-        if (addressListCloseAnimator != null) {
-            addressListCloseAnimator.removeAllListeners()
-        }
+        addressListCloseAnimator?.removeAllListeners()
         super.onStop()
     }
 
@@ -144,10 +146,10 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         inputMethodManger.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    fun initAddressListOverlayAdapter(addresses: List<String>, selectedPosition: Int) {
+    fun initAddressListOverlayAdapter(addresses: List<Category>, selectedPosition: Int) {
         dropdown_addresses_listview.adapter = ChannelsListDropdownAdapter(applicationContext, addresses, selectedPosition)
         dropdown_addresses_listview.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            //presenter.handleAddressListClick(addresses[position])
+            presenter.onChannelListClick(addresses[position].channelId)
         }
         trans_overlay.setOnTouchListener(View.OnTouchListener { v, event ->
             closeAddressListOverlay()
@@ -214,8 +216,8 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         val height:Float = (-dropdown_addresses_listview.measuredHeight).toFloat()
         addressListCloseAnimator = ObjectAnimator
                 .ofFloat(dropdown_addresses_listview, "translationY", 0f, height)
-        addressListCloseAnimator.duration = duration.toLong()
-        addressListCloseAnimator.addListener(object : AnimatorListenerAdapter() {
+        addressListCloseAnimator?.duration = duration.toLong()
+        addressListCloseAnimator?.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
                 if (dropdown_addresses_listview != null) {
@@ -234,7 +236,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
                 }
             }
         })
-        addressListCloseAnimator.start()
+        addressListCloseAnimator?.start()
     }
 
     fun changeActionBarDefaultDrawerIcon() {
@@ -330,6 +332,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
     }
 
     private fun createOnVendorsScrollListener() {
+        var con: Context  = this
         onVendorsScrollListener = object : EndlessRecyclerOnScrollListener(footerAdapter) {
             override fun onLoadMore(currentPage: Int) {
                 removeBottomListProgress()

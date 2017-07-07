@@ -1,8 +1,10 @@
 package com.allrecipes.presenters;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.allrecipes.managers.GoogleYoutubeApiManager;
+import com.allrecipes.managers.LocalStorageManagerInterface;
 import com.allrecipes.model.SearchChannelVideosResponse;
 import com.allrecipes.model.YoutubeItem;
 import com.allrecipes.model.playlist.YoutubeChannelItem;
@@ -25,20 +27,38 @@ import io.reactivex.schedulers.Schedulers;
 
 public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
 
+    private static final String APP_LAST_CHANNEL_USED = "app.lastChannelUsed";
+    public static final String TASTY_CHANNEL_ID_DEFAULT = "UCJFp8uSYCjXOMnkUyb3CQ3Q";
+
     private final GoogleYoutubeApiManager googleYoutubeApiManager;
+    private final LocalStorageManagerInterface localStorageManagerInterface;
 
     private String pageToken;
 
-    public HomeScreenPresenter(HomeScreenView view, GoogleYoutubeApiManager googleYoutubeApiManager) {
+    public HomeScreenPresenter(
+            HomeScreenView view,
+            GoogleYoutubeApiManager googleYoutubeApiManager,
+            LocalStorageManagerInterface localStorageManagerInterface
+    ) {
         super(new WeakReference<>(view));
         this.googleYoutubeApiManager = googleYoutubeApiManager;
+        this.localStorageManagerInterface = localStorageManagerInterface;
+    }
+
+    public void onChannelListClick(String channelId) {
+        localStorageManagerInterface.putString(APP_LAST_CHANNEL_USED, channelId);
+        fetchYoutubeChannelVideos(null, "");
     }
 
     public void fetchYoutubeChannelVideos(final String currentPageToken, String searchCriteria) {
         if (currentPageToken == null) {
             getView().showLoading();
         }
-        googleYoutubeApiManager.fetchChannelVideos("UCJFp8uSYCjXOMnkUyb3CQ3Q", currentPageToken, 20, "date", searchCriteria)
+        String channelId = localStorageManagerInterface.getString(APP_LAST_CHANNEL_USED, "");
+        if (TextUtils.isEmpty(channelId)) {
+            channelId = TASTY_CHANNEL_ID_DEFAULT;
+        }
+        googleYoutubeApiManager.fetchChannelVideos(channelId, currentPageToken, 20, "date", searchCriteria)
             .subscribe(new Consumer<SearchChannelVideosResponse>() {
                 @Override
                 public void accept(@NonNull SearchChannelVideosResponse searchChannelVideosResponse) throws Exception {
