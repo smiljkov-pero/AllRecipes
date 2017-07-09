@@ -3,8 +3,10 @@ package com.allrecipes.presenters;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.allrecipes.di.managers.FirebaseDatabaseManager;
 import com.allrecipes.managers.GoogleYoutubeApiManager;
 import com.allrecipes.managers.LocalStorageManagerInterface;
+import com.allrecipes.model.Category;
 import com.allrecipes.model.SearchChannelVideosResponse;
 import com.allrecipes.model.YoutubeItem;
 import com.allrecipes.model.playlist.YoutubeChannelItem;
@@ -12,8 +14,12 @@ import com.allrecipes.model.playlist.YoutubePlaylistWithVideos;
 import com.allrecipes.model.playlist.YoutubePlaylistsResponse;
 import com.allrecipes.model.video.YoutubeVideoResponse;
 import com.allrecipes.ui.home.views.HomeScreenView;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -24,25 +30,30 @@ import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import rx.functions.Action1;
 
 public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
 
     private static final String APP_LAST_CHANNEL_USED = "app.lastChannelUsed";
-    public static final String TASTY_CHANNEL_ID_DEFAULT = "UCJFp8uSYCjXOMnkUyb3CQ3Q";
+    private static final String APP_CACHED_FIREBASE_CONFIG = "app.cachedFirebaseConfig";
+    private static final String TASTY_CHANNEL_ID_DEFAULT = "UCJFp8uSYCjXOMnkUyb3CQ3Q";
 
     private final GoogleYoutubeApiManager googleYoutubeApiManager;
     private final LocalStorageManagerInterface localStorageManagerInterface;
+    private final FirebaseDatabaseManager firebaseDatabaseManager;
 
     private String pageToken;
 
     public HomeScreenPresenter(
-            HomeScreenView view,
-            GoogleYoutubeApiManager googleYoutubeApiManager,
-            LocalStorageManagerInterface localStorageManagerInterface
+        HomeScreenView view,
+        GoogleYoutubeApiManager googleYoutubeApiManager,
+        LocalStorageManagerInterface localStorageManagerInterface,
+        FirebaseDatabaseManager firebaseDatabaseManager
     ) {
         super(new WeakReference<>(view));
         this.googleYoutubeApiManager = googleYoutubeApiManager;
         this.localStorageManagerInterface = localStorageManagerInterface;
+        this.firebaseDatabaseManager = firebaseDatabaseManager;
     }
 
     public void onChannelListClick(String channelId) {
@@ -58,7 +69,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         if (TextUtils.isEmpty(channelId)) {
             channelId = TASTY_CHANNEL_ID_DEFAULT;
         }
-        googleYoutubeApiManager.fetchChannelVideos(channelId, currentPageToken, 20, "date", searchCriteria)
+        googleYoutubeApiManager.fetchChannelVideos(channelId, currentPageToken, 30, "date", searchCriteria)
             .subscribe(new Consumer<SearchChannelVideosResponse>() {
                 @Override
                 public void accept(@NonNull SearchChannelVideosResponse searchChannelVideosResponse) throws Exception {
@@ -87,7 +98,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         fetchYoutubeChannelVideos(pageToken, searchCriteria);
     }
 
-    public void fetchPlaylistsAndVideos(String channelId) {
+    private void fetchPlayListsAndVideos(String channelId) {
         googleYoutubeApiManager.fetchPlaylists(channelId, 50)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -111,12 +122,12 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         }, new Consumer<Throwable>() {
             @Override
             public void accept(@NonNull Throwable throwable) throws Exception {
-                Log.e("playlist and videos", "error fetchPlaylistsAndVideos() " + throwable.getMessage());
+                Log.e("playlist and videos", "error fetchPlayListsAndVideos() " + throwable.getMessage());
             }
         });
     }
 
-    public Observable<YoutubePlaylistWithVideos> getVideosForEachPlaylist(YoutubeChannelItem channel) {
+    private Observable<YoutubePlaylistWithVideos> getVideosForEachPlaylist(YoutubeChannelItem channel) {
         Observable<YoutubeVideoResponse> fetchVideosInPlaylistObservable = googleYoutubeApiManager.fetchVideosInPlaylist(channel.getId(), 50);
         return Observable.zip(Observable.just(channel), fetchVideosInPlaylistObservable,
             new BiFunction<YoutubeChannelItem, YoutubeVideoResponse, YoutubePlaylistWithVideos>() {
@@ -125,5 +136,45 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
                     return new YoutubePlaylistWithVideos(youtubeChannelItem, youtubeVideoResponse);
                 }
             });
+    }
+
+    public void onCreate() {
+        fetchYoutubeChannelVideos(null, "");
+        String appConfig = localStorageManagerInterface.getString(APP_CACHED_FIREBASE_CONFIG, "");
+        if (!TextUtils.isEmpty(appConfig)) {
+            Type listType = new TypeToken<ArrayList<Category>>(){}.getType();
+            List<Category> categories = new GsonBuilder().create().fromJson(appConfig, listType);
+            getView().initAddressListOverlayAdapter(categories, 0);
+            fetchAppConfigFromFirebase(true);
+        } else {
+            fetchAppConfigFromFirebase(false);
+        }
+    }
+
+    private void fetchAppConfigFromFirebase(final boolean isConfigAlreadyExist) {
+        firebaseDatabaseManager.getCategories().subscribe(
+            new Action1<List<Category>>() {
+                @Override
+                public void call(List<Category> categories) {
+                    if (!isConfigAlreadyExist) {
+                        getView().initAddressListOverlayAdapter(categories, 0);
+                    }
+                    for (Category category : categories) {
+                        fetchPlayListsAndVideos(category.channelId);
+                    }
+
+                    localStorageManagerInterface.putString(
+                        APP_CACHED_FIREBASE_CONFIG,
+                        new GsonBuilder().create().toJson(categories)
+                    );
+                }
+            },
+            new Action1<Throwable>() {
+                @Override
+                public void call(Throwable throwable) {
+
+                }
+            }
+        );
     }
 }

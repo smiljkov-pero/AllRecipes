@@ -47,7 +47,7 @@ public class GoogleYoutubeApiManager {
     public Observable<YoutubeVideoResponse> fetchVideo(String videoId) {
         HashMap<String, Object> params = new HashMap<>();
         params.put("id", videoId);
-        params.put("part", "snippet,contentDetails");
+        params.put("part", "snippet,contentDetails,statistics");
 
         return networkApi.fetchVideo(BuildConfig.YOUTUBE_API_KEY, params)
             .subscribeOn(Schedulers.io())

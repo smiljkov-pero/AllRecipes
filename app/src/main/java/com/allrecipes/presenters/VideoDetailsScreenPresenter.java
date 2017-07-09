@@ -17,7 +17,10 @@ public class VideoDetailsScreenPresenter extends AbstractPresenter<VideoDetailsV
 
     private final GoogleYoutubeApiManager googleYoutubeApiManager;
 
-    public VideoDetailsScreenPresenter(VideoDetailsView view, GoogleYoutubeApiManager googleYoutubeApiManager) {
+    public VideoDetailsScreenPresenter(
+        VideoDetailsView view,
+        GoogleYoutubeApiManager googleYoutubeApiManager
+    ) {
         super(new WeakReference<>(view));
         this.googleYoutubeApiManager = googleYoutubeApiManager;
     }
