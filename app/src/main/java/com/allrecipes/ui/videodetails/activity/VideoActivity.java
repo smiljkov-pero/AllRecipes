@@ -1,8 +1,11 @@
 package com.allrecipes.ui.videodetails.activity;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.support.design.widget.AppBarLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -50,6 +53,10 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
     Toolbar toolbar;
     @BindView(R.id.description)
     TextView description;
+    @BindView(R.id.recipe_title)
+    TextView recipeTitle;
+    @BindView(R.id.app_bar_layout)
+    AppBarLayout appBarLayout;
 
     @Inject
     VideoDetailsScreenPresenter presenter;
@@ -133,20 +140,20 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
         presenter.fetchVideo(video.id.videoId);
 
         Picasso.with(this)
-                .load(video.snippet.thumbnails.highThumbnail.url)
-                //.placeholder(R.drawable.restaurant_placeholder)
-                .noFade()
-                .into(videoThumbnail, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        supportStartPostponedEnterTransition();
-                    }
+            .load(video.snippet.thumbnails.highThumbnail.url)
+            //.placeholder(R.drawable.restaurant_placeholder)
+            .noFade()
+            .into(videoThumbnail, new Callback() {
+                @Override
+                public void onSuccess() {
+                    supportStartPostponedEnterTransition();
+                }
 
-                    @Override
-                    public void onError() {
-                        supportStartPostponedEnterTransition();
-                    }
-                });
+                @Override
+                public void onError() {
+                    supportStartPostponedEnterTransition();
+                }
+            });
         setSupportActionBar(toolbar);
         setTitleToolbar(video.snippet.title);
     }
@@ -171,16 +178,19 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
     public static void setTransparentStatusBar(View decorView) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
             );
         }
     }
 
-    protected void setStatusBarColor(int colorRes) {
-        if (isAtLeastLollipop()) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(getResources().getColor(colorRes));
+    /**
+     * @param decorView the view obtained form {@code getWindow().getDecorView()}
+     */
+    public static void setLightStatusBar(View decorView) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            );
         }
     }
 
@@ -189,6 +199,7 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(false);
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(title);
         }
@@ -202,5 +213,6 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
     @Override
     public void setVideoDetails(YoutubeSnipped item) {
         description.setText(Html.fromHtml(item.description.replace("\n", "<br>")));
+        recipeTitle.setText(item.title);
     }
 }

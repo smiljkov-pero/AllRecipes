@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
 import com.allrecipes.App
 import com.allrecipes.R
@@ -24,6 +25,7 @@ open class BaseActivity : AppCompatActivity() {
         setContentView(R.layout.activity_home)
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
+        setStatusBarColor(R.color.listViewDivider)
     }
 
     fun getApp(): App {
@@ -68,5 +70,13 @@ open class BaseActivity : AppCompatActivity() {
 
     fun isAtLeastLollipop(): Boolean {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+    }
+
+    protected fun setStatusBarColor(colorRes: Int) {
+        if (isAtLeastLollipop()) {
+            val window = window
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.statusBarColor = resources.getColor(colorRes)
+        }
     }
 }

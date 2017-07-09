@@ -15,11 +15,11 @@ import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
+import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import com.allrecipes.R
-import com.allrecipes.di.managers.FirebaseDatabaseManager
 import com.allrecipes.model.Category
 import com.allrecipes.presenters.HomeScreenPresenter
 import com.allrecipes.ui.BaseActivity
@@ -58,31 +58,16 @@ class HomeActivity : BaseActivity(), HomeScreenView {
     @Inject
     lateinit var presenter: HomeScreenPresenter
 
-    @Inject
-    lateinit var firebaseDatabaseManager: FirebaseDatabaseManager
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         getApp().createHomeScreenComponent(this).inject(this)
 
-        presenter.fetchYoutubeChannelVideos(null, "")
-
-        firebaseDatabaseManager.getCategories().subscribe(
-                { categories ->
-                    categories.forEach {
-                        println(it.name)
-                        presenter.fetchPlaylistsAndVideos(it.channelId)
-                        TODO("save categories/ present them !")
-                    }
-                    initAddressListOverlayAdapter(categories, 0)
-                },
-                { error -> print("error $error") }
-        )
+        presenter.onCreate()
 
         initSwipeRefresh()
         initRecyclerViewAdapter()
-        var con: Context = this
+
         searchEditText.addTextChangedListener(object: TextWatcher {
             override fun afterTextChanged(s: Editable?) {
             }
@@ -100,8 +85,8 @@ class HomeActivity : BaseActivity(), HomeScreenView {
             }
         })
 
-        list.setOnTouchListener(View.OnTouchListener { v, event ->
-            if (containerTopAddressList != null && containerTopAddressList.getVisibility() == View.VISIBLE) {
+        list.setOnTouchListener({ view: View, motionEvent: MotionEvent ->
+            if (containerTopAddressList != null && containerTopAddressList.visibility == View.VISIBLE) {
                 closeAddressListOverlay()
             }
             if (searchEditText != null) {
@@ -111,16 +96,20 @@ class HomeActivity : BaseActivity(), HomeScreenView {
             false
         })
 
-        title_text.setOnClickListener { v ->
-            KeyboardUtils.hideKeyboard(this)
-            if (isAddressListOverlayContainerVisible()) {
-                closeAddressListOverlay()
-            } else {
-                showAddressListOverlay()
-            }
+        title_text.setOnClickListener {
+            onClickToolbarText()
         }
 
         initActionBar()
+    }
+
+    private fun onClickToolbarText() {
+        KeyboardUtils.hideKeyboard(this)
+        if (isAddressListOverlayContainerVisible()) {
+            closeAddressListOverlay()
+        } else {
+            showAddressListOverlay()
+        }
     }
 
     fun isAddressListOverlayContainerVisible(): Boolean {
@@ -146,12 +135,15 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         inputMethodManger.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    fun initAddressListOverlayAdapter(addresses: List<Category>, selectedPosition: Int) {
-        dropdown_addresses_listview.adapter = ChannelsListDropdownAdapter(applicationContext, addresses, selectedPosition)
+    override fun initAddressListOverlayAdapter(channels: List<Category>, selectedPosition: Int) {
+        dropdown_addresses_listview.adapter = ChannelsListDropdownAdapter(applicationContext, channels, selectedPosition)
         dropdown_addresses_listview.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            presenter.onChannelListClick(addresses[position].channelId)
+            val category: Category = channels[position]
+            presenter.onChannelListClick(category.channelId)
+            title_text.text = category.name
+            closeAddressListOverlay()
         }
-        trans_overlay.setOnTouchListener(View.OnTouchListener { v, event ->
+        trans_overlay.setOnTouchListener({ view: View, motionEvent: MotionEvent ->
             closeAddressListOverlay()
             true
         })
@@ -174,9 +166,9 @@ class HomeActivity : BaseActivity(), HomeScreenView {
     fun changeActionBarIconToClear() {
         val actionBar = supportActionBar
         title_text.visibility = View.VISIBLE
-        activity_toolbar.setNavigationOnClickListener(View.OnClickListener({
+        activity_toolbar.setNavigationOnClickListener({
             closeAddressListOverlay()
-        }))
+        })
     }
 
     private fun showAndAnimateAddressList() {
@@ -190,7 +182,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         animateTranslationYShowAddressList(duration)
 
         if (title_text != null) {
-            title_text.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_small_arrow_down_white, 0)
+            title_text.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_arrow_drop_up_white_24dp, 0)
         }
     }
 
