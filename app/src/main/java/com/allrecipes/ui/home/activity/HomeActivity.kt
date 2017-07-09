@@ -297,6 +297,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         homeScreenItemFactory = HomeScreenItemFactory(
             resources.getDimensionPixelSize(R.dimen.toolbar_layout_image_height)
         )
+
         homeScreenItemAdapter = GenericItemAdapter<HomeScreenModelItemWrapper, HomeScreenItem>(homeScreenItemFactory)
         footerAdapter = FooterAdapter<ProgressItem>()
         list.adapter = footerAdapter.wrap(homeScreenItemAdapter.wrap(fastAdapter))

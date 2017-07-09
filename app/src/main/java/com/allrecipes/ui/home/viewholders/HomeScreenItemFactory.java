@@ -17,7 +17,9 @@ public class HomeScreenItemFactory implements Function<HomeScreenModelItemWrappe
         switch (wrapper.getType()) {
             case R.id.home_screen_video_item:
                 return new YoutubeItem(wrapper);
-
+            case R.id.home_swimlane_channel_item:
+                //return new SwipelaneChannelItem(wrapper);
+                return null;
             default:
                 return new HomeScreenItem(wrapper);
         }

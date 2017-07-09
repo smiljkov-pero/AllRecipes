@@ -29,7 +29,7 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/videoThumbnail"
+        android:id="@+id/videosRecyclerView"
         android:layout_width="0dp"
         android:layout_height="@dimen/toolbar_layout_image_height"
         android:layout_marginBottom="8dp"

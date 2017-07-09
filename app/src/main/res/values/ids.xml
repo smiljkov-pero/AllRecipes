@@ -2,5 +2,7 @@
 <resources>
 
     <item name="home_screen_video_item" type="id" />
+    <item name="home_swimlane_channel_item" type="id" />
+
 
 </resources>

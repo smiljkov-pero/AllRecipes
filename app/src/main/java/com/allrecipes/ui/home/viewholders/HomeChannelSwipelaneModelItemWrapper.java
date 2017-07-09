@@ -7,11 +7,10 @@ import com.allrecipes.R;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-public class HomeScreenModelItemWrapper {
+public class HomeChannelSwipelaneModelItemWrapper {
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
-        R.id.home_screen_video_item,
         R.id.home_swimlane_channel_item
     })
     public @interface Type { }
@@ -19,7 +18,7 @@ public class HomeScreenModelItemWrapper {
     private Object t;
     private @Type int type;
 
-    public HomeScreenModelItemWrapper(Object t, @Type int type) {
+    public HomeChannelSwipelaneModelItemWrapper(Object t, @Type int type) {
         this.t = t;
         this.type = type;
     }
