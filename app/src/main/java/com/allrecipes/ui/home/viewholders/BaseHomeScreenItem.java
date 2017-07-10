@@ -9,7 +9,7 @@ import com.mikepenz.fastadapter.items.GenericAbstractItem;
 public class BaseHomeScreenItem
     extends GenericAbstractItem<HomeScreenModelItemWrapper, BaseHomeScreenItem, BaseHomeScreenItem.ViewHolder> {
 
-    BaseHomeScreenItem(HomeScreenModelItemWrapper wrapper) {
+    public BaseHomeScreenItem(HomeScreenModelItemWrapper wrapper) {
         super(wrapper);
     }
 

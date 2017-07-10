@@ -20,7 +20,7 @@ public class YoutubeVideoItem extends BaseHomeScreenItem {
 
     private com.allrecipes.model.YoutubeItem item;
 
-    YoutubeVideoItem(HomeScreenModelItemWrapper wrapper) {
+    public YoutubeVideoItem(HomeScreenModelItemWrapper wrapper) {
         super(wrapper);
         this.item = (com.allrecipes.model.YoutubeItem) wrapper.getT();
     }

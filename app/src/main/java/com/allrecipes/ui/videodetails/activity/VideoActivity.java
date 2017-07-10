@@ -1,19 +1,20 @@
 package com.allrecipes.ui.videodetails.activity;
 
-import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.transition.Transition;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
@@ -23,15 +24,10 @@ import android.widget.TextView;
 import com.allrecipes.R;
 import com.allrecipes.model.YoutubeItem;
 import com.allrecipes.model.YoutubeSnipped;
-import com.allrecipes.model.video.VideoItem;
 import com.allrecipes.presenters.VideoDetailsScreenPresenter;
 import com.allrecipes.ui.BaseActivity;
 import com.allrecipes.ui.YoutubePlayerActivity;
 import com.allrecipes.ui.videodetails.views.VideoDetailsView;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -78,8 +74,8 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
         getApp().createVideoDetailsScreenComponent(this).inject(this);
         ButterKnife.bind(this);
 
-        setStatusBarColor(android.R.color.transparent);
-        setTransparentStatusBar(getWindow().getDecorView());
+        /*setStatusBarColor(android.R.color.transparent);
+        setTransparentStatusBar(getWindow().getDecorView());*/
         supportPostponeEnterTransition();
 
         if (isAtLeastLollipop()) {
@@ -156,6 +152,43 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
             });
         setSupportActionBar(toolbar);
         setTitleToolbar(video.snippet.title);
+
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+
+            @Override
+            public void onOffsetChanged(final AppBarLayout appBarLayout, int verticalOffset) {
+                if (verticalOffset > -toolbar.getHeight()) {
+                    clearLightStatusBar(VideoActivity.this, getWindow().getDecorView());
+                } else {
+                    setLightStatusBar(VideoActivity.this, getWindow().getDecorView());
+                }
+            }
+        });
+    }
+
+    public static void setLightStatusBar(Activity activity, @NonNull View view) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int flags = view.getSystemUiVisibility();
+            flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            view.setSystemUiVisibility(flags);
+            activity.getWindow().setStatusBarColor(Color.WHITE);
+        }
+    }
+
+    public static void clearLightStatusBar(Activity activity,  @NonNull View view) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int flags = view.getSystemUiVisibility();
+            /*flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            view.setSystemUiVisibility(flags);*/
+            view.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            );
+
+            Window window = activity.getWindow();
+            window.setStatusBarColor(ContextCompat
+                    .getColor(activity,R.color.transparent));
+
+        }
     }
 
     @Override
@@ -178,18 +211,7 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
     public static void setTransparentStatusBar(View decorView) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-            );
-        }
-    }
-
-    /**
-     * @param decorView the view obtained form {@code getWindow().getDecorView()}
-     */
-    public static void setLightStatusBar(View decorView) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
             );
         }
     }

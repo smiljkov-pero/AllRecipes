@@ -21,7 +21,7 @@ public class SwipeLaneChannelItem extends BaseHomeScreenItem {
 
     private YoutubePlaylistWithVideos item;
 
-    SwipeLaneChannelItem(HomeScreenModelItemWrapper wrapper) {
+    public SwipeLaneChannelItem(HomeScreenModelItemWrapper wrapper) {
         super(wrapper);
     }
 
