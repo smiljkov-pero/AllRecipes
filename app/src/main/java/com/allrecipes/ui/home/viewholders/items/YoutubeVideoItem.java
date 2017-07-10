@@ -1,14 +1,14 @@
-package com.allrecipes.ui.home.viewholders;
+package com.allrecipes.ui.home.viewholders.items;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.allrecipes.R;
-import com.bumptech.glide.Glide;
+import com.allrecipes.ui.home.viewholders.BaseHomeScreenItem;
+import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -16,11 +16,11 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class YoutubeItem extends HomeScreenItem {
+public class YoutubeVideoItem extends BaseHomeScreenItem {
 
     private com.allrecipes.model.YoutubeItem item;
 
-    YoutubeItem(HomeScreenModelItemWrapper wrapper) {
+    YoutubeVideoItem(HomeScreenModelItemWrapper wrapper) {
         super(wrapper);
         this.item = (com.allrecipes.model.YoutubeItem) wrapper.getT();
     }
@@ -40,14 +40,14 @@ public class YoutubeItem extends HomeScreenItem {
     }
 
     @Override
-    public YoutubeItem.ViewHolder getViewHolder(View v) {
-        return new YoutubeItem.ViewHolder(v);
+    public YoutubeVideoItem.ViewHolder getViewHolder(View v) {
+        return new YoutubeVideoItem.ViewHolder(v);
     }
 
     @Override
-    public void bindView(HomeScreenItem.ViewHolder holder, List payloads) {
+    public void bindView(BaseHomeScreenItem.ViewHolder holder, List payloads) {
         super.bindView(holder, payloads);
-        YoutubeItem.ViewHolder viewHolder = ((YoutubeItem.ViewHolder) holder);
+        YoutubeVideoItem.ViewHolder viewHolder = ((YoutubeVideoItem.ViewHolder) holder);
 
         adjustYoutubeImage(viewHolder, item);
         viewHolder.name.setText(item.snippet.title);
@@ -64,7 +64,7 @@ public class YoutubeItem extends HomeScreenItem {
             .into(holder.videoThumbnail);
     }
 
-    protected static class ViewHolder extends HomeScreenItem.ViewHolder {
+    protected static class ViewHolder extends BaseHomeScreenItem.ViewHolder {
 
         @BindView(R.id.videoThumbnail)
         ImageView videoThumbnail;

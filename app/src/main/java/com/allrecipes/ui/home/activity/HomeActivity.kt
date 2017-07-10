@@ -24,10 +24,10 @@ import com.allrecipes.model.Category
 import com.allrecipes.presenters.HomeScreenPresenter
 import com.allrecipes.ui.BaseActivity
 import com.allrecipes.ui.home.adapters.ChannelsListDropdownAdapter
-import com.allrecipes.ui.home.viewholders.HomeScreenItem
+import com.allrecipes.ui.home.viewholders.BaseHomeScreenItem
 import com.allrecipes.ui.home.viewholders.HomeScreenItemFactory
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper
-import com.allrecipes.ui.home.viewholders.YoutubeItem
+import com.allrecipes.ui.home.viewholders.items.YoutubeVideoItem
 import com.allrecipes.ui.home.views.HomeScreenView
 import com.allrecipes.ui.videodetails.activity.VideoActivity
 import com.allrecipes.util.KeyboardUtils
@@ -43,11 +43,11 @@ class HomeActivity : BaseActivity(), HomeScreenView {
 
     private val DOUBLE_CLICK_TIMEOUT = 1000
     private var lastClickTime: Long = 0
-    private val REQ_CODE_RESTAURANT = 998
+    private val REQ_CODE_RECIPE_VIDEO = 998
 
-    lateinit var fastAdapter: FastAdapter<HomeScreenItem>
+    lateinit var fastAdapter: FastAdapter<BaseHomeScreenItem>
     lateinit var footerAdapter: FooterAdapter<ProgressItem>
-    lateinit var homeScreenItemAdapter: GenericItemAdapter<HomeScreenModelItemWrapper, HomeScreenItem>
+    lateinit var homeScreenItemAdapter: GenericItemAdapter<HomeScreenModelItemWrapper, BaseHomeScreenItem>
     lateinit var homeScreenItemFactory: HomeScreenItemFactory
     lateinit var layoutManager: LinearLayoutManager
     lateinit var onVendorsScrollListener: EndlessRecyclerOnScrollListener
@@ -290,7 +290,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
             resources.getDimensionPixelSize(R.dimen.toolbar_layout_image_height)
         )
 
-        homeScreenItemAdapter = GenericItemAdapter<HomeScreenModelItemWrapper, HomeScreenItem>(homeScreenItemFactory)
+        homeScreenItemAdapter = GenericItemAdapter<HomeScreenModelItemWrapper, BaseHomeScreenItem>(homeScreenItemFactory)
         footerAdapter = FooterAdapter<ProgressItem>()
         list.adapter = footerAdapter.wrap(homeScreenItemAdapter.wrap(fastAdapter))
         createOnVendorsScrollListener()
@@ -298,11 +298,11 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         fastAdapter.withOnClickListener(onOrdersListClickListener)
     }
 
-    private val onOrdersListClickListener = FastAdapter.OnClickListener<HomeScreenItem> { v, adapter, item, position ->
+    private val onOrdersListClickListener = FastAdapter.OnClickListener<BaseHomeScreenItem> { v, adapter, item, position ->
         if (SystemClock.elapsedRealtime() > lastClickTime + DOUBLE_CLICK_TIMEOUT) {
             lastClickTime = SystemClock.elapsedRealtime()
             if (item.type == R.id.home_screen_video_item) {
-                onItemRestaurantClick(v, item as YoutubeItem)
+                onItemYoutubeVideoClick(v, item as YoutubeVideoItem)
             }
         }
 
@@ -317,10 +317,10 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         list.addOnScrollListener(onVendorsScrollListener)
     }
 
-    private fun onItemRestaurantClick(v: View, item: YoutubeItem) {
+    private fun onItemYoutubeVideoClick(v: View, item: YoutubeVideoItem) {
         val intent = VideoActivity.newIntent(this, item.item)
 
-        startRestaurantActivityWithTransition(v, intent)
+        startVideoActivityWithTransition(v, intent)
         overridePendingTransition(0, 0)
     }
 
@@ -329,7 +329,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         onVendorsScrollListener = object : EndlessRecyclerOnScrollListener(footerAdapter) {
             override fun onLoadMore(currentPage: Int) {
                 removeBottomListProgress()
-                if (existRestaurantItemsInAdapter()) {
+                if (existVideoItemsInAdapter()) {
                     addFooterLoadingView()
                     presenter.onLoadMore(searchCriteria)
                 }
@@ -341,7 +341,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         footerAdapter.clear()
     }
 
-    fun existRestaurantItemsInAdapter(): Boolean {
+    fun existVideoItemsInAdapter(): Boolean {
         val itemExist = homeScreenItemAdapter.adapterItems.any {
             it.type == R.id.home_screen_video_item
         }
@@ -371,11 +371,11 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         swipeContainer.isRefreshing = false
     }
 
-    internal fun startRestaurantActivityWithTransition(v: View, intent: Intent) {
+    internal fun startVideoActivityWithTransition(v: View, intent: Intent) {
         val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
             this,
             Pair<View, String>(v.findViewById(R.id.videoThumbnail), "VideoImageTransition")
         )
-        ActivityCompat.startActivityForResult(this, intent, REQ_CODE_RESTAURANT, options.toBundle())
+        ActivityCompat.startActivityForResult(this, intent, REQ_CODE_RECIPE_VIDEO, options.toBundle())
     }
 }

@@ -1,4 +1,4 @@
-package com.allrecipes.ui.home.viewholders;
+package com.allrecipes.ui.home.viewholders.items;
 
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,17 +9,19 @@ import android.widget.TextView;
 import com.allrecipes.R;
 import com.allrecipes.model.playlist.YoutubePlaylistWithVideos;
 import com.allrecipes.ui.home.adapters.SwaplaneChannelAdapter;
+import com.allrecipes.ui.home.viewholders.BaseHomeScreenItem;
+import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SwipelaneChannelItem extends HomeChannelSwipelaneItem {
+public class SwipeLaneChannelItem extends BaseHomeScreenItem {
 
     private YoutubePlaylistWithVideos item;
 
-    SwipelaneChannelItem(HomeScreenModelItemWrapper wrapper) {
+    SwipeLaneChannelItem(HomeScreenModelItemWrapper wrapper) {
         super(wrapper);
     }
 
@@ -38,25 +40,25 @@ public class SwipelaneChannelItem extends HomeChannelSwipelaneItem {
     }
 
     @Override
-    public SwipelaneChannelItem.ViewHolder getViewHolder(View v) {
-        return new SwipelaneChannelItem.ViewHolder(v);
+    public BaseHomeScreenItem.ViewHolder getViewHolder(View v) {
+        return new BaseHomeScreenItem.ViewHolder(v);
     }
 
     @Override
-    public void bindView(HomeChannelSwipelaneItem.ViewHolder holder, List payloads) {
+    public void bindView(BaseHomeScreenItem.ViewHolder holder, List payloads) {
         super.bindView(holder, payloads);
-        SwipelaneChannelItem.ViewHolder viewHolder = ((SwipelaneChannelItem.ViewHolder) holder);
+        SwipeLaneChannelItem.ViewHolder viewHolder = ((SwipeLaneChannelItem.ViewHolder) holder);
 
         viewHolder.name.setText(item.getChannel().getSnippet().channelTitle);
         initSwaplane(viewHolder);
     }
 
-    private void initSwaplane(SwipelaneChannelItem.ViewHolder viewHolder) {
+    private void initSwaplane(SwipeLaneChannelItem.ViewHolder viewHolder) {
         SwaplaneChannelAdapter adapter = new SwaplaneChannelAdapter(item.getVideosResponse().items);
         viewHolder.videosRecyclerView.setAdapter(adapter);
     }
 
-    protected static class ViewHolder extends HomeChannelSwipelaneItem.ViewHolder {
+    protected static class ViewHolder extends BaseHomeScreenItem.ViewHolder {
 
         @BindView(R.id.videosRecyclerView)
         RecyclerView videosRecyclerView;

@@ -6,10 +6,10 @@ import android.view.View;
 import com.allrecipes.R;
 import com.mikepenz.fastadapter.items.GenericAbstractItem;
 
-public class HomeScreenItem
-    extends GenericAbstractItem<HomeScreenModelItemWrapper, HomeScreenItem, HomeScreenItem.ViewHolder> {
+public class BaseHomeScreenItem
+    extends GenericAbstractItem<HomeScreenModelItemWrapper, BaseHomeScreenItem, BaseHomeScreenItem.ViewHolder> {
 
-    HomeScreenItem(HomeScreenModelItemWrapper wrapper) {
+    BaseHomeScreenItem(HomeScreenModelItemWrapper wrapper) {
         super(wrapper);
     }
 
