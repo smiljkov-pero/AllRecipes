@@ -21,6 +21,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import com.allrecipes.R
 import com.allrecipes.model.Category
+import com.allrecipes.model.playlist.YoutubePlaylistWithVideos
 import com.allrecipes.presenters.HomeScreenPresenter
 import com.allrecipes.ui.BaseActivity
 import com.allrecipes.ui.home.adapters.ChannelsListDropdownAdapter
@@ -381,5 +382,9 @@ class HomeActivity : BaseActivity(), HomeScreenView {
             Pair<View, String>(v.findViewById(R.id.videoThumbnail), "VideoImageTransition")
         )
         ActivityCompat.startActivityForResult(this, intent, REQ_CODE_RECIPE_VIDEO, options.toBundle())
+    }
+
+    override fun addSwapLaneChannelItemToAdapter(youtubePlaylistWithVideos: YoutubePlaylistWithVideos) {
+        //homeScreenItemAdapter.addModel(0, HomeScreenModelItemWrapper(youtubePlaylistWithVideos, R.id.home_swimlane_channel_item))
     }
 }

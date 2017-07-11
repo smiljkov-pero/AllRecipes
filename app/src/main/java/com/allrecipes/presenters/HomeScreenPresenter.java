@@ -120,6 +120,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
             public void accept(@NonNull YoutubePlaylistWithVideos youtubePlaylistWithVideos) throws Exception {
                 Log.d("playlist and videos", "playlist name: " + youtubePlaylistWithVideos.getChannel().getSnippet().title);
                 Log.d("playlist and videos", "playlist videos size: " + youtubePlaylistWithVideos.getVideosResponse().items.size());
+                getView().addSwapLaneChannelItemToAdapter(youtubePlaylistWithVideos);
             }
         }, new Consumer<Throwable>() {
             @Override

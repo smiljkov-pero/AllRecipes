@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.allrecipes.R;
 import com.allrecipes.model.playlist.YoutubePlaylistWithVideos;
-import com.allrecipes.ui.home.adapters.SwaplaneChannelAdapter;
+import com.allrecipes.ui.home.adapters.SwapLaneChannelAdapter;
 import com.allrecipes.ui.home.viewholders.BaseHomeScreenItem;
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper;
 
@@ -23,6 +23,7 @@ public class SwipeLaneChannelItem extends BaseHomeScreenItem {
 
     public SwipeLaneChannelItem(HomeScreenModelItemWrapper wrapper) {
         super(wrapper);
+        this.item = (YoutubePlaylistWithVideos) wrapper.getT();
     }
 
     public YoutubePlaylistWithVideos getItem() {
@@ -36,7 +37,7 @@ public class SwipeLaneChannelItem extends BaseHomeScreenItem {
 
     @Override
     public int getLayoutRes() {
-        return R.layout.item_youtube;
+        return R.layout.item_swipelane_channel;
     }
 
     @Override
@@ -50,11 +51,11 @@ public class SwipeLaneChannelItem extends BaseHomeScreenItem {
         SwipeLaneChannelItem.ViewHolder viewHolder = ((SwipeLaneChannelItem.ViewHolder) holder);
 
         viewHolder.name.setText(item.getChannel().getSnippet().channelTitle);
-        initSwaplane(viewHolder);
+        initSwapLane(viewHolder);
     }
 
-    private void initSwaplane(SwipeLaneChannelItem.ViewHolder viewHolder) {
-        SwaplaneChannelAdapter adapter = new SwaplaneChannelAdapter(item.getVideosResponse().items);
+    private void initSwapLane(SwipeLaneChannelItem.ViewHolder viewHolder) {
+        SwapLaneChannelAdapter adapter = new SwapLaneChannelAdapter(item.getVideosResponse().items);
         viewHolder.videosRecyclerView.setAdapter(adapter);
     }
 
