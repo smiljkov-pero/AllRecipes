@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -159,8 +161,14 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
             public void onOffsetChanged(final AppBarLayout appBarLayout, int verticalOffset) {
                 if (verticalOffset > -toolbar.getHeight()) {
                     clearLightStatusBar(VideoActivity.this, getWindow().getDecorView());
+                    final Drawable upArrow = getResources().getDrawable(R.drawable.ic_arrow_left_white);
+                    upArrow.setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
+                    getSupportActionBar().setHomeAsUpIndicator(upArrow);
                 } else {
                     setLightStatusBar(VideoActivity.this, getWindow().getDecorView());
+                    final Drawable upArrow = getResources().getDrawable(R.drawable.ic_arrow_left_white);
+                    upArrow.setColorFilter(getResources().getColor(android.R.color.black), PorterDuff.Mode.SRC_ATOP);
+                    getSupportActionBar().setHomeAsUpIndicator(upArrow);
                 }
             }
         });

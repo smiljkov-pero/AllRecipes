@@ -4,6 +4,8 @@ import com.allrecipes.model.Category;
 import com.allrecipes.model.YoutubeItem;
 import com.allrecipes.ui.views.AbstractPresenterView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public interface HomeScreenView extends AbstractPresenterView {
@@ -12,4 +14,6 @@ public interface HomeScreenView extends AbstractPresenterView {
     void clearAdapterItems();
 
     void initAddressListOverlayAdapter(List<Category> categories, int i);
+
+    void setToolbarTitleText(@NotNull String value);
 }

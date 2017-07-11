@@ -42,6 +42,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
     private final LocalStorageManagerInterface localStorageManagerInterface;
     private final FirebaseDatabaseManager firebaseDatabaseManager;
 
+    private Category category;
     private String pageToken;
 
     public HomeScreenPresenter(
@@ -56,8 +57,10 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         this.firebaseDatabaseManager = firebaseDatabaseManager;
     }
 
-    public void onChannelListClick(String channelId) {
-        localStorageManagerInterface.putString(APP_LAST_CHANNEL_USED, channelId);
+    public void onChannelListClick(Category category) {
+        String categoryJson = new GsonBuilder().create().toJson(category, Category.class);
+        localStorageManagerInterface.putString(APP_LAST_CHANNEL_USED, categoryJson);
+        this.category = category;
         fetchYoutubeChannelVideos(null, "");
     }
 
@@ -65,11 +68,10 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         if (currentPageToken == null) {
             getView().showLoading();
         }
-        String channelId = localStorageManagerInterface.getString(APP_LAST_CHANNEL_USED, "");
-        if (TextUtils.isEmpty(channelId)) {
-            channelId = TASTY_CHANNEL_ID_DEFAULT;
-        }
-        googleYoutubeApiManager.fetchChannelVideos(channelId, currentPageToken, 30, "date", searchCriteria)
+        String channelId = category != null ? category.channelId : TASTY_CHANNEL_ID_DEFAULT;
+
+        googleYoutubeApiManager
+            .fetchChannelVideos(channelId, currentPageToken, 30, "date", searchCriteria)
             .subscribe(new Consumer<SearchChannelVideosResponse>() {
                 @Override
                 public void accept(@NonNull SearchChannelVideosResponse searchChannelVideosResponse) throws Exception {
@@ -113,7 +115,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
                 public ObservableSource<YoutubePlaylistWithVideos> apply(@NonNull YoutubeChannelItem youtubeChannelItem) throws Exception {
                     return getVideosForEachPlaylist(youtubeChannelItem);
                 }
-            }).subscribe(new Consumer<YoutubePlaylistWithVideos>() {
+            })/*.subscribe(new Consumer<YoutubePlaylistWithVideos>() {
             @Override
             public void accept(@NonNull YoutubePlaylistWithVideos youtubePlaylistWithVideos) throws Exception {
                 Log.d("playlist and videos", "playlist name: " + youtubePlaylistWithVideos.getChannel().getSnippet().title);
@@ -124,7 +126,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
             public void accept(@NonNull Throwable throwable) throws Exception {
                 Log.e("playlist and videos", "error fetchPlayListsAndVideos() " + throwable.getMessage());
             }
-        });
+        })*/;
     }
 
     private Observable<YoutubePlaylistWithVideos> getVideosForEachPlaylist(YoutubeChannelItem channel) {
@@ -139,7 +141,10 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
     }
 
     public void onCreate() {
+        String categoryJson = localStorageManagerInterface.getString(APP_LAST_CHANNEL_USED, "");
+        category = new GsonBuilder().create().fromJson(categoryJson, Category.class);
         fetchYoutubeChannelVideos(null, "");
+        getView().setToolbarTitleText(category != null ? category.getName() : "Tasty");
         String appConfig = localStorageManagerInterface.getString(APP_CACHED_FIREBASE_CONFIG, "");
         if (!TextUtils.isEmpty(appConfig)) {
             Type listType = new TypeToken<ArrayList<Category>>(){}.getType();

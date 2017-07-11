@@ -139,7 +139,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         dropdown_addresses_listview.adapter = ChannelsListDropdownAdapter(applicationContext, channels, selectedPosition)
         dropdown_addresses_listview.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val category: Category = channels[position]
-            presenter.onChannelListClick(category.channelId)
+            presenter.onChannelListClick(category)
             title_text.text = category.name
             closeAddressListOverlay()
         }
@@ -357,7 +357,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
 
     private fun initSwipeRefresh() {
         swipeContainer.setOnRefreshListener({
-            presenter.fetchYoutubeChannelVideos(null, "")
+            presenter.fetchYoutubeChannelVideos(null, searchCriteria)
         })
     }
 
@@ -369,6 +369,10 @@ class HomeActivity : BaseActivity(), HomeScreenView {
     override fun showLoading() {
         super.showLoading()
         swipeContainer.isRefreshing = false
+    }
+
+    override fun setToolbarTitleText(value: String) {
+        title_text.text = value
     }
 
     internal fun startVideoActivityWithTransition(v: View, intent: Intent) {
