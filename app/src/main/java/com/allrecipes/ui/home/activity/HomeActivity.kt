@@ -12,9 +12,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.util.Pair
 import android.support.v7.widget.LinearLayoutManager
-import android.text.Editable
 import android.text.TextUtils
-import android.text.TextWatcher
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -25,6 +23,7 @@ import com.allrecipes.model.playlist.YoutubePlaylistWithVideos
 import com.allrecipes.presenters.HomeScreenPresenter
 import com.allrecipes.ui.BaseActivity
 import com.allrecipes.ui.home.adapters.ChannelsListDropdownAdapter
+import com.allrecipes.ui.home.listeners.TextChangeOnSubscribe
 import com.allrecipes.ui.home.viewholders.BaseHomeScreenItem
 import com.allrecipes.ui.home.viewholders.HomeScreenItemFactory
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper
@@ -37,7 +36,11 @@ import com.mikepenz.fastadapter.adapters.FooterAdapter
 import com.mikepenz.fastadapter.adapters.GenericItemAdapter
 import com.mikepenz.fastadapter_extensions.items.ProgressItem
 import com.mikepenz.fastadapter_extensions.scroll.EndlessRecyclerOnScrollListener
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_home.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class HomeActivity : BaseActivity(), HomeScreenView {
@@ -55,6 +58,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
     var searchCriteria = ""
     private var addressListCloseAnimator: ObjectAnimator? = null
     private var isAddressesDropDownVisible = false
+    private lateinit var searchTextSubscription: Disposable
 
     @Inject
     lateinit var presenter: HomeScreenPresenter
@@ -69,7 +73,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         initSwipeRefresh()
         initRecyclerViewAdapter()
 
-        searchEditText.addTextChangedListener(object: TextWatcher {
+        /*searchEditText.addTextChangedListener(object: TextWatcher {
             override fun afterTextChanged(s: Editable?) {
             }
 
@@ -84,7 +88,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
                     presenter.fetchYoutubeChannelVideos(null, searchCriteria)
                 }
             }
-        })
+        })*/
 
         list.setOnTouchListener({ view: View, motionEvent: MotionEvent ->
             if (containerTopAddressList != null && containerTopAddressList.visibility == View.VISIBLE) {
@@ -113,6 +117,31 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         }
     }
 
+    private fun initSearchTextOnTextChangeEvents() {
+        val textChangeObs = Observable.create(TextChangeOnSubscribe(searchEditText)).debounce(500, TimeUnit.MILLISECONDS)
+
+        searchTextSubscription = textChangeObs
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { text ->
+                val prevSearchCriteria = if (searchCriteria == null) "" else searchCriteria
+                searchCriteria = if (text!!.length < 3) "" else text
+                if (!TextUtils.equals(searchCriteria, prevSearchCriteria)) {
+                    presenter.fetchYoutubeChannelVideos(null, searchCriteria)
+                }
+
+                /*searchClearButton.setVisibility(if (text.length > 0) View.VISIBLE else View.GONE)
+                                    val prevSearchCriteria = if (searchCriteria == null) "" else searchCriteria
+                                    searchCriteria = if (text.length < 3) "" else text
+                                    if (!TextUtils.equals(searchCriteria, prevSearchCriteria)) {
+                                        presenter.fetchVendorsRequestFirstPage(area, currentFilterSettings, searchCriteria)
+                                    }
+                                    if (!isEditing) {
+                                        isEditing = true
+                                        startTrackingSearchCriteria()
+                                    }*/
+            }
+    }
+
     fun isAddressListOverlayContainerVisible(): Boolean {
         return containerTopAddressList.visibility == View.VISIBLE
     }
@@ -128,7 +157,15 @@ class HomeActivity : BaseActivity(), HomeScreenView {
 
     override fun onStop() {
         addressListCloseAnimator?.removeAllListeners()
+        if (searchTextSubscription != null && !searchTextSubscription.isDisposed && isFinishing) {
+            searchTextSubscription.dispose()
+        }
         super.onStop()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        initSearchTextOnTextChangeEvents()
     }
 
     private fun hideKeyboard(view: View) {
