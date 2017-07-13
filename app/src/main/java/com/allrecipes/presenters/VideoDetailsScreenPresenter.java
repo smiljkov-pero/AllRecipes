@@ -32,7 +32,7 @@ public class VideoDetailsScreenPresenter extends AbstractPresenter<VideoDetailsV
                 @Override
                 public void accept(@NonNull YoutubeVideoResponse response) throws Exception {
                     getView().hideLoading();
-                    getView().setVideoDetails(response.items.get(0).snippet);
+                    getView().setVideoDetails(response.items.get(0));
                 }
             }, new Consumer<Throwable>() {
                 @Override

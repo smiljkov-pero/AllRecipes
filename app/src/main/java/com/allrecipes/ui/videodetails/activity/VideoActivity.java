@@ -25,7 +25,7 @@ import android.widget.TextView;
 
 import com.allrecipes.R;
 import com.allrecipes.model.YoutubeItem;
-import com.allrecipes.model.YoutubeSnipped;
+import com.allrecipes.model.video.VideoItem;
 import com.allrecipes.presenters.VideoDetailsScreenPresenter;
 import com.allrecipes.ui.BaseActivity;
 import com.allrecipes.ui.YoutubePlayerActivity;
@@ -55,6 +55,8 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
     TextView recipeTitle;
     @BindView(R.id.app_bar_layout)
     AppBarLayout appBarLayout;
+    @BindView(R.id.number_likes)
+    TextView numberOfLikes;
 
     @Inject
     VideoDetailsScreenPresenter presenter;
@@ -241,8 +243,9 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
     }
 
     @Override
-    public void setVideoDetails(YoutubeSnipped item) {
-        description.setText(Html.fromHtml(item.description.replace("\n", "<br>")));
-        recipeTitle.setText(item.title);
+    public void setVideoDetails(VideoItem item) {
+        description.setText(Html.fromHtml(item.snippet.description.replace("\n", "<br>")));
+        recipeTitle.setText(item.snippet.title);
+        numberOfLikes.setText(item.statistics.likeCount);
     }
 }
