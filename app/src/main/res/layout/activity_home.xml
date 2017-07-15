@@ -11,32 +11,30 @@
         android:id="@+id/activity_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:transitionGroup="true"
         app:popupTheme="@style/AppTheme"
         app:theme="@style/ToolbarNormalStyle"
         tools:targetApi="lollipop">
 
-        <TextView
+        <com.allrecipes.custom.views.AllRecipesTextView
             android:id="@+id/title_text"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
+            android:layout_gravity="center|center_vertical"
             android:ellipsize="end"
-            android:gravity="center"
+            android:gravity="center|center_vertical"
             android:maxLines="1"
-            android:backgroundTint="@color/light_grey1"
+            android:backgroundTint="@color/secondary_text"
+            android:drawableTint="@color/secondary_text"
             android:text="Channels"
-            android:textColor="@color/dark_text"
-            android:textSize="@dimen/s3" />
+            android:textColor="@color/primary_text"
+            android:textSize="@dimen/s3"
+            app:customFont="fonts/Roboto-Medium.ttf"/>
 
     </android.support.v7.widget.Toolbar>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/light_grey1"/>
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

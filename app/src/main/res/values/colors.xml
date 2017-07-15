@@ -4,10 +4,12 @@
     <color name="colorPrimaryDark">#689F38</color>
     <color name="colorAccent">#9E9E9E</color>
 
-    <color name="dark_text">#333333</color>
-    <color name="light_dark_text">#888888</color>
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#757575</color>
+
     <color name="disabled_gray_text">#c2c2c2</color>
     <color name="white">#FFFFFF</color>
+    <color name="grey_cart_number">#bdbdbd</color>
 
     <color name="light_grey1">#AED9DA</color>
     <color name="light_grey2">#3DDAD7</color>

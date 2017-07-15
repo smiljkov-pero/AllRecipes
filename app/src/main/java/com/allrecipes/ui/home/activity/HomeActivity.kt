@@ -10,6 +10,8 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
+import android.support.v4.content.ContextCompat
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v4.util.Pair
 import android.support.v7.widget.LinearLayoutManager
 import android.text.TextUtils
@@ -73,23 +75,6 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         initSwipeRefresh()
         initRecyclerViewAdapter()
 
-        /*searchEditText.addTextChangedListener(object: TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {
-                //search_clear_button.visibility = if (text.isNotEmpty()) View.VISIBLE else View.GONE
-                val prevSearchCriteria = if (searchCriteria == null) "" else searchCriteria
-                searchCriteria = if (text!!.length < 3) "" else text.toString()
-                if (!TextUtils.equals(searchCriteria, prevSearchCriteria)) {
-                    presenter.fetchYoutubeChannelVideos(null, searchCriteria)
-                }
-            }
-        })*/
-
         list.setOnTouchListener({ view: View, motionEvent: MotionEvent ->
             if (containerTopAddressList != null && containerTopAddressList.visibility == View.VISIBLE) {
                 closeAddressListOverlay()
@@ -106,6 +91,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         }
 
         initActionBar()
+        setDefaultAddressListDropDownIcons()
     }
 
     private fun onClickToolbarText() {
@@ -130,15 +116,15 @@ class HomeActivity : BaseActivity(), HomeScreenView {
                 }
 
                 /*searchClearButton.setVisibility(if (text.length > 0) View.VISIBLE else View.GONE)
-                                    val prevSearchCriteria = if (searchCriteria == null) "" else searchCriteria
-                                    searchCriteria = if (text.length < 3) "" else text
-                                    if (!TextUtils.equals(searchCriteria, prevSearchCriteria)) {
-                                        presenter.fetchVendorsRequestFirstPage(area, currentFilterSettings, searchCriteria)
-                                    }
-                                    if (!isEditing) {
-                                        isEditing = true
-                                        startTrackingSearchCriteria()
-                                    }*/
+                val prevSearchCriteria = if (searchCriteria == null) "" else searchCriteria
+                searchCriteria = if (text.length < 3) "" else text
+                if (!TextUtils.equals(searchCriteria, prevSearchCriteria)) {
+                    presenter.fetchVendorsRequestFirstPage(area, currentFilterSettings, searchCriteria)
+                }
+                if (!isEditing) {
+                    isEditing = true
+                    startTrackingSearchCriteria()
+                }*/
             }
     }
 
@@ -173,7 +159,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         inputMethodManger.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    override fun initAddressListOverlayAdapter(channels: List<Category>, selectedPosition: Int) {
+    override fun initChannelsListOverlayAdapter(channels: List<Category>, selectedPosition: Int) {
         dropdown_addresses_listview.adapter = ChannelsListDropdownAdapter(applicationContext, channels, selectedPosition)
         dropdown_addresses_listview.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val category: Category = channels[position]
@@ -209,9 +195,15 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         })
     }
 
+    fun setDefaultAddressListDropDownIcons() {
+        isAddressesDropDownVisible = false
+        changeActionBarDefaultDrawerIcon()
+        setToolbarTextArrow(R.drawable.ic_arrow_drop_down_white_24dp)
+    }
+
     private fun showAndAnimateAddressList() {
         isAddressesDropDownVisible = true
-        containerTopAddressList.setVisibility(View.VISIBLE)
+        containerTopAddressList.visibility = View.VISIBLE
         app_bar.visibility = View.INVISIBLE
         val duration = resources.getInteger(android.R.integer.config_mediumAnimTime)
         changeActionBarIconToClear()
@@ -219,8 +211,15 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         alphaAnimateShowAddressListTransitionOverlay(duration)
         animateTranslationYShowAddressList(duration)
 
+        setToolbarTextArrow(R.drawable.ic_arrow_drop_up_white_24dp)
+    }
+
+    private fun setToolbarTextArrow(imageResource: Int) {
         if (title_text != null) {
-            title_text.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_arrow_drop_up_white_24dp, 0)
+            var drawable = ContextCompat.getDrawable(this, imageResource)
+            drawable = DrawableCompat.wrap(drawable)
+            DrawableCompat.setTint(drawable.mutate(), R.color.colorAccent)
+            title_text.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)
         }
     }
 
@@ -256,14 +255,12 @@ class HomeActivity : BaseActivity(), HomeScreenView {
                 isAddressesDropDownVisible = false
                 changeActionBarDefaultDrawerIcon()
                 if (containerTopAddressList != null) {
-                    containerTopAddressList.setVisibility(View.INVISIBLE)
+                    containerTopAddressList.visibility = View.INVISIBLE
                 }
                 if (app_bar != null) {
                     app_bar.visibility = View.VISIBLE
                 }
-                if (title_text != null) {
-                    title_text.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_small_arrow_down_white, 0)
-                }
+                setToolbarTextArrow(R.drawable.ic_arrow_drop_down_white_24dp)
             }
         })
         addressListCloseAnimator?.start()
@@ -312,8 +309,8 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         setSupportActionBar(activity_toolbar)
         val actionBar = supportActionBar
         actionBar!!.setDisplayShowTitleEnabled(false)
-        actionBar.setDisplayHomeAsUpEnabled(true)
-        actionBar.setHomeButtonEnabled(true)
+        actionBar.setDisplayHomeAsUpEnabled(false)
+        actionBar.setHomeButtonEnabled(false)
         //actionBar.setHomeAsUpIndicator(resources.getDrawable(R.drawable.ic_dehaze_white_24dp))
     }
 

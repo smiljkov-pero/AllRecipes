@@ -19,7 +19,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <TextView
+    <com.allrecipes.custom.views.AllRecipesTextView
         android:id="@+id/name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
         android:lines="1"
         android:maxLines="1"
         android:singleLine="true"
-        android:textColor="@color/dark_text"
+        android:textColor="@color/primary_text"
         android:textSize="@dimen/s2_quarter"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

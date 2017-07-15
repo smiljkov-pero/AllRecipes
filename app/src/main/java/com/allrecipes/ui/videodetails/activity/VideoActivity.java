@@ -1,22 +1,16 @@
 package com.allrecipes.ui.videodetails.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.transition.Transition;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
@@ -57,6 +51,12 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
     AppBarLayout appBarLayout;
     @BindView(R.id.number_likes)
     TextView numberOfLikes;
+    @BindView(R.id.title_text)
+    TextView titleText;
+    @BindView(R.id.number_likes_icon)
+    ImageView numberOfLikesIcon;
+    @BindView(R.id.number_views)
+    TextView numberViews;
 
     @Inject
     VideoDetailsScreenPresenter presenter;
@@ -78,8 +78,8 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
         getApp().createVideoDetailsScreenComponent(this).inject(this);
         ButterKnife.bind(this);
 
-        /*setStatusBarColor(android.R.color.transparent);
-        setTransparentStatusBar(getWindow().getDecorView());*/
+        setStatusBarColor(android.R.color.transparent);
+        setTransparentStatusBar(getWindow().getDecorView());
         supportPostponeEnterTransition();
 
         if (isAtLeastLollipop()) {
@@ -154,51 +154,27 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
                     supportStartPostponedEnterTransition();
                 }
             });
-        setSupportActionBar(toolbar);
+
         setTitleToolbar(video.snippet.title);
-
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-
             @Override
-            public void onOffsetChanged(final AppBarLayout appBarLayout, int verticalOffset) {
-                if (verticalOffset > -toolbar.getHeight()) {
-                    clearLightStatusBar(VideoActivity.this, getWindow().getDecorView());
-                    final Drawable upArrow = getResources().getDrawable(R.drawable.ic_arrow_left_white);
-                    upArrow.setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
-                    getSupportActionBar().setHomeAsUpIndicator(upArrow);
-                } else {
-                    setLightStatusBar(VideoActivity.this, getWindow().getDecorView());
-                    final Drawable upArrow = getResources().getDrawable(R.drawable.ic_arrow_left_white);
-                    upArrow.setColorFilter(getResources().getColor(android.R.color.black), PorterDuff.Mode.SRC_ATOP);
-                    getSupportActionBar().setHomeAsUpIndicator(upArrow);
-                }
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                titleText.setAlpha(
+                    Math.abs(verticalOffset / (float) appBarLayout.getTotalScrollRange())
+                );
             }
         });
     }
 
-    public static void setLightStatusBar(Activity activity, @NonNull View view) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int flags = view.getSystemUiVisibility();
-            flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-            view.setSystemUiVisibility(flags);
-            activity.getWindow().setStatusBarColor(Color.WHITE);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
         }
-    }
 
-    public static void clearLightStatusBar(Activity activity,  @NonNull View view) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int flags = view.getSystemUiVisibility();
-            /*flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-            view.setSystemUiVisibility(flags);*/
-            view.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            );
-
-            Window window = activity.getWindow();
-            window.setStatusBarColor(ContextCompat
-                    .getColor(activity,R.color.transparent));
-
-        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -235,6 +211,7 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(title);
         }
+        titleText.setText(title);
     }
 
     @OnClick(R.id.video_thumbnail)
@@ -242,10 +219,40 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
         startActivity(YoutubePlayerActivity.newIntent(this, video.id.videoId));
     }
 
+    @OnClick(R.id.title_text)
+    void onToolbarTitleClick() {
+        startActivity(YoutubePlayerActivity.newIntent(this, video.id.videoId));
+    }
+
+    @OnClick(R.id.recipe_title)
+    void onRecipeTitleClick() {
+        startActivity(YoutubePlayerActivity.newIntent(this, video.id.videoId));
+    }
+
     @Override
     public void setVideoDetails(VideoItem item) {
         description.setText(Html.fromHtml(item.snippet.description.replace("\n", "<br>")));
         recipeTitle.setText(item.snippet.title);
-        numberOfLikes.setText(item.statistics.likeCount);
+
+        int likeCount = Integer.parseInt(item.statistics.likeCount);
+        boolean isLikeCountBiggerThenThousand = likeCount >= 1000;
+        if (isLikeCountBiggerThenThousand) {
+            likeCount = likeCount / 1000;
+        }
+        numberOfLikes.setText(isLikeCountBiggerThenThousand
+                ? likeCount + "K"
+                : item.statistics.likeCount
+        );
+        numberOfLikesIcon.setVisibility(View.VISIBLE);
+
+        int viewsCount = Integer.parseInt(item.statistics.viewCount);
+        boolean isViewCountBiggerThenThousand = viewsCount >= 1000;
+        if (isViewCountBiggerThenThousand) {
+            viewsCount = viewsCount / 1000;
+        }
+        numberViews.setText(isViewCountBiggerThenThousand
+                ? viewsCount + "K"
+                : item.statistics.viewCount
+        );
     }
 }

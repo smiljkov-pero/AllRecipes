@@ -1,7 +1,6 @@
 package com.allrecipes.presenters;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.allrecipes.di.managers.FirebaseDatabaseManager;
 import com.allrecipes.managers.GoogleYoutubeApiManager;
@@ -150,7 +149,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         if (!TextUtils.isEmpty(appConfig)) {
             Type listType = new TypeToken<ArrayList<Category>>(){}.getType();
             List<Category> categories = new GsonBuilder().create().fromJson(appConfig, listType);
-            getView().initAddressListOverlayAdapter(categories, 0);
+            getView().initChannelsListOverlayAdapter(categories, 0);
             fetchAppConfigFromFirebase(true);
         } else {
             fetchAppConfigFromFirebase(false);
@@ -163,7 +162,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
                 @Override
                 public void call(List<Category> categories) {
                     if (!isConfigAlreadyExist) {
-                        getView().initAddressListOverlayAdapter(categories, 0);
+                        getView().initChannelsListOverlayAdapter(categories, 0);
                     }
                     for (Category category : categories) {
                         fetchPlayListsAndVideos(category.channelId);

@@ -11,7 +11,15 @@
     <style name="ToolbarNormalStyle" parent="@style/AllRecipesTheme">
         <item name="colorControlNormal">@android:color/white</item>
         <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="colorControlHighlight">@color/colorPrimaryDark</item>
+        <item name="searchViewStyle">@style/MySearchViewStyle</item>
         <item name="isLightTheme">false</item>
+    </style>
+
+    <style name="MySearchViewStyle" parent="Widget.AppCompat.Light.SearchView">
+        <!-- Background for the search query section (e.g. EditText) -->
+        <!--<item name="queryBackground">@drawable/textfield_search_white_holo_light</item>-->
+        <item name="queryBackground">@null</item>"
     </style>
 
 </resources>

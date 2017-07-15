@@ -63,7 +63,21 @@
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/ToolbarNormalStyle"
-                app:theme="@style/ToolbarNormalStyle" />
+                app:theme="@style/ToolbarNormalStyle" >
+
+                <com.allrecipes.custom.views.AllRecipesTextView
+                    android:id="@+id/title_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:ellipsize="end"
+                    android:gravity="left"
+                    android:maxLines="1"
+                    android:textColor="@color/primary_text"
+                    android:textSize="@dimen/s2_quarter"
+                    app:customFont="fonts/Roboto-Medium.ttf"/>
+
+            </android.support.v7.widget.Toolbar>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
@@ -77,15 +91,17 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
+            <com.allrecipes.custom.views.AllRecipesTextView
                 android:id="@+id/recipe_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/d2"
                 android:layout_marginRight="@dimen/d2"
                 android:layout_marginTop="@dimen/d2"
-                android:textColor="@color/dark_text"
-                android:textSize="@dimen/s2_half" />
+                android:textIsSelectable="true"
+                android:textColor="@color/primary_text"
+                android:textSize="@dimen/s2_half"
+                app:customFont="fonts/Roboto-Medium.ttf"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -94,28 +110,50 @@
                 android:layout_margin="@dimen/d2"
                 android:orientation="horizontal">
 
-                <ImageView
+                <com.allrecipes.custom.views.AllRecipesTextView
+                    android:id="@+id/number_views"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/d2"
+                    android:textColor="@color/secondary_text"
+                    android:textSize="@dimen/s1_three_quarter"
+                    app:customFont="fonts/Roboto-Light.ttf"/>
+
+                <com.allrecipes.custom.views.AllRecipesTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="views"
+                    android:layout_marginLeft="@dimen/d1"
+                    android:textColor="@color/secondary_text"
+                    android:textSize="@dimen/s1_half"
+                    app:customFont="fonts/Roboto-Light.ttf"/>
+
+                <ImageView
+                    android:id="@+id/number_likes_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d4"
+                    android:visibility="gone"
                     android:src="@drawable/ic_thumb_up_grey600_24dp" />
 
-                <TextView
+                <com.allrecipes.custom.views.AllRecipesTextView
                     android:id="@+id/number_likes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/d1"
-                    android:textColor="@color/light_dark_text"
-                    android:textSize="@dimen/s1_three_quarter" />
+                    android:textColor="@color/secondary_text"
+                    android:textSize="@dimen/s1_three_quarter"
+                    app:customFont="fonts/Roboto-Light.ttf"/>
             </LinearLayout>
 
-            <TextView
+            <com.allrecipes.custom.views.AllRecipesTextView
                 android:id="@+id/description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/d2"
-                android:textColor="@color/dark_text"
-                android:textSize="@dimen/s2" />
+                android:textIsSelectable="true"
+                android:textColor="@color/primary_text"
+                android:textSize="@dimen/s2"
+                app:customFont="fonts/Roboto-Regular.ttf"/>
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

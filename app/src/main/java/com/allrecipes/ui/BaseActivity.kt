@@ -25,7 +25,6 @@ open class BaseActivity : AppCompatActivity() {
         setContentView(R.layout.activity_home)
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
-        setStatusBarColor(R.color.listViewDivider)
     }
 
     fun getApp(): App {

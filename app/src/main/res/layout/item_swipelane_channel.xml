@@ -12,7 +12,7 @@
     android:layout_marginTop="@dimen/d1"
     android:paddingBottom="@dimen/d1_three_quarter">
 
-    <TextView
+    <com.allrecipes.custom.views.AllRecipesTextView
         android:id="@+id/name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -21,7 +21,7 @@
         android:lines="1"
         android:maxLines="1"
         android:text="Channel Name"
-        android:textColor="@color/dark_text"
+        android:textColor="@color/primary_text"
         android:textSize="@dimen/s2_quarter"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"

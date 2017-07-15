@@ -14,7 +14,7 @@ public interface HomeScreenView extends AbstractPresenterView {
     void removeBottomListProgress();
     void clearAdapterItems();
 
-    void initAddressListOverlayAdapter(List<Category> categories, int i);
+    void initChannelsListOverlayAdapter(List<Category> categories, int i);
 
     void setToolbarTitleText(@NotNull String value);
 
