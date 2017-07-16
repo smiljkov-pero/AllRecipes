@@ -73,7 +73,7 @@
                     android:ellipsize="end"
                     android:gravity="left"
                     android:maxLines="1"
-                    android:textColor="@color/primary_text"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/s2_quarter"
                     app:customFont="fonts/Roboto-Medium.ttf"/>
 

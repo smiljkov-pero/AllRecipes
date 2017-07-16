@@ -71,6 +71,7 @@
     <dimen name="vendor_item_tag_width">59dp</dimen>
     <dimen name="home_screen_delivery_pickup_wrapper_height">188dp</dimen>
     <dimen name="home_screen_delivery_pickup_wrapper_bottom">11dp</dimen>
+    <dimen name="search_clear_button_width">60dp</dimen>
 
     <!-- Texts -->
     <dimen name="s0_quarter">2sp</dimen>

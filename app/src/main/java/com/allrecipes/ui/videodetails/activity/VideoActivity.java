@@ -1,13 +1,19 @@
 package com.allrecipes.ui.videodetails.activity;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsClient;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.customtabs.CustomTabsServiceConnection;
+import android.support.customtabs.CustomTabsSession;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.transition.Transition;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.allrecipes.R;
+import com.allrecipes.custom.LinkTransformationMethod;
 import com.allrecipes.model.YoutubeItem;
 import com.allrecipes.model.video.VideoItem;
 import com.allrecipes.presenters.VideoDetailsScreenPresenter;
@@ -36,6 +43,7 @@ import butterknife.OnClick;
 public class VideoActivity extends BaseActivity implements VideoDetailsView {
 
     private static final String KEY_VIDEO = "KEY_VIDEO";
+    final String CUSTOM_TAB_PACKAGE_NAME = "com.android.chrome";
 
     @BindView(R.id.viewGrayOverlay)
     View viewGrayOverlay;
@@ -60,6 +68,11 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
 
     @Inject
     VideoDetailsScreenPresenter presenter;
+
+    CustomTabsClient mCustomTabsClient;
+    CustomTabsSession mCustomTabsSession;
+    CustomTabsServiceConnection mCustomTabsServiceConnection;
+    CustomTabsIntent mCustomTabsIntent;
 
     private YoutubeItem video;
     private boolean isAnimationStarted = false;
@@ -164,6 +177,34 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
                 );
             }
         });
+
+        mCustomTabsServiceConnection = new CustomTabsServiceConnection() {
+            @Override
+            public void onCustomTabsServiceConnected(ComponentName componentName, CustomTabsClient customTabsClient) {
+                mCustomTabsClient= customTabsClient;
+                mCustomTabsClient.warmup(0L);
+                mCustomTabsSession = mCustomTabsClient.newSession(null);
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mCustomTabsClient= null;
+            }
+        };
+
+        CustomTabsClient.bindCustomTabsService(this, CUSTOM_TAB_PACKAGE_NAME, mCustomTabsServiceConnection);
+
+        mCustomTabsIntent = new CustomTabsIntent.Builder(mCustomTabsSession)
+                .setShowTitle(true)
+                .build();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (isFinishing()) {
+            presenter.unbindAll();
+        }
     }
 
     @Override
@@ -232,6 +273,8 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
     @Override
     public void setVideoDetails(VideoItem item) {
         description.setText(Html.fromHtml(item.snippet.description.replace("\n", "<br>")));
+        description.setTransformationMethod(new LinkTransformationMethod(mCustomTabsIntent, this));
+        description.setMovementMethod(LinkMovementMethod.getInstance());
         recipeTitle.setText(item.snippet.title);
 
         int likeCount = Integer.parseInt(item.statistics.likeCount);

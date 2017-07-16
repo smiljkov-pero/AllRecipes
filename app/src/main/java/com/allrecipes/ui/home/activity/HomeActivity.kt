@@ -10,8 +10,6 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
-import android.support.v4.content.ContextCompat
-import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v4.util.Pair
 import android.support.v7.widget.LinearLayoutManager
 import android.text.TextUtils
@@ -90,8 +88,19 @@ class HomeActivity : BaseActivity(), HomeScreenView {
             onClickToolbarText()
         }
 
+        search_clear_button.setOnClickListener {
+            searchEditText.setText("")
+        }
+
         initActionBar()
         setDefaultAddressListDropDownIcons()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (isFinishing) {
+            presenter.unbindAll()
+        }
     }
 
     private fun onClickToolbarText() {
@@ -104,27 +113,18 @@ class HomeActivity : BaseActivity(), HomeScreenView {
     }
 
     private fun initSearchTextOnTextChangeEvents() {
-        val textChangeObs = Observable.create(TextChangeOnSubscribe(searchEditText)).debounce(500, TimeUnit.MILLISECONDS)
+        val textChangeObs = Observable
+                .create(TextChangeOnSubscribe(searchEditText)).debounce(500, TimeUnit.MILLISECONDS)
 
         searchTextSubscription = textChangeObs
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { text ->
+                search_clear_button.visibility = if (text.isNotEmpty()) View.VISIBLE else View.GONE
                 val prevSearchCriteria = if (searchCriteria == null) "" else searchCriteria
                 searchCriteria = if (text!!.length < 3) "" else text
                 if (!TextUtils.equals(searchCriteria, prevSearchCriteria)) {
                     presenter.fetchYoutubeChannelVideos(null, searchCriteria)
                 }
-
-                /*searchClearButton.setVisibility(if (text.length > 0) View.VISIBLE else View.GONE)
-                val prevSearchCriteria = if (searchCriteria == null) "" else searchCriteria
-                searchCriteria = if (text.length < 3) "" else text
-                if (!TextUtils.equals(searchCriteria, prevSearchCriteria)) {
-                    presenter.fetchVendorsRequestFirstPage(area, currentFilterSettings, searchCriteria)
-                }
-                if (!isEditing) {
-                    isEditing = true
-                    startTrackingSearchCriteria()
-                }*/
             }
     }
 
@@ -188,7 +188,6 @@ class HomeActivity : BaseActivity(), HomeScreenView {
     }
 
     fun changeActionBarIconToClear() {
-        val actionBar = supportActionBar
         title_text.visibility = View.VISIBLE
         activity_toolbar.setNavigationOnClickListener({
             closeAddressListOverlay()
@@ -216,10 +215,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
 
     private fun setToolbarTextArrow(imageResource: Int) {
         if (title_text != null) {
-            var drawable = ContextCompat.getDrawable(this, imageResource)
-            drawable = DrawableCompat.wrap(drawable)
-            DrawableCompat.setTint(drawable.mutate(), R.color.colorAccent)
-            title_text.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)
+            title_text.setCompoundDrawablesWithIntrinsicBounds(0, 0, imageResource, 0)
         }
     }
 

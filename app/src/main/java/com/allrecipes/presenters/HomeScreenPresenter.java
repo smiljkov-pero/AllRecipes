@@ -25,10 +25,12 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import rx.Subscription;
 import rx.functions.Action1;
 
 public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
@@ -40,6 +42,9 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
     private final GoogleYoutubeApiManager googleYoutubeApiManager;
     private final LocalStorageManagerInterface localStorageManagerInterface;
     private final FirebaseDatabaseManager firebaseDatabaseManager;
+
+    Disposable fetchChannelVideosDisposable;
+    Subscription getCategoriesConfigFromFirebaseSubscription;
 
     private Category category;
     private String pageToken;
@@ -56,6 +61,12 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         this.firebaseDatabaseManager = firebaseDatabaseManager;
     }
 
+    @Override
+    public void unbindAll() {
+        dispose(fetchChannelVideosDisposable);
+        unsubscribe(getCategoriesConfigFromFirebaseSubscription);
+    }
+
     public void onChannelListClick(Category category) {
         String categoryJson = new GsonBuilder().create().toJson(category, Category.class);
         localStorageManagerInterface.putString(APP_LAST_CHANNEL_USED, categoryJson);
@@ -69,27 +80,31 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         }
         String channelId = category != null ? category.channelId : TASTY_CHANNEL_ID_DEFAULT;
 
-        googleYoutubeApiManager
+        fetchChannelVideosDisposable = googleYoutubeApiManager
             .fetchChannelVideos(channelId, currentPageToken, 30, "date", searchCriteria)
             .subscribe(new Consumer<SearchChannelVideosResponse>() {
                 @Override
                 public void accept(@NonNull SearchChannelVideosResponse searchChannelVideosResponse) throws Exception {
-                    if (currentPageToken == null) {
-                        getView().clearAdapterItems();
+                    if (isDisposedAndViewAvailable(fetchChannelVideosDisposable)) {
+                        if (currentPageToken == null) {
+                            getView().clearAdapterItems();
+                        }
+                        getView().removeBottomListProgress();
+                        List<YoutubeItem> items = searchChannelVideosResponse.items;
+                        for (YoutubeItem item : items) {
+                            getView().addYoutubeItemToAdapter(item);
+                        }
+                        pageToken = searchChannelVideosResponse.nextPageToken;
+                        getView().hideLoading();
                     }
-                    getView().removeBottomListProgress();
-                    List<YoutubeItem> items = searchChannelVideosResponse.items;
-                    for (YoutubeItem item : items) {
-                        getView().addYoutubeItemToAdapter(item);
-                    }
-                    pageToken = searchChannelVideosResponse.nextPageToken;
-                    getView().hideLoading();
                 }
             }, new Consumer<Throwable>() {
                 @Override
                 public void accept(@NonNull Throwable throwable) throws Exception {
-                    getView().hideLoading();
-                    throwable.printStackTrace();
+                    if (isDisposedAndViewAvailable(fetchChannelVideosDisposable)) {
+                        getView().hideLoading();
+                        throwable.printStackTrace();
+                    }
                 }
             });
 
@@ -157,27 +172,29 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
     }
 
     private void fetchAppConfigFromFirebase(final boolean isConfigAlreadyExist) {
-        firebaseDatabaseManager.getCategories().subscribe(
+        getCategoriesConfigFromFirebaseSubscription = firebaseDatabaseManager.getCategories()
+                .subscribe(
             new Action1<List<Category>>() {
                 @Override
                 public void call(List<Category> categories) {
-                    if (!isConfigAlreadyExist) {
-                        getView().initChannelsListOverlayAdapter(categories, 0);
-                    }
-                    for (Category category : categories) {
-                        fetchPlayListsAndVideos(category.channelId);
-                    }
+                    if (isSubscribedAndViewAvailable(getCategoriesConfigFromFirebaseSubscription)) {
+                        if (!isConfigAlreadyExist) {
+                            getView().initChannelsListOverlayAdapter(categories, 0);
+                        }
+                        for (Category category : categories) {
+                            fetchPlayListsAndVideos(category.channelId);
+                        }
 
-                    localStorageManagerInterface.putString(
-                        APP_CACHED_FIREBASE_CONFIG,
-                        new GsonBuilder().create().toJson(categories)
-                    );
+                        localStorageManagerInterface.putString(
+                            APP_CACHED_FIREBASE_CONFIG,
+                            new GsonBuilder().create().toJson(categories)
+                        );
+                    }
                 }
             },
             new Action1<Throwable>() {
                 @Override
                 public void call(Throwable throwable) {
-
                 }
             }
         );
