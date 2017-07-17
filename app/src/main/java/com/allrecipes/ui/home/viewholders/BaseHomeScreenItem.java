@@ -7,7 +7,7 @@ import com.allrecipes.R;
 import com.mikepenz.fastadapter.items.GenericAbstractItem;
 
 public class BaseHomeScreenItem
-    extends GenericAbstractItem<HomeScreenModelItemWrapper, BaseHomeScreenItem, BaseHomeScreenItem.ViewHolder> {
+    extends GenericAbstractItem<HomeScreenModelItemWrapper, BaseHomeScreenItem, BaseHomeScreenItem.BaseViewHolder> {
 
     public BaseHomeScreenItem(HomeScreenModelItemWrapper wrapper) {
         super(wrapper);
@@ -24,12 +24,12 @@ public class BaseHomeScreenItem
     }
 
     @Override
-    public ViewHolder getViewHolder(View v) {
-        return new ViewHolder(v);
+    public BaseViewHolder getViewHolder(View v) {
+        return new BaseViewHolder(v);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public ViewHolder(View view) {
+    public static class BaseViewHolder extends RecyclerView.ViewHolder {
+        public BaseViewHolder(View view) {
             super(view);
         }
     }

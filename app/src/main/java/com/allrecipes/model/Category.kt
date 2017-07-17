@@ -1,9 +1,10 @@
 package com.allrecipes.model
 
 class Category {
-    lateinit var name : String
-    lateinit var image : String
-    lateinit var youtubeUrl : String
-    lateinit var channelId : String
-    lateinit var description : String
+    val name: String = ""
+    val image: String = ""
+    val youtubeUrl: String = ""
+    val channelId: String = ""
+    val description: String = ""
+    val recommendedPlaylists: Map<String, RecommendedPlaylists> = HashMap()
 }

@@ -45,7 +45,7 @@ public class YoutubeVideoItem extends BaseHomeScreenItem {
     }
 
     @Override
-    public void bindView(BaseHomeScreenItem.ViewHolder holder, List payloads) {
+    public void bindView(BaseViewHolder holder, List payloads) {
         super.bindView(holder, payloads);
         YoutubeVideoItem.ViewHolder viewHolder = ((YoutubeVideoItem.ViewHolder) holder);
 
@@ -64,7 +64,7 @@ public class YoutubeVideoItem extends BaseHomeScreenItem {
             .into(holder.videoThumbnail);
     }
 
-    protected static class ViewHolder extends BaseHomeScreenItem.ViewHolder {
+    protected static class ViewHolder extends BaseViewHolder {
 
         @BindView(R.id.videoThumbnail)
         ImageView videoThumbnail;

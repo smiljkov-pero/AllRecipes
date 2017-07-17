@@ -41,25 +41,27 @@ public class SwipeLaneChannelItem extends BaseHomeScreenItem {
     }
 
     @Override
-    public BaseHomeScreenItem.ViewHolder getViewHolder(View v) {
-        return new BaseHomeScreenItem.ViewHolder(v);
+    public SwipeLineChannelViewHolder getViewHolder(View v) {
+        return new SwipeLineChannelViewHolder(v);
     }
 
     @Override
-    public void bindView(BaseHomeScreenItem.ViewHolder holder, List payloads) {
+    public void bindView(BaseViewHolder holder, List payloads) {
         super.bindView(holder, payloads);
-        SwipeLaneChannelItem.ViewHolder viewHolder = ((SwipeLaneChannelItem.ViewHolder) holder);
+        SwipeLineChannelViewHolder viewHolder = ((SwipeLineChannelViewHolder) holder);
 
-        viewHolder.name.setText(item.getChannel().getSnippet().channelTitle);
+        if(item.getChannel() != null) {
+            viewHolder.name.setText(item.getChannel().getSnippet().title);
+        }
         initSwapLane(viewHolder);
     }
 
-    private void initSwapLane(SwipeLaneChannelItem.ViewHolder viewHolder) {
+    private void initSwapLane(SwipeLineChannelViewHolder viewHolder) {
         SwapLaneChannelAdapter adapter = new SwapLaneChannelAdapter(item.getVideosResponse().items);
         viewHolder.videosRecyclerView.setAdapter(adapter);
     }
 
-    protected static class ViewHolder extends BaseHomeScreenItem.ViewHolder {
+    protected static class SwipeLineChannelViewHolder extends BaseViewHolder {
 
         @BindView(R.id.videosRecyclerView)
         RecyclerView videosRecyclerView;
@@ -69,7 +71,7 @@ public class SwipeLaneChannelItem extends BaseHomeScreenItem {
 
         Context context;
 
-        public ViewHolder(View view) {
+        public SwipeLineChannelViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
             context = view.getContext();

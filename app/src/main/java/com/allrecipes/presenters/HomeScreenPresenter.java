@@ -1,13 +1,16 @@
 package com.allrecipes.presenters;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.allrecipes.di.managers.FirebaseDatabaseManager;
 import com.allrecipes.managers.GoogleYoutubeApiManager;
 import com.allrecipes.managers.LocalStorageManagerInterface;
 import com.allrecipes.model.Category;
+import com.allrecipes.model.RecommendedPlaylists;
 import com.allrecipes.model.SearchChannelVideosResponse;
 import com.allrecipes.model.YoutubeItem;
+import com.allrecipes.model.YoutubeSnipped;
 import com.allrecipes.model.playlist.YoutubeChannelItem;
 import com.allrecipes.model.playlist.YoutubePlaylistWithVideos;
 import com.allrecipes.model.playlist.YoutubePlaylistsResponse;
@@ -20,6 +23,7 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -78,7 +82,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         if (currentPageToken == null) {
             getView().showLoading();
         }
-        String channelId = category != null ? category.channelId : TASTY_CHANNEL_ID_DEFAULT;
+        String channelId = category != null ? category.getChannelId() : TASTY_CHANNEL_ID_DEFAULT;
 
         fetchChannelVideosDisposable = googleYoutubeApiManager
             .fetchChannelVideos(channelId, currentPageToken, 30, "date", searchCriteria)
@@ -129,7 +133,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
                 public ObservableSource<YoutubePlaylistWithVideos> apply(@NonNull YoutubeChannelItem youtubeChannelItem) throws Exception {
                     return getVideosForEachPlaylist(youtubeChannelItem);
                 }
-            })/*.subscribe(new Consumer<YoutubePlaylistWithVideos>() {
+            }).subscribe(new Consumer<YoutubePlaylistWithVideos>() {
             @Override
             public void accept(@NonNull YoutubePlaylistWithVideos youtubePlaylistWithVideos) throws Exception {
                 Log.d("playlist and videos", "playlist name: " + youtubePlaylistWithVideos.getChannel().getSnippet().title);
@@ -141,7 +145,30 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
             public void accept(@NonNull Throwable throwable) throws Exception {
                 Log.e("playlist and videos", "error fetchPlayListsAndVideos() " + throwable.getMessage());
             }
-        })*/;
+        });
+    }
+
+    private void fetchVideosFromPlaylist(final String channelId, final String channelName) {
+        googleYoutubeApiManager.fetchVideosInPlaylist(channelId, 50)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<YoutubeVideoResponse>() {
+                    @Override
+                    public void accept(@NonNull YoutubeVideoResponse youtubeVideoResponse) throws Exception {
+                        YoutubeChannelItem channelItem = new YoutubeChannelItem();
+                        YoutubeSnipped youtubeSnipped = new YoutubeSnipped();
+                        youtubeSnipped.title = channelName;
+                        youtubeSnipped.channelId = channelId;
+                        youtubeSnipped.channelTitle = channelName;
+                        channelItem.setSnippet(youtubeSnipped);
+                        getView().addSwapLaneChannelItemToAdapter(new YoutubePlaylistWithVideos(channelItem, youtubeVideoResponse));
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(@NonNull Throwable throwable) throws Exception {
+                        Log.e("e","",throwable);
+                    }
+                });
     }
 
     private Observable<YoutubePlaylistWithVideos> getVideosForEachPlaylist(YoutubeChannelItem channel) {
@@ -159,6 +186,9 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         String categoryJson = localStorageManagerInterface.getString(APP_LAST_CHANNEL_USED, "");
         category = new GsonBuilder().create().fromJson(categoryJson, Category.class);
         fetchYoutubeChannelVideos(null, "");
+        if (category != null) {
+            loadRecommendedPlaylists(category);
+        }
         getView().setToolbarTitleText(category != null ? category.getName() : "Tasty");
         String appConfig = localStorageManagerInterface.getString(APP_CACHED_FIREBASE_CONFIG, "");
         if (!TextUtils.isEmpty(appConfig)) {
@@ -168,6 +198,20 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
             fetchAppConfigFromFirebase(true);
         } else {
             fetchAppConfigFromFirebase(false);
+        }
+    }
+
+    public void loadRecommendedPlaylists(Category category){
+        Map<String,RecommendedPlaylists> recommendedPlaylistsMap = category.getRecommendedPlaylists();
+        if (recommendedPlaylistsMap == null) {
+            return;
+        }
+        for (Map.Entry<String,RecommendedPlaylists> recommended : recommendedPlaylistsMap.entrySet()) {
+            for (int i = 0; i < recommended.getValue().getChannelIds().size(); i++){
+                String channelId = recommended.getValue().getChannelIds().get(i);
+                //fetchPlayListsAndVideos(channelId);
+                fetchVideosFromPlaylist(channelId, recommended.getKey());
+            }
         }
     }
 
@@ -181,9 +225,10 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
                         if (!isConfigAlreadyExist) {
                             getView().initChannelsListOverlayAdapter(categories, 0);
                         }
-                        for (Category category : categories) {
+                        /*for (Category category : categories) {
                             fetchPlayListsAndVideos(category.channelId);
-                        }
+                        }*/
+                        //loadRecommendedPlaylists(categories.get(0));
 
                         localStorageManagerInterface.putString(
                             APP_CACHED_FIREBASE_CONFIG,
@@ -195,6 +240,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
             new Action1<Throwable>() {
                 @Override
                 public void call(Throwable throwable) {
+                    Log.e("getting_app_config", "", throwable);
                 }
             }
         );

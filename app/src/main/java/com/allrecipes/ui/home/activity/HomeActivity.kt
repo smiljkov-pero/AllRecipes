@@ -27,6 +27,7 @@ import com.allrecipes.ui.home.listeners.TextChangeOnSubscribe
 import com.allrecipes.ui.home.viewholders.BaseHomeScreenItem
 import com.allrecipes.ui.home.viewholders.HomeScreenItemFactory
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper
+import com.allrecipes.ui.home.viewholders.items.SwipeLaneChannelItem
 import com.allrecipes.ui.home.viewholders.items.YoutubeVideoItem
 import com.allrecipes.ui.home.views.HomeScreenView
 import com.allrecipes.ui.videodetails.activity.VideoActivity
@@ -334,6 +335,9 @@ class HomeActivity : BaseActivity(), HomeScreenView {
             lastClickTime = SystemClock.elapsedRealtime()
             if (item.type == R.id.home_screen_video_item) {
                 onItemYoutubeVideoClick(v, item as YoutubeVideoItem)
+            } else if (item.type == R.id.home_swimlane_channel_item) {
+                //onItemYoutubeVideoClick(v, item as YoutubeVideoItem)
+                val swipeLaneChannelItem = item as SwipeLaneChannelItem
             }
         }
 
@@ -396,7 +400,6 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         homeScreenItemAdapter.addModel(HomeScreenModelItemWrapper(item, R.id.home_screen_video_item))
     }
 
-
     override fun showLoading() {
         super.showLoading()
         swipeContainer.isRefreshing = false
@@ -415,6 +418,6 @@ class HomeActivity : BaseActivity(), HomeScreenView {
     }
 
     override fun addSwapLaneChannelItemToAdapter(youtubePlaylistWithVideos: YoutubePlaylistWithVideos) {
-        //homeScreenItemAdapter.addModel(0, HomeScreenModelItemWrapper(youtubePlaylistWithVideos, R.id.home_swimlane_channel_item))
+        homeScreenItemAdapter.addModel(0, HomeScreenModelItemWrapper(youtubePlaylistWithVideos, R.id.home_swimlane_channel_item))
     }
 }

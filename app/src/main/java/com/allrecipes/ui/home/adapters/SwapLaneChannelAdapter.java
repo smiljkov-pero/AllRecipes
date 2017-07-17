@@ -28,7 +28,7 @@ public class SwapLaneChannelAdapter extends RecyclerView.Adapter<SwapLaneChannel
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-            .inflate(R.layout.item_swaplane_video, parent, false);
+                .inflate(R.layout.item_swaplane_video, parent, false);
 
         return new ViewHolder(itemView);
     }
@@ -42,12 +42,13 @@ public class SwapLaneChannelAdapter extends RecyclerView.Adapter<SwapLaneChannel
     }
 
     private void adjustYoutubeImage(final ViewHolder holder, VideoItem item) {
-        Picasso.with(holder.videoThumbnail.getContext())
-                .load(item.snippet.thumbnails.highThumbnail.url)
-                .fit()
-                .centerCrop()
-                .config(Bitmap.Config.RGB_565)
-                .into(holder.videoThumbnail);
+        if (item.snippet != null && item.snippet.thumbnails != null)
+            Picasso.with(holder.videoThumbnail.getContext())
+                    .load(item.snippet.thumbnails.mediumThumbnail.url)
+                    .fit()
+                    .centerCrop()
+                    .config(Bitmap.Config.RGB_565)
+                    .into(holder.videoThumbnail);
     }
 
     @Override
