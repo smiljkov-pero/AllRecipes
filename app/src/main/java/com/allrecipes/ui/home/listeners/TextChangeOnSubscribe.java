@@ -40,10 +40,16 @@ public class TextChangeOnSubscribe implements ObservableOnSubscribe<String> {
         e.setDisposable(new MainThreadDisposable() {
             @Override
             protected void onDispose() {
-                editText.get().removeTextChangedListener(watcher);
+                EditText editView = editText.get();
+                if (editView != null) {
+                    editView.removeTextChangedListener(watcher);
+                }
             }
         });
-        editText.get().addTextChangedListener(watcher);
+        EditText editView = editText.get();
+        if (editView != null) {
+            editView.addTextChangedListener(watcher);
+        }
         e.onNext("");
     }
 }
