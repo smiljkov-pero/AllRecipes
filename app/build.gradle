@@ -15,6 +15,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         all {
@@ -77,7 +78,6 @@ dependencies {
     compile "com.android.support:cardview-v7:${rootProject.supportLibVersion}"
     compile "com.android.support:design:${rootProject.supportLibVersion}"
     compile "com.android.support:customtabs:${rootProject.supportLibVersion}"
-    compile "com.android.support:customtabs:${rootProject.supportLibVersion}"
 
     compile "com.google.android.gms:play-services-base:${rootProject.googlePlayServicesVersion}"
     compile "com.google.android.gms:play-services-analytics:${rootProject.googlePlayServicesVersion}"
@@ -99,6 +99,8 @@ dependencies {
     compile('com.mikepenz:fastadapter:2.6.2@aar') {
         transitive = true
     }
+
+    compile files('libs/YouTubeAndroidPlayerApi.jar')
     compile 'com.google.dagger:dagger:2.7'
     compile 'com.google.code.gson:gson:2.7'
     compile 'javax.annotation:javax.annotation-api:1.2'
@@ -108,11 +110,14 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.4.0'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile 'io.reactivex.rxjava2:rxjava:2.1.0'
+    compile 'com.jakewharton.rxbinding2:rxbinding-appcompat-v7-kotlin:2.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.kelvinapps:rxfirebase:0.0.15'
     compile 'com.mikepenz:fastadapter-commons:2.6.0@aar'
     compile 'com.mikepenz:fastadapter-extensions:2.6.0@aar'
     compile 'com.mikepenz:materialize:1.0.2@aar'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.android.support:multidex:1.0.1'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     debugCompile 'com.facebook.stetho:stetho:1.4.1'
@@ -122,10 +127,6 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.7'
     kapt 'com.jakewharton:butterknife-compiler:8.4.0'
     provided 'javax.annotation:jsr250-api:1.0'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-
-    compile files('libs/YouTubeAndroidPlayerApi.jar')
-    compile 'com.android.support:multidex:1.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

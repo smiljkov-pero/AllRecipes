@@ -1,6 +1,9 @@
 package com.allrecipes;
 
 import android.app.Application;
+import android.content.Context;
+import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 
 import com.allrecipes.di.AppComponent;
 import com.allrecipes.di.AppModule;
@@ -14,13 +17,14 @@ import com.allrecipes.di.VideoDetailsScreenModule;
 import com.allrecipes.ui.home.views.HomeScreenView;
 import com.allrecipes.ui.videodetails.views.VideoDetailsView;
 
-
-/**
- * Created by Vladimir on 11/14/2016.
- */
-
 public class App extends Application {
     static AppComponent appComponent;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
 
     @Override
     public void onCreate() {

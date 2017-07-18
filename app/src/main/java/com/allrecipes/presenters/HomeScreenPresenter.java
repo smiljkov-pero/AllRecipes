@@ -71,21 +71,21 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         unsubscribe(getCategoriesConfigFromFirebaseSubscription);
     }
 
-    public void onChannelListClick(Category category) {
+    public void onChannelListClick(Category category, String sortBy) {
         String categoryJson = new GsonBuilder().create().toJson(category, Category.class);
         localStorageManagerInterface.putString(APP_LAST_CHANNEL_USED, categoryJson);
         this.category = category;
-        fetchYoutubeChannelVideos(null, "");
+        fetchYoutubeChannelVideos(null, "", sortBy);
     }
 
-    public void fetchYoutubeChannelVideos(final String currentPageToken, String searchCriteria) {
+    public void fetchYoutubeChannelVideos(final String currentPageToken, String searchCriteria, String sortBy) {
         if (currentPageToken == null) {
             getView().showLoading();
         }
         String channelId = category != null ? category.getChannelId() : TASTY_CHANNEL_ID_DEFAULT;
 
         fetchChannelVideosDisposable = googleYoutubeApiManager
-            .fetchChannelVideos(channelId, currentPageToken, 30, "date", searchCriteria)
+            .fetchChannelVideos(channelId, currentPageToken, 30, sortBy, searchCriteria)
             .subscribe(new Consumer<SearchChannelVideosResponse>() {
                 @Override
                 public void accept(@NonNull SearchChannelVideosResponse searchChannelVideosResponse) throws Exception {
@@ -114,8 +114,8 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
 
     }
 
-    public void onLoadMore(String searchCriteria) {
-        fetchYoutubeChannelVideos(pageToken, searchCriteria);
+    public void onLoadMore(String searchCriteria, String sortBy) {
+        fetchYoutubeChannelVideos(pageToken, searchCriteria, sortBy);
     }
 
     private void fetchPlayListsAndVideos(String channelId) {
@@ -182,10 +182,10 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
             });
     }
 
-    public void onCreate() {
+    public void onCreate(String sortBy) {
         String categoryJson = localStorageManagerInterface.getString(APP_LAST_CHANNEL_USED, "");
         category = new GsonBuilder().create().fromJson(categoryJson, Category.class);
-        fetchYoutubeChannelVideos(null, "");
+        fetchYoutubeChannelVideos(null, "", sortBy);
         if (category != null) {
             loadRecommendedPlaylists(category);
         }

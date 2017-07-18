@@ -31,6 +31,15 @@
             android:textSize="@dimen/s3"
             app:customFont="fonts/Roboto-Medium.ttf"/>
 
+        <ImageView
+            android:id="@+id/sortFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="@dimen/d1"
+            android:padding="@dimen/d1"
+            app:srcCompat="@drawable/sort_descending"/>
+
     </android.support.v7.widget.Toolbar>
 
     <FrameLayout

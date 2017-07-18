@@ -40,6 +40,11 @@
             android:theme="@style/AllRecipesTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.YoutubePlayerActivity" />
+        <activity android:name=".ui.filters.FiltersActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AllRecipesTheme">
+        </activity>
     </application>
 
 </manifest>

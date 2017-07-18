@@ -22,8 +22,8 @@ import com.allrecipes.model.Category
 import com.allrecipes.model.playlist.YoutubePlaylistWithVideos
 import com.allrecipes.presenters.HomeScreenPresenter
 import com.allrecipes.ui.BaseActivity
+import com.allrecipes.ui.filters.FiltersActivity
 import com.allrecipes.ui.home.adapters.ChannelsListDropdownAdapter
-import com.allrecipes.ui.home.listeners.TextChangeOnSubscribe
 import com.allrecipes.ui.home.viewholders.BaseHomeScreenItem
 import com.allrecipes.ui.home.viewholders.HomeScreenItemFactory
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper
@@ -32,12 +32,13 @@ import com.allrecipes.ui.home.viewholders.items.YoutubeVideoItem
 import com.allrecipes.ui.home.views.HomeScreenView
 import com.allrecipes.ui.videodetails.activity.VideoActivity
 import com.allrecipes.util.KeyboardUtils
+import com.jakewharton.rxbinding2.view.RxView
+import com.jakewharton.rxbinding2.widget.RxTextView
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.adapters.FooterAdapter
 import com.mikepenz.fastadapter.adapters.GenericItemAdapter
 import com.mikepenz.fastadapter_extensions.items.ProgressItem
 import com.mikepenz.fastadapter_extensions.scroll.EndlessRecyclerOnScrollListener
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_home.*
@@ -49,6 +50,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
     private val DOUBLE_CLICK_TIMEOUT = 1000
     private var lastClickTime: Long = 0
     private val REQ_CODE_RECIPE_VIDEO = 998
+    private val REQ_CODE_CHANGE_FILTER = 996
 
     lateinit var fastAdapter: FastAdapter<BaseHomeScreenItem>
     lateinit var footerAdapter: FooterAdapter<ProgressItem>
@@ -60,6 +62,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
     private var addressListCloseAnimator: ObjectAnimator? = null
     private var isAddressesDropDownVisible = false
     private lateinit var searchTextSubscription: Disposable
+    var sortBy = "Date"
 
     @Inject
     lateinit var presenter: HomeScreenPresenter
@@ -69,13 +72,15 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         setContentView(R.layout.activity_home)
         getApp().createHomeScreenComponent(this).inject(this)
 
-        presenter.onCreate()
+        presenter.onCreate(sortBy)
 
         initSwipeRefresh()
         initRecyclerViewAdapter()
 
         list.setOnTouchListener({ view: View, motionEvent: MotionEvent ->
-            if (containerTopAddressList != null && containerTopAddressList.visibility == View.VISIBLE) {
+            if (containerTopAddressList != null
+                && containerTopAddressList.visibility == View.VISIBLE
+            ) {
                 closeAddressListOverlay()
             }
             if (searchEditText != null) {
@@ -93,6 +98,13 @@ class HomeActivity : BaseActivity(), HomeScreenView {
             searchEditText.setText("")
         }
 
+        RxView.clicks(sortFilter)
+            .debounce(700, TimeUnit.MILLISECONDS)
+            .subscribe({
+                val filterIntent = FiltersActivity.newIntent(this@HomeActivity, "")
+                startActivityForResult(filterIntent, REQ_CODE_CHANGE_FILTER)
+            })
+
         initActionBar()
         setDefaultAddressListDropDownIcons()
     }
@@ -101,6 +113,16 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         super.onPause()
         if (isFinishing) {
             presenter.unbindAll()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            REQ_CODE_CHANGE_FILTER -> if (resultCode == Activity.RESULT_OK) {
+                sortBy = data!!.getStringExtra(FiltersActivity.KEY_SORT_BY_SETTINGS)
+                presenter.fetchYoutubeChannelVideos(null, searchCriteria, sortBy)
+            }
         }
     }
 
@@ -114,17 +136,15 @@ class HomeActivity : BaseActivity(), HomeScreenView {
     }
 
     private fun initSearchTextOnTextChangeEvents() {
-        val textChangeObs = Observable
-                .create(TextChangeOnSubscribe(searchEditText)).debounce(500, TimeUnit.MILLISECONDS)
-
-        searchTextSubscription = textChangeObs
+        searchTextSubscription = RxTextView.textChangeEvents(searchEditText)
+            .debounce(400, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { text ->
-                search_clear_button.visibility = if (text.isNotEmpty()) View.VISIBLE else View.GONE
+                search_clear_button.visibility = if (text.count() > 0 ) View.VISIBLE else View.GONE
                 val prevSearchCriteria = if (searchCriteria == null) "" else searchCriteria
-                searchCriteria = if (text!!.length < 3) "" else text
+                searchCriteria = if (text!!.count() < 3) "" else text.toString()
                 if (!TextUtils.equals(searchCriteria, prevSearchCriteria)) {
-                    presenter.fetchYoutubeChannelVideos(null, searchCriteria)
+                    presenter.fetchYoutubeChannelVideos(null, searchCriteria, sortBy)
                 }
             }
     }
@@ -164,7 +184,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         dropdown_addresses_listview.adapter = ChannelsListDropdownAdapter(applicationContext, channels, selectedPosition)
         dropdown_addresses_listview.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val category: Category = channels[position]
-            presenter.onChannelListClick(category)
+            presenter.onChannelListClick(category, sortBy)
             title_text.text = category.name
             closeAddressListOverlay()
         }
@@ -366,7 +386,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
                 removeBottomListProgress()
                 if (existVideoItemsInAdapter()) {
                     addFooterLoadingView()
-                    presenter.onLoadMore(searchCriteria)
+                    presenter.onLoadMore(searchCriteria, sortBy)
                 }
             }
         }
@@ -392,7 +412,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
 
     private fun initSwipeRefresh() {
         swipeContainer.setOnRefreshListener({
-            presenter.fetchYoutubeChannelVideos(null, searchCriteria)
+            presenter.fetchYoutubeChannelVideos(null, searchCriteria, sortBy)
         })
     }
 
