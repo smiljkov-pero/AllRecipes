@@ -140,9 +140,9 @@ class HomeActivity : BaseActivity(), HomeScreenView {
             .debounce(400, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { text ->
-                search_clear_button.visibility = if (text.count() > 0 ) View.VISIBLE else View.GONE
+                search_clear_button.visibility = if (text.text().length > 0 ) View.VISIBLE else View.GONE
                 val prevSearchCriteria = if (searchCriteria == null) "" else searchCriteria
-                searchCriteria = if (text!!.count() < 3) "" else text.toString()
+                searchCriteria = if (text!!.text().length < 3) "" else text.text().toString()
                 if (!TextUtils.equals(searchCriteria, prevSearchCriteria)) {
                     presenter.fetchYoutubeChannelVideos(null, searchCriteria, sortBy)
                 }
