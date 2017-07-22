@@ -95,6 +95,7 @@ dependencies {
     compile "com.google.firebase:firebase-crash:${rootProject.googlePlayServicesVersion}"
     compile "com.google.firebase:firebase-database:${rootProject.googlePlayServicesVersion}"
     compile "com.google.firebase:firebase-storage:${rootProject.googlePlayServicesVersion}"
+    compile "com.google.firebase:firebase-perf:${rootProject.googlePlayServicesVersion}"
 
     compile('com.mikepenz:fastadapter:2.6.2@aar') {
         transitive = true
@@ -118,6 +119,8 @@ dependencies {
     compile 'com.mikepenz:materialize:1.0.2@aar'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:multidex:1.0.1'
+    compile 'com.github.javiersantos:AppUpdater:2.6.1'
+
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     debugCompile 'com.facebook.stetho:stetho:1.4.1'

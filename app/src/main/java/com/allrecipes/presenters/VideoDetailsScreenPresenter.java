@@ -1,6 +1,7 @@
 package com.allrecipes.presenters;
 
 import com.allrecipes.managers.GoogleYoutubeApiManager;
+import com.allrecipes.managers.remoteconfig.RemoteConfigManager;
 import com.allrecipes.model.SearchChannelVideosResponse;
 import com.allrecipes.model.YoutubeItem;
 import com.allrecipes.model.video.YoutubeVideoResponse;
@@ -17,15 +18,18 @@ import io.reactivex.functions.Consumer;
 public class VideoDetailsScreenPresenter extends AbstractPresenter<VideoDetailsView> {
 
     private final GoogleYoutubeApiManager googleYoutubeApiManager;
+    private final RemoteConfigManager remoteConfigManager;
 
     Disposable fetchVideoDisposable;
 
     public VideoDetailsScreenPresenter(
         VideoDetailsView view,
-        GoogleYoutubeApiManager googleYoutubeApiManager
+        GoogleYoutubeApiManager googleYoutubeApiManager,
+        RemoteConfigManager remoteConfigManager
     ) {
         super(new WeakReference<>(view));
         this.googleYoutubeApiManager = googleYoutubeApiManager;
+        this.remoteConfigManager = remoteConfigManager;
     }
 
     @Override
@@ -54,5 +58,13 @@ public class VideoDetailsScreenPresenter extends AbstractPresenter<VideoDetailsV
                 }
             });
 
+    }
+
+    public void playVideo() {
+        if (remoteConfigManager.isOpenYoutubeNativePlayer()) {
+            getView().playVideoWithYoutubeNativeAppPlayer();
+        } else {
+            getView().playVideoWithYoutubeInAppPlayer();
+        }
     }
 }

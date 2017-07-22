@@ -3,6 +3,7 @@ package com.allrecipes.ui.videodetails.activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.customtabs.CustomTabsClient;
@@ -257,17 +258,30 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
 
     @OnClick(R.id.video_thumbnail)
     void onThumbnailClick() {
-        startActivity(YoutubePlayerActivity.newIntent(this, video.id.videoId));
+        presenter.playVideo();
     }
 
     @OnClick(R.id.title_text)
     void onToolbarTitleClick() {
-        startActivity(YoutubePlayerActivity.newIntent(this, video.id.videoId));
+        presenter.playVideo();
     }
 
     @OnClick(R.id.recipe_title)
     void onRecipeTitleClick() {
+        presenter.playVideo();
+    }
+
+    @Override
+    public void playVideoWithYoutubeInAppPlayer() {
         startActivity(YoutubePlayerActivity.newIntent(this, video.id.videoId));
+    }
+
+    @Override
+    public void playVideoWithYoutubeNativeAppPlayer() {
+        startActivity(new Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse("http://www.youtube.com/watch?v=" + video.id.videoId
+        )));
     }
 
     @Override

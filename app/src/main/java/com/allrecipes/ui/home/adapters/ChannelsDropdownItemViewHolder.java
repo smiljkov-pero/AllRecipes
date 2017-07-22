@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.allrecipes.R;
-import com.allrecipes.model.Category;
+import com.allrecipes.model.Channel;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -28,7 +28,7 @@ public class ChannelsDropdownItemViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void initItemViewDetails(Context context, Category channel, boolean isChecked) {
+    public void initItemViewDetails(Context context, Channel channel, boolean isChecked) {
         channelName.setText(channel.getName());
         description.setText(channel.getDescription());
         Picasso.with(context)

@@ -1,6 +1,6 @@
 package com.allrecipes.ui.home.views;
 
-import com.allrecipes.model.Category;
+import com.allrecipes.model.Channel;
 import com.allrecipes.model.YoutubeItem;
 import com.allrecipes.model.playlist.YoutubePlaylistWithVideos;
 import com.allrecipes.ui.views.AbstractPresenterView;
@@ -14,7 +14,7 @@ public interface HomeScreenView extends AbstractPresenterView {
     void removeBottomListProgress();
     void clearAdapterItems();
 
-    void initChannelsListOverlayAdapter(List<Category> categories, int i);
+    void initChannelsListOverlayAdapter(List<Channel> categories, int i);
 
     void setToolbarTitleText(@NotNull String value);
 

@@ -23,7 +23,7 @@ public class GoogleYoutubeApiManager {
     public Observable<SearchChannelVideosResponse> fetchChannelVideos(
         String channelId,
         String pageToken,
-        int maxResults,
+        long maxResults,
         String order,
         String searchCriteria
     ) {

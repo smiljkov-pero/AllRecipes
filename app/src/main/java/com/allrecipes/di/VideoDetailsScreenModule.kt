@@ -1,6 +1,7 @@
 package com.allrecipes.di
 
 import com.allrecipes.managers.GoogleYoutubeApiManager
+import com.allrecipes.managers.remoteconfig.RemoteConfigManager
 import com.allrecipes.presenters.HomeScreenPresenter
 import com.allrecipes.presenters.VideoDetailsScreenPresenter
 import com.allrecipes.ui.home.views.HomeScreenView
@@ -17,8 +18,9 @@ class VideoDetailsScreenModule(view: VideoDetailsView) {
 
     @Provides
     fun providesVideoDetailsScreenPresenter(
-        googleYoutubeApiManager: GoogleYoutubeApiManager
+        googleYoutubeApiManager: GoogleYoutubeApiManager,
+        remoteConfigManager: RemoteConfigManager
     ): VideoDetailsScreenPresenter {
-        return VideoDetailsScreenPresenter(view.get(), googleYoutubeApiManager)
+        return VideoDetailsScreenPresenter(view.get(), googleYoutubeApiManager, remoteConfigManager)
     }
 }

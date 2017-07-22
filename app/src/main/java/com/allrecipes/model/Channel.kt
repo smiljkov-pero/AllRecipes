@@ -1,10 +1,10 @@
 package com.allrecipes.model
 
-class Category {
+class Channel {
     val name: String = ""
     val image: String = ""
     val youtubeUrl: String = ""
     val channelId: String = ""
     val description: String = ""
-    val recommendedPlaylists: Map<String, RecommendedPlaylists> = HashMap()
+    val recommendedPlayLists: Map<String, RecommendedPlaylists> = HashMap()
 }

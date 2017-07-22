@@ -1,17 +1,14 @@
 package com.allrecipes.presenters;
 
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
-import android.app.Activity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.allrecipes.di.managers.FirebaseDatabaseManager;
 import com.allrecipes.managers.GoogleYoutubeApiManager;
 import com.allrecipes.managers.LocalStorageManagerInterface;
-import com.allrecipes.model.Category;
+import com.allrecipes.managers.remoteconfig.RemoteConfigManager;
+import com.allrecipes.model.DefaultChannel;
+import com.allrecipes.model.Channel;
 import com.allrecipes.model.RecommendedPlaylists;
 import com.allrecipes.model.SearchChannelVideosResponse;
 import com.allrecipes.model.YoutubeItem;
@@ -21,6 +18,8 @@ import com.allrecipes.model.playlist.YoutubePlaylistWithVideos;
 import com.allrecipes.model.playlist.YoutubePlaylistsResponse;
 import com.allrecipes.model.video.YoutubeVideoResponse;
 import com.allrecipes.ui.home.views.HomeScreenView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
@@ -46,28 +45,30 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
 
     private static final String APP_LAST_CHANNEL_USED = "app.lastChannelUsed";
     private static final String APP_CACHED_FIREBASE_CONFIG = "app.cachedFirebaseConfig";
-    private static final String TASTY_CHANNEL_ID_DEFAULT = "UCJFp8uSYCjXOMnkUyb3CQ3Q";
 
     private final GoogleYoutubeApiManager googleYoutubeApiManager;
     private final LocalStorageManagerInterface localStorageManagerInterface;
     private final FirebaseDatabaseManager firebaseDatabaseManager;
+    private final RemoteConfigManager remoteConfigManager;
 
-    Disposable fetchChannelVideosDisposable;
+    private Disposable fetchChannelVideosDisposable;
     Subscription getCategoriesConfigFromFirebaseSubscription;
 
-    private Category category;
+    private Channel channel;
     private String pageToken;
 
     public HomeScreenPresenter(
         HomeScreenView view,
         GoogleYoutubeApiManager googleYoutubeApiManager,
         LocalStorageManagerInterface localStorageManagerInterface,
-        FirebaseDatabaseManager firebaseDatabaseManager
+        FirebaseDatabaseManager firebaseDatabaseManager,
+        RemoteConfigManager remoteConfigManager
     ) {
         super(new WeakReference<>(view));
         this.googleYoutubeApiManager = googleYoutubeApiManager;
         this.localStorageManagerInterface = localStorageManagerInterface;
         this.firebaseDatabaseManager = firebaseDatabaseManager;
+        this.remoteConfigManager = remoteConfigManager;
     }
 
     @Override
@@ -76,28 +77,39 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         unsubscribe(getCategoriesConfigFromFirebaseSubscription);
     }
 
-    public void onChannelListClick(Category category, String sortBy) {
-        String categoryJson = new GsonBuilder().create().toJson(category, Category.class);
+    public void onChannelListClick(Channel channel, String sortBy) {
+        String categoryJson = new GsonBuilder().create().toJson(channel, Channel.class);
         localStorageManagerInterface.putString(APP_LAST_CHANNEL_USED, categoryJson);
-        this.category = category;
+        this.channel = channel;
         fetchYoutubeChannelVideos(null, "", sortBy);
     }
 
-    public void fetchYoutubeChannelVideos(final String currentPageToken, String searchCriteria, String sortBy) {
+    public void fetchYoutubeChannelVideos(
+        final String currentPageToken,
+        String searchCriteria,
+        String sortBy
+    ) {
         if (currentPageToken == null) {
             getView().showLoading();
         }
-        String channelId = category != null ? category.getChannelId() : TASTY_CHANNEL_ID_DEFAULT;
-        if (category != null && TextUtils.isEmpty(searchCriteria)) {
-            loadRecommendedPlaylists(category);
+        if (TextUtils.isEmpty(searchCriteria)) {
+            loadRecommendedPlayLists(channel);
         }
 
         fetchChannelVideosDisposable = googleYoutubeApiManager
-            .fetchChannelVideos(channelId, currentPageToken, 30, sortBy, searchCriteria)
+            .fetchChannelVideos(
+                channel.getChannelId(),
+                currentPageToken,
+                remoteConfigManager.getVideoListItemsPerPage(),
+                sortBy,
+                searchCriteria
+            )
             .subscribe(new Consumer<SearchChannelVideosResponse>() {
                 @Override
-                public void accept(@NonNull SearchChannelVideosResponse searchChannelVideosResponse) throws Exception {
-                    if (isDisposedAndViewAvailable(fetchChannelVideosDisposable)) {
+                public void accept(
+                    @NonNull SearchChannelVideosResponse searchChannelVideosResponse
+                ) throws Exception {
+                    if (isViewAvailable()) {
                         if (currentPageToken == null) {
                             getView().clearAdapterItems();
                         }
@@ -113,7 +125,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
             }, new Consumer<Throwable>() {
                 @Override
                 public void accept(@NonNull Throwable throwable) throws Exception {
-                    if (isDisposedAndViewAvailable(fetchChannelVideosDisposable)) {
+                    if (isViewAvailable()) {
                         getView().hideLoading();
                         throwable.printStackTrace();
                     }
@@ -190,16 +202,29 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
             });
     }
 
-    public void onCreate(String sortBy) {
-        String categoryJson = localStorageManagerInterface.getString(APP_LAST_CHANNEL_USED, "");
-        category = new GsonBuilder().create().fromJson(categoryJson, Category.class);
-        fetchYoutubeChannelVideos(null, "", sortBy);
+    public void onCreate(final String sortBy) {
+        if (remoteConfigManager.isRemoteConfigNotFetchYet()) {
+            remoteConfigManager.reload(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@android.support.annotation.NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        remoteConfigManager.activateFetched();
+                        initCurrentChannel(sortBy);
+                    }
+                }
+            });
+        } else {
+            initCurrentChannel(sortBy);
+        }
+        initFirebaseDBConfig();
+    }
 
-        getView().setToolbarTitleText(category != null ? category.getName() : "Tasty");
+    private void initFirebaseDBConfig() {
         String appConfig = localStorageManagerInterface.getString(APP_CACHED_FIREBASE_CONFIG, "");
+
         if (!TextUtils.isEmpty(appConfig)) {
-            Type listType = new TypeToken<ArrayList<Category>>(){}.getType();
-            List<Category> categories = new GsonBuilder().create().fromJson(appConfig, listType);
+            Type listType = new TypeToken<ArrayList<Channel>>(){}.getType();
+            List<Channel> categories = new GsonBuilder().create().fromJson(appConfig, listType);
             getView().initChannelsListOverlayAdapter(categories, 0);
             fetchAppConfigFromFirebase(true);
         } else {
@@ -207,12 +232,22 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         }
     }
 
-    public void loadRecommendedPlaylists(Category category){
-        Map<String,RecommendedPlaylists> recommendedPlaylistsMap = category.getRecommendedPlaylists();
-        if (recommendedPlaylistsMap == null) {
-            return;
+    private void initCurrentChannel(String sortBy) {
+        String lastUsedChannel = localStorageManagerInterface.getString(APP_LAST_CHANNEL_USED, "");
+        channel = new GsonBuilder().create().fromJson(lastUsedChannel, Channel.class);
+        if (channel == null) {
+            String remoteConfigString = remoteConfigManager.getDefaultChannel();
+            channel = new GsonBuilder().create()
+                .fromJson(remoteConfigString, DefaultChannel.class).defaultChannel;
         }
-        for (Map.Entry<String,RecommendedPlaylists> recommended : recommendedPlaylistsMap.entrySet()) {
+
+        getView().setToolbarTitleText(channel.getName());
+        fetchYoutubeChannelVideos(null, "", sortBy);
+    }
+
+    private void loadRecommendedPlayLists(Channel channel){
+        Map<String, RecommendedPlaylists> recommendedPlayLists = channel.getRecommendedPlayLists();
+        for (Map.Entry<String,RecommendedPlaylists> recommended : recommendedPlayLists.entrySet()) {
             fetchVideosFromPlaylist(recommended.getValue().getChannelId(), recommended.getKey());
         }
     }
@@ -220,15 +255,15 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
     private void fetchAppConfigFromFirebase(final boolean isConfigAlreadyExist) {
         getCategoriesConfigFromFirebaseSubscription = firebaseDatabaseManager.getCategories()
                 .subscribe(
-            new Action1<List<Category>>() {
+            new Action1<List<Channel>>() {
                 @Override
-                public void call(List<Category> categories) {
+                public void call(List<Channel> categories) {
                     if (isSubscribedAndViewAvailable(getCategoriesConfigFromFirebaseSubscription)) {
                         if (!isConfigAlreadyExist) {
                             getView().initChannelsListOverlayAdapter(categories, 0);
                         }
-                        /*for (Category category : categories) {
-                            fetchPlayListsAndVideos(category.channelId);
+                        /*for (Channel channel : categories) {
+                            fetchPlayListsAndVideos(channel.channelId);
                         }*/
                         localStorageManagerInterface.putString(
                             APP_CACHED_FIREBASE_CONFIG,

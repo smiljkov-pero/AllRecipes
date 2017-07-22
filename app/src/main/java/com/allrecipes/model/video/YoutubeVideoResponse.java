@@ -4,6 +4,7 @@ import com.allrecipes.model.PageInfo;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class YoutubeVideoResponse {
 
@@ -11,5 +12,5 @@ public class YoutubeVideoResponse {
     public PageInfo pageInfo;
 
     @SerializedName("items")
-    public ArrayList<VideoItem> items;
+    public List<VideoItem> items;
 }

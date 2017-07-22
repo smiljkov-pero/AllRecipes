@@ -18,7 +18,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import com.allrecipes.R
-import com.allrecipes.model.Category
+import com.allrecipes.model.Channel
 import com.allrecipes.model.playlist.YoutubePlaylistWithVideos
 import com.allrecipes.presenters.HomeScreenPresenter
 import com.allrecipes.ui.BaseActivity
@@ -180,12 +180,12 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         inputMethodManger.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    override fun initChannelsListOverlayAdapter(channels: List<Category>, selectedPosition: Int) {
+    override fun initChannelsListOverlayAdapter(channels: List<Channel>, selectedPosition: Int) {
         dropdown_addresses_listview.adapter = ChannelsListDropdownAdapter(applicationContext, channels, selectedPosition)
         dropdown_addresses_listview.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            val category: Category = channels[position]
-            presenter.onChannelListClick(category, sortBy)
-            title_text.text = category.name
+            val channel: Channel = channels[position]
+            presenter.onChannelListClick(channel, sortBy)
+            title_text.text = channel.name
             closeAddressListOverlay()
         }
         trans_overlay.setOnTouchListener({ view: View, motionEvent: MotionEvent ->
