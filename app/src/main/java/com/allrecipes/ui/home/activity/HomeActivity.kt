@@ -58,7 +58,7 @@ class HomeActivity : BaseActivity(), HomeScreenView {
     lateinit var homeScreenItemFactory: HomeScreenItemFactory
     lateinit var layoutManager: LinearLayoutManager
     lateinit var onVendorsScrollListener: EndlessRecyclerOnScrollListener
-    var searchCriteria = ""
+    var searchCriteria: String? = ""
     private var addressListCloseAnimator: ObjectAnimator? = null
     private var isAddressesDropDownVisible = false
     private lateinit var searchTextSubscription: Disposable
@@ -140,9 +140,9 @@ class HomeActivity : BaseActivity(), HomeScreenView {
             .debounce(400, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { text ->
-                search_clear_button.visibility = if (text.text().length > 0 ) View.VISIBLE else View.GONE
+                search_clear_button.visibility = if (text.text().isNotEmpty()) View.VISIBLE else View.GONE
                 val prevSearchCriteria = if (searchCriteria == null) "" else searchCriteria
-                searchCriteria = if (text!!.text().length < 3) "" else text.text().toString()
+                searchCriteria = if (text.text().length < 3) "" else text.text().toString()
                 if (!TextUtils.equals(searchCriteria, prevSearchCriteria)) {
                     presenter.fetchYoutubeChannelVideos(null, searchCriteria, sortBy)
                 }
@@ -439,5 +439,6 @@ class HomeActivity : BaseActivity(), HomeScreenView {
 
     override fun addSwapLaneChannelItemToAdapter(youtubePlaylistWithVideos: YoutubePlaylistWithVideos) {
         homeScreenItemAdapter.addModel(0, HomeScreenModelItemWrapper(youtubePlaylistWithVideos, R.id.home_swimlane_channel_item))
+        layoutManager.scrollToPosition(0)
     }
 }

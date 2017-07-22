@@ -1,5 +1,10 @@
 package com.allrecipes.presenters;
 
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerCallback;
+import android.accounts.AccountManagerFuture;
+import android.app.Activity;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -83,6 +88,9 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
             getView().showLoading();
         }
         String channelId = category != null ? category.getChannelId() : TASTY_CHANNEL_ID_DEFAULT;
+        if (category != null && TextUtils.isEmpty(searchCriteria)) {
+            loadRecommendedPlaylists(category);
+        }
 
         fetchChannelVideosDisposable = googleYoutubeApiManager
             .fetchChannelVideos(channelId, currentPageToken, 30, sortBy, searchCriteria)
@@ -166,7 +174,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(@NonNull Throwable throwable) throws Exception {
-                        Log.e("e","",throwable);
+                        Log.e("fetchVideosFromPlaylist","",throwable);
                     }
                 });
     }
@@ -186,9 +194,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         String categoryJson = localStorageManagerInterface.getString(APP_LAST_CHANNEL_USED, "");
         category = new GsonBuilder().create().fromJson(categoryJson, Category.class);
         fetchYoutubeChannelVideos(null, "", sortBy);
-        if (category != null) {
-            loadRecommendedPlaylists(category);
-        }
+
         getView().setToolbarTitleText(category != null ? category.getName() : "Tasty");
         String appConfig = localStorageManagerInterface.getString(APP_CACHED_FIREBASE_CONFIG, "");
         if (!TextUtils.isEmpty(appConfig)) {
@@ -207,11 +213,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
             return;
         }
         for (Map.Entry<String,RecommendedPlaylists> recommended : recommendedPlaylistsMap.entrySet()) {
-            for (int i = 0; i < recommended.getValue().getChannelIds().size(); i++){
-                String channelId = recommended.getValue().getChannelIds().get(i);
-                //fetchPlayListsAndVideos(channelId);
-                fetchVideosFromPlaylist(channelId, recommended.getKey());
-            }
+            fetchVideosFromPlaylist(recommended.getValue().getChannelId(), recommended.getKey());
         }
     }
 
@@ -228,8 +230,6 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
                         /*for (Category category : categories) {
                             fetchPlayListsAndVideos(category.channelId);
                         }*/
-                        //loadRecommendedPlaylists(categories.get(0));
-
                         localStorageManagerInterface.putString(
                             APP_CACHED_FIREBASE_CONFIG,
                             new GsonBuilder().create().toJson(categories)

@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.allrecipes.R;
 import com.allrecipes.model.playlist.YoutubePlaylistWithVideos;
+import com.allrecipes.model.video.VideoItem;
 import com.allrecipes.ui.home.adapters.SwapLaneChannelAdapter;
 import com.allrecipes.ui.home.viewholders.BaseHomeScreenItem;
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper;
