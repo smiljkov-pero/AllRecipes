@@ -92,7 +92,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         if (currentPageToken == null) {
             getView().showLoading();
         }
-        if (TextUtils.isEmpty(searchCriteria)) {
+        if (channel !=null && TextUtils.isEmpty(searchCriteria)) {
             loadRecommendedPlayLists(channel);
         }
 
@@ -246,7 +246,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
     }
 
     private void loadRecommendedPlayLists(Channel channel){
-        Map<String, RecommendedPlaylists> recommendedPlayLists = channel.getRecommendedPlayLists();
+        Map<String, RecommendedPlaylists> recommendedPlayLists = channel.getRecommendedPlaylists();
         for (Map.Entry<String,RecommendedPlaylists> recommended : recommendedPlayLists.entrySet()) {
             if (recommended.getValue().getVisible()) {
                 fetchVideosFromPlaylist(recommended.getValue().getChannelId(), recommended.getKey());
@@ -255,21 +255,21 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
     }
 
     private void fetchAppConfigFromFirebase(final boolean isConfigAlreadyExist) {
-        getCategoriesConfigFromFirebaseSubscription = firebaseDatabaseManager.getCategories()
+        getCategoriesConfigFromFirebaseSubscription = firebaseDatabaseManager.fetchChannels()
                 .subscribe(
             new Action1<List<Channel>>() {
                 @Override
-                public void call(List<Channel> categories) {
+                public void call(List<Channel> channels) {
                     if (isSubscribedAndViewAvailable(getCategoriesConfigFromFirebaseSubscription)) {
                         if (!isConfigAlreadyExist) {
-                            getView().initChannelsListOverlayAdapter(categories, 0);
+                            getView().initChannelsListOverlayAdapter(channels, 0);
                         }
                         /*for (Channel channel : categories) {
                             fetchPlayListsAndVideos(channel.channelId);
                         }*/
                         localStorageManagerInterface.putString(
                             APP_CACHED_FIREBASE_CONFIG,
-                            new GsonBuilder().create().toJson(categories)
+                            new GsonBuilder().create().toJson(channels)
                         );
                     }
                 }

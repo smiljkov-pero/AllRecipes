@@ -8,7 +8,7 @@ import com.kelvinapps.rxfirebase.RxFirebaseDatabase
 class FirebaseDatabaseManager(databaseReference: DatabaseReference) {
     val fireBaseDb: DatabaseReference = databaseReference
 
-    fun getCategories(): rx.Observable<MutableList<Channel>> {
+    fun fetchChannels(): rx.Observable<MutableList<Channel>> {
         val ref = fireBaseDb.database.getReference("categories")
 
         return RxFirebaseDatabase

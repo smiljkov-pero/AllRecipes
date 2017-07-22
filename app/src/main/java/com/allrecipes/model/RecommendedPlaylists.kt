@@ -1,6 +1,8 @@
 package com.allrecipes.model
 
+import com.google.gson.annotations.SerializedName
+
 class RecommendedPlaylists {
-    val visible: Boolean = true
-    val channelId: String = ""
+    @SerializedName("visible") val visible: Boolean = true
+    @SerializedName("channelId") val channelId: String = ""
 }
