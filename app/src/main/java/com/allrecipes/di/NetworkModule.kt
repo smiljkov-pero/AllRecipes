@@ -9,6 +9,9 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
+import okhttp3.logging.HttpLoggingInterceptor
+
+
 
 
 @Module
@@ -19,6 +22,10 @@ class NetworkModule(val mBaseUrl: String) {
     internal fun provideRetrofit(context: Context): Retrofit {
         val httpClient: OkHttpClient
         val builder: OkHttpClient.Builder = OkHttpClient.Builder()
+
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.level = HttpLoggingInterceptor.Level.BODY
+        builder.addInterceptor(interceptor)
 
         val CACHE_SIZE_BYTES = 1024 * 1024 * 2
 

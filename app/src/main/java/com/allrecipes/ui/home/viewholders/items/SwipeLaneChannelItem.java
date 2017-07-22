@@ -12,6 +12,7 @@ import com.allrecipes.model.video.VideoItem;
 import com.allrecipes.ui.home.adapters.SwapLaneChannelAdapter;
 import com.allrecipes.ui.home.viewholders.BaseHomeScreenItem;
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper;
+import com.allrecipes.ui.home.viewholders.listeners.SwipeLaneItemClickListener;
 
 import java.util.List;
 
@@ -21,10 +22,12 @@ import butterknife.ButterKnife;
 public class SwipeLaneChannelItem extends BaseHomeScreenItem {
 
     private YoutubePlaylistWithVideos item;
+    private SwipeLaneItemClickListener listener;
 
-    public SwipeLaneChannelItem(HomeScreenModelItemWrapper wrapper) {
+    public SwipeLaneChannelItem(HomeScreenModelItemWrapper wrapper, SwipeLaneItemClickListener listener) {
         super(wrapper);
         this.item = (YoutubePlaylistWithVideos) wrapper.getT();
+        this.listener = listener;
     }
 
     public YoutubePlaylistWithVideos getItem() {
@@ -58,7 +61,7 @@ public class SwipeLaneChannelItem extends BaseHomeScreenItem {
     }
 
     private void initSwapLane(SwipeLineChannelViewHolder viewHolder) {
-        SwapLaneChannelAdapter adapter = new SwapLaneChannelAdapter(item.getVideosResponse().items);
+        SwapLaneChannelAdapter adapter = new SwapLaneChannelAdapter(item.getVideosResponse().items, listener);
         viewHolder.videosRecyclerView.setAdapter(adapter);
     }
 

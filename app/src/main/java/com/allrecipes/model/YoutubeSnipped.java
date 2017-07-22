@@ -33,6 +33,9 @@ public class YoutubeSnipped implements Parcelable {
     @SerializedName("categoryId")
     public long categoryId;
 
+    @SerializedName("resourceId")
+    public YoutubeId resourceId;
+
     public YoutubeSnipped() {
     }
 
@@ -51,6 +54,7 @@ public class YoutubeSnipped implements Parcelable {
         dest.writeStringList(this.tags);
         dest.writeParcelable(this.thumbnails, flags);
         dest.writeLong(this.categoryId);
+        dest.writeParcelable(this.resourceId, flags);
     }
 
     protected YoutubeSnipped(Parcel in) {
@@ -62,6 +66,8 @@ public class YoutubeSnipped implements Parcelable {
         this.tags = in.createStringArrayList();
         this.thumbnails = in.readParcelable(YoutubeThumbnailTypes.class.getClassLoader());
         this.categoryId = in.readLong();
+        this.resourceId = in.readParcelable(YoutubeId.class.getClassLoader());
+
     }
 
     public static final Creator<YoutubeSnipped> CREATOR = new Creator<YoutubeSnipped>() {

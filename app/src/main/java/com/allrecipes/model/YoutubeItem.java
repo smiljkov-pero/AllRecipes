@@ -43,4 +43,13 @@ public class YoutubeItem implements Parcelable {
             return new YoutubeItem[size];
         }
     };
+
+    public YoutubeItem(YoutubeId id, YoutubeSnipped snippet) {
+        this.id = id;
+        this.snippet = snippet;
+    }
+
+    public YoutubeItem(YoutubeSnipped snippet) {
+        this.snippet = snippet;
+    }
 }

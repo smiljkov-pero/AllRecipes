@@ -18,10 +18,17 @@ public class HomeScreenModelItemWrapper {
 
     private Object t;
     private @Type int type;
+    private Object listener;
 
     public HomeScreenModelItemWrapper(Object t, @Type int type) {
         this.t = t;
         this.type = type;
+    }
+
+    public HomeScreenModelItemWrapper(Object t, @Type int type, Object listener) {
+        this.t = t;
+        this.type = type;
+        this.listener = listener;
     }
 
     public Object getT() {
@@ -39,5 +46,9 @@ public class HomeScreenModelItemWrapper {
 
     public void setType(@Type int type) {
         this.type = type;
+    }
+
+    public Object getListener(){
+        return listener;
     }
 }

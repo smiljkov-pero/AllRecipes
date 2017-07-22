@@ -4,6 +4,6 @@ import android.view.View;
 
 import com.allrecipes.model.video.VideoItem;
 
-interface SwipeLaneItemClickListener {
+public interface SwipeLaneItemClickListener {
     void onSwapLaneItemClicked(View view, VideoItem item);
 }

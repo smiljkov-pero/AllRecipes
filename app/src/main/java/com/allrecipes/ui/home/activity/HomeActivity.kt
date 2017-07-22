@@ -18,8 +18,11 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import com.allrecipes.R
+import com.allrecipes.model.YoutubeId
+import com.allrecipes.model.YoutubeItem
 import com.allrecipes.model.Channel
 import com.allrecipes.model.playlist.YoutubePlaylistWithVideos
+import com.allrecipes.model.video.VideoItem
 import com.allrecipes.presenters.HomeScreenPresenter
 import com.allrecipes.ui.BaseActivity
 import com.allrecipes.ui.filters.FiltersActivity
@@ -29,6 +32,7 @@ import com.allrecipes.ui.home.viewholders.HomeScreenItemFactory
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper
 import com.allrecipes.ui.home.viewholders.items.SwipeLaneChannelItem
 import com.allrecipes.ui.home.viewholders.items.YoutubeVideoItem
+import com.allrecipes.ui.home.viewholders.listeners.SwipeLaneItemClickListener
 import com.allrecipes.ui.home.views.HomeScreenView
 import com.allrecipes.ui.videodetails.activity.VideoActivity
 import com.allrecipes.util.KeyboardUtils
@@ -45,7 +49,7 @@ import kotlinx.android.synthetic.main.activity_home.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class HomeActivity : BaseActivity(), HomeScreenView {
+class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneItemClickListener {
 
     private val DOUBLE_CLICK_TIMEOUT = 1000
     private var lastClickTime: Long = 0
@@ -354,7 +358,8 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         if (SystemClock.elapsedRealtime() > lastClickTime + DOUBLE_CLICK_TIMEOUT) {
             lastClickTime = SystemClock.elapsedRealtime()
             if (item.type == R.id.home_screen_video_item) {
-                onItemYoutubeVideoClick(v, item as YoutubeVideoItem)
+                val youtubeVideoItem = item as YoutubeVideoItem
+                onItemYoutubeVideoClick(v, youtubeVideoItem.item)
             } else if (item.type == R.id.home_swimlane_channel_item) {
                 //onItemYoutubeVideoClick(v, item as YoutubeVideoItem)
                 val swipeLaneChannelItem = item as SwipeLaneChannelItem
@@ -372,8 +377,8 @@ class HomeActivity : BaseActivity(), HomeScreenView {
         list.addOnScrollListener(onVendorsScrollListener)
     }
 
-    private fun onItemYoutubeVideoClick(v: View, item: YoutubeVideoItem) {
-        val intent = VideoActivity.newIntent(this, item.item)
+    private fun onItemYoutubeVideoClick(v: View, item: YoutubeItem) {
+        val intent = VideoActivity.newIntent(this, item)
 
         startVideoActivityWithTransition(v, intent)
         overridePendingTransition(0, 0)
@@ -438,7 +443,11 @@ class HomeActivity : BaseActivity(), HomeScreenView {
     }
 
     override fun addSwapLaneChannelItemToAdapter(youtubePlaylistWithVideos: YoutubePlaylistWithVideos) {
-        homeScreenItemAdapter.addModel(0, HomeScreenModelItemWrapper(youtubePlaylistWithVideos, R.id.home_swimlane_channel_item))
+        homeScreenItemAdapter.addModel(0, HomeScreenModelItemWrapper(youtubePlaylistWithVideos, R.id.home_swimlane_channel_item, this))
         layoutManager.scrollToPosition(0)
+    }
+
+    override fun onSwapLaneItemClicked(view: View, item: VideoItem) {
+        onItemYoutubeVideoClick(view, YoutubeItem(YoutubeId(), item.snippet))
     }
 }

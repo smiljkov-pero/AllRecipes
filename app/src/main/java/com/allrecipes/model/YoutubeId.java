@@ -39,6 +39,10 @@ public class YoutubeId implements Parcelable {
     public YoutubeId() {
     }
 
+    public YoutubeId(String videoId) {
+        this.videoId = videoId;
+    }
+
     protected YoutubeId(Parcel in) {
         this.kind = in.readString();
         this.videoId = in.readString();

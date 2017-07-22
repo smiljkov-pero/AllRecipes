@@ -248,7 +248,9 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
     private void loadRecommendedPlayLists(Channel channel){
         Map<String, RecommendedPlaylists> recommendedPlayLists = channel.getRecommendedPlayLists();
         for (Map.Entry<String,RecommendedPlaylists> recommended : recommendedPlayLists.entrySet()) {
-            fetchVideosFromPlaylist(recommended.getValue().getChannelId(), recommended.getKey());
+            if (recommended.getValue().getVisible()) {
+                fetchVideosFromPlaylist(recommended.getValue().getChannelId(), recommended.getKey());
+            }
         }
     }
 
