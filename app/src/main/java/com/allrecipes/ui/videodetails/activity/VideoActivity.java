@@ -151,7 +151,9 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
             video = savedInstanceState.getParcelable(KEY_VIDEO);
         }
 
-        presenter.fetchVideo(video.id != null ? video.id.videoId : video.snippet.resourceId.videoId);
+        presenter.fetchVideo(video.id != null && video.id.videoId != null
+                                 ? video.id.videoId
+                                 : video.snippet.resourceId.videoId);
 
         Picasso.with(this)
             .load(video.snippet.thumbnails.highThumbnail.url)

@@ -18,13 +18,13 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SwapLaneChannelAdapter extends RecyclerView.Adapter<SwapLaneChannelAdapter.ViewHolder> {
+public class SwipeLaneChannelAdapter extends RecyclerView.Adapter<SwipeLaneChannelAdapter.ViewHolder> {
 
     private List<VideoItem> items;
     private SwipeLaneItemClickListener listener;
 
 
-    public SwapLaneChannelAdapter(List<VideoItem> items, SwipeLaneItemClickListener listener) {
+    public SwipeLaneChannelAdapter(List<VideoItem> items, SwipeLaneItemClickListener listener) {
         this.items = items;
         this.listener = listener;
     }

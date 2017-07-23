@@ -121,7 +121,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         if (currentPageToken == null) {
             getView().showLoading();
         }
-        if (TextUtils.isEmpty(searchCriteria)) {
+        if (TextUtils.isEmpty(searchCriteria) && TextUtils.isEmpty(currentPageToken)) {
             loadRecommendedPlayLists(currentChannel);
         }
 
@@ -144,8 +144,10 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
                         }
                         getView().removeBottomListProgress();
                         List<YoutubeItem> items = searchChannelVideosResponse.items;
+                        int position = 0;
                         for (YoutubeItem item : items) {
-                            getView().addYoutubeItemToAdapter(item);
+                            getView().addYoutubeItemToAdapter(item, position);
+                            position++;
                         }
                         pageToken = searchChannelVideosResponse.nextPageToken;
                         getView().hideLoading();
@@ -167,7 +169,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         fetchYoutubeChannelVideos(pageToken, searchCriteria, currentFilterSettings);
     }
 
-    private void fetchPlayListsAndVideos(String channelId) {
+    /*private void fetchPlayListsAndVideos(String channelId) {
         googleYoutubeApiManager.fetchPlaylists(channelId, 50)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -195,10 +197,10 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
                 Log.e("playlist and videos", "error fetchPlayListsAndVideos() " + throwable.getMessage());
             }
         });
-    }
+    }*/
 
-    private void fetchVideosFromPlaylist(final String channelId, final String channelName) {
-        googleYoutubeApiManager.fetchVideosInPlaylist(channelId, 50)
+    private void fetchVideosFromPlaylist(final String channelName,final RecommendedPlaylists recommendedPlaylists) {
+        googleYoutubeApiManager.fetchVideosInPlaylist(recommendedPlaylists.getChannelId(), 50)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<YoutubeVideoResponse>() {
@@ -207,10 +209,10 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
                         YoutubeChannelItem channelItem = new YoutubeChannelItem();
                         YoutubeSnipped youtubeSnipped = new YoutubeSnipped();
                         youtubeSnipped.title = channelName;
-                        youtubeSnipped.channelId = channelId;
+                        youtubeSnipped.channelId = recommendedPlaylists.getChannelId();
                         youtubeSnipped.channelTitle = channelName;
                         channelItem.setSnippet(youtubeSnipped);
-                        getView().addSwapLaneChannelItemToAdapter(new YoutubePlaylistWithVideos(channelItem, youtubeVideoResponse));
+                        getView().addSwapLaneChannelItemToAdapter(new YoutubePlaylistWithVideos(channelItem, youtubeVideoResponse),recommendedPlaylists.getPosition());
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -287,7 +289,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         Map<String, RecommendedPlaylists> recommendedPlayLists = channel.getRecommendedPlaylists();
         for (Map.Entry<String,RecommendedPlaylists> recommended : recommendedPlayLists.entrySet()) {
             if (recommended.getValue().getVisible()) {
-                fetchVideosFromPlaylist(recommended.getValue().getChannelId(), recommended.getKey());
+                fetchVideosFromPlaylist(recommended.getKey(), recommended.getValue());
             }
         }
     }

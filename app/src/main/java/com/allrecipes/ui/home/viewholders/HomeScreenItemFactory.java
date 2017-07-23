@@ -2,6 +2,7 @@ package com.allrecipes.ui.home.viewholders;
 
 
 import com.allrecipes.R;
+import com.allrecipes.ui.home.viewholders.items.HomeAdItem;
 import com.allrecipes.ui.home.viewholders.items.SwipeLaneChannelItem;
 import com.allrecipes.ui.home.viewholders.items.YoutubeVideoItem;
 import com.allrecipes.ui.home.viewholders.listeners.SwipeLaneItemClickListener;
@@ -22,6 +23,8 @@ public class HomeScreenItemFactory implements Function<HomeScreenModelItemWrappe
                 return new YoutubeVideoItem(wrapper);
             case R.id.home_swimlane_channel_item:
                 return new SwipeLaneChannelItem(wrapper, (SwipeLaneItemClickListener) wrapper.getListener());
+            case R.id.item_home_ad:
+                return new HomeAdItem(wrapper);
             default:
                 return new BaseHomeScreenItem(wrapper);
         }

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public interface HomeScreenView extends AbstractPresenterView {
-    void addYoutubeItemToAdapter(YoutubeItem item);
+    void addYoutubeItemToAdapter(YoutubeItem item, int position);
     void removeBottomListProgress();
     void clearAdapterItems();
 
@@ -19,7 +19,7 @@ public interface HomeScreenView extends AbstractPresenterView {
 
     void setToolbarTitleText(@NotNull String value);
 
-    void addSwapLaneChannelItemToAdapter(YoutubePlaylistWithVideos youtubePlaylistWithVideos);
+    void addSwapLaneChannelItemToAdapter(YoutubePlaylistWithVideos youtubePlaylistWithVideos, int position);
 
     void setCurrentFilterSettings(FiltersAndSortSettings filtersAndSortSettings);
 }

@@ -16,6 +16,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.TextUtils
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -38,6 +39,7 @@ import com.allrecipes.ui.home.viewholders.listeners.SwipeLaneItemClickListener
 import com.allrecipes.ui.home.views.HomeScreenView
 import com.allrecipes.ui.videodetails.activity.VideoActivity
 import com.allrecipes.util.KeyboardUtils
+import com.google.android.gms.ads.MobileAds
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.mikepenz.fastadapter.FastAdapter
@@ -77,7 +79,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneItemClickListener 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         getApp().createHomeScreenComponent(this).inject(this)
-
+        //MobileAds.initialize(this, "ca-app-pub-5253357485536416~1123239941")
         presenter.onCreate()
 
         initSwipeRefresh()
@@ -456,8 +458,12 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneItemClickListener 
         })
     }
 
-    override fun addYoutubeItemToAdapter(item: com.allrecipes.model.YoutubeItem) {
+    override fun addYoutubeItemToAdapter(item: com.allrecipes.model.YoutubeItem, position: Int) {
         homeScreenItemAdapter.addModel(HomeScreenModelItemWrapper(item, R.id.home_screen_video_item))
+
+        if (position % 3 == 0) {
+            homeScreenItemAdapter.addModel(HomeScreenModelItemWrapper(null, R.id.item_home_ad))
+        }
     }
 
     override fun showLoading() {
@@ -477,9 +483,13 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneItemClickListener 
         ActivityCompat.startActivityForResult(this, intent, REQ_CODE_RECIPE_VIDEO, options.toBundle())
     }
 
-    override fun addSwapLaneChannelItemToAdapter(youtubePlaylistWithVideos: YoutubePlaylistWithVideos) {
-        homeScreenItemAdapter.addModel(0, HomeScreenModelItemWrapper(youtubePlaylistWithVideos, R.id.home_swimlane_channel_item, this))
-        layoutManager.scrollToPosition(0)
+    override fun addSwapLaneChannelItemToAdapter(youtubePlaylistWithVideos: YoutubePlaylistWithVideos, position: Int) {
+        val currentPosition = layoutManager.findFirstVisibleItemPosition()
+        homeScreenItemAdapter.addModel(position, HomeScreenModelItemWrapper(youtubePlaylistWithVideos, R.id.home_swimlane_channel_item, this))
+        Log.d("HomeActivity", "added swap lane at position = " +position)
+        if (currentPosition == 0 && position == 0) {
+            layoutManager.scrollToPosition(0)
+        }
     }
 
     override fun onSwapLaneItemClicked(view: View, item: VideoItem) {

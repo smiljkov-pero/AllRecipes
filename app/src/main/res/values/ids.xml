@@ -3,6 +3,6 @@
 
     <item name="home_screen_video_item" type="id" />
     <item name="home_swimlane_channel_item" type="id" />
-
+    <item name="item_home_ad" type="id" />
 
 </resources>
