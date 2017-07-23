@@ -98,14 +98,14 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         if (!TextUtils.isEmpty(searchCriteria)) {
             filtersCombined.append(searchCriteria);
             if (!filters.isEmpty()) {
-                filtersCombined.append("|");
+                filtersCombined.append("&");
             }
         }
         for (int i = 0; i < filters.size(); i++) {
             if (filters.get(i).isChecked()) {
                 filtersCombined.append(filters.get(i).getRecipeFilter());
                 if (i < filters.size() - 1) {
-                    filtersCombined.append("&");
+                    filtersCombined.append("|");
                 }
             }
         }
@@ -231,21 +231,28 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
             });
     }
 
-    public void onCreate(final FiltersAndSortSettings currentFilterSettings) {
+    public void onCreate() {
         if (remoteConfigManager.isRemoteConfigNotFetchYet()) {
-            remoteConfigManager.reload(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@android.support.annotation.NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        remoteConfigManager.activateFetched();
-                        initCurrentChannel(currentFilterSettings);
-                    }
-                }
-            });
+            reloadFirebaseRemoteConfig(true);
         } else {
-            initCurrentChannel(currentFilterSettings);
+            initCurrentChannel();
+            reloadFirebaseRemoteConfig(false);
         }
         initFirebaseDBConfig();
+    }
+
+    private void reloadFirebaseRemoteConfig(final boolean proceedWithInit) {
+        remoteConfigManager.reload(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@android.support.annotation.NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    remoteConfigManager.activateFetched();
+                    if (proceedWithInit) {
+                        initCurrentChannel();
+                    }
+                }
+            }
+        });
     }
 
     private void initFirebaseDBConfig() {
@@ -261,7 +268,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         }
     }
 
-    private void initCurrentChannel(FiltersAndSortSettings currentFilterSettings) {
+    private void initCurrentChannel() {
         String lastUsedChannel = localStorageManagerInterface.getString(APP_LAST_CHANNEL_USED, "");
         currentChannel = new GsonBuilder().create().fromJson(lastUsedChannel, Channel.class);
         if (currentChannel == null) {
@@ -272,7 +279,8 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         }
 
         getView().setToolbarTitleText(currentChannel.getName());
-        fetchYoutubeChannelVideos(null, "", currentFilterSettings);
+        FiltersAndSortSettings filtersAndSortSettings = initDefaultFilterAndSortSettings();
+        fetchYoutubeChannelVideos(null, "", filtersAndSortSettings);
     }
 
     private void loadRecommendedPlayLists(Channel channel) {
@@ -313,5 +321,19 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
                 }
             }
         );
+    }
+
+    private FiltersAndSortSettings initDefaultFilterAndSortSettings() {
+        FiltersAndSortSettings filtersAndSortSettings = new FiltersAndSortSettings();
+        filtersAndSortSettings.setSort(remoteConfigManager.getDefaultFilterSort());
+        List<String> remoteFilterCategories = remoteConfigManager.getFilterCategories();
+        if (remoteFilterCategories != null) {
+            for (String filterCategory : remoteFilterCategories) {
+                filtersAndSortSettings.getFilters().add(new RecipeFilterOption(filterCategory, false));
+            }
+        }
+        getView().setCurrentFilterSettings(filtersAndSortSettings);
+
+        return filtersAndSortSettings;
     }
 }

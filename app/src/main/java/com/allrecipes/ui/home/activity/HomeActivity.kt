@@ -6,18 +6,22 @@ import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Bundle
 import android.os.SystemClock
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.util.Pair
 import android.support.v7.widget.LinearLayoutManager
+import android.text.SpannableStringBuilder
+import android.text.Spanned
 import android.text.TextUtils
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import com.allrecipes.R
+import com.allrecipes.custom.RoundedBackgroundSpan
 import com.allrecipes.model.*
 import com.allrecipes.model.playlist.YoutubePlaylistWithVideos
 import com.allrecipes.model.video.VideoItem
@@ -73,11 +77,8 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneItemClickListener 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         getApp().createHomeScreenComponent(this).inject(this)
-        currentFilterSettings.sort = "Date"
-        currentFilterSettings
-            .filters = listOf(RecipeFilterOption("Breakfast", false), RecipeFilterOption("Healthy", false))
 
-        presenter.onCreate(currentFilterSettings)
+        presenter.onCreate()
 
         initSwipeRefresh()
         initRecyclerViewAdapter()
@@ -140,6 +141,10 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneItemClickListener 
         }
     }
 
+    override fun setCurrentFilterSettings(filtersAndSortSettings: FiltersAndSortSettings) {
+        currentFilterSettings = filtersAndSortSettings;
+    }
+
     private fun initSearchTextOnTextChangeEvents() {
         searchTextSubscription = RxTextView.textChangeEvents(searchEditText)
             .debounce(400, TimeUnit.MILLISECONDS)
@@ -178,6 +183,35 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneItemClickListener 
     override fun onResume() {
         super.onResume()
         initSearchTextOnTextChangeEvents()
+        initAppliedFiltersText()
+    }
+
+    fun initAppliedFiltersText() {
+        if (currentFilterSettings.filters.size > 0 && currentFilterSettings.isAtLeastOneFilterSet) {
+            val stringBuilder = SpannableStringBuilder()
+
+            var between = "  "
+            for (tag in currentFilterSettings.filters) {
+                if (tag.isChecked) {
+                    stringBuilder.append(between)
+                    if (between.isEmpty()) between = "  "
+                    val thisTag = "  ${tag.recipeFilter}  "
+                    stringBuilder.append(thisTag)
+                    stringBuilder.setSpan(
+                        RoundedBackgroundSpan(this),
+                        stringBuilder.length - thisTag.length,
+                        stringBuilder.length - thisTag.length + thisTag.length,
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+            }
+            filter_search_divider.visibility = View.VISIBLE
+            applied_filters.text = stringBuilder
+            applied_filters.visibility = View.VISIBLE
+        } else {
+            filter_search_divider.visibility = View.GONE
+            applied_filters.visibility = View.GONE
+        }
     }
 
     private fun hideKeyboard(view: View) {

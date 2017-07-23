@@ -15,12 +15,8 @@ public class FiltersAndSortSettings implements Parcelable {
         filters = new ArrayList<>();
     }
 
-    public static boolean isAtLeastOneFilterOptionSet(FiltersAndSortSettings filtersAndSortSettings) {
-        return isAtLeastOneFilterSet(filtersAndSortSettings);
-    }
-
-    public static boolean isAtLeastOneFilterSet(FiltersAndSortSettings filtersAndSortSettings) {
-        for (RecipeFilterOption filterOption : filtersAndSortSettings.getFilters()) {
+    public boolean isAtLeastOneFilterSet() {
+        for (RecipeFilterOption filterOption : filters) {
             if (filterOption.isChecked()) {
                 return true;
             }
