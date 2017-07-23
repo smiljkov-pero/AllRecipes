@@ -16,7 +16,7 @@ public class FirebaseConfig implements RemoteConfigManager {
     private static final String VIDEO_LIST_ITEMS_PER_PAGE = "video_list_items_per_page";
     private static final String APP_FORCE_UPDATE_VERSION = "app_force_update_version";
 
-    final FirebaseRemoteConfig remoteConfig;
+    private final FirebaseRemoteConfig remoteConfig;
 
     public FirebaseConfig(FirebaseRemoteConfig remoteConfig) {
         this.remoteConfig = remoteConfig;

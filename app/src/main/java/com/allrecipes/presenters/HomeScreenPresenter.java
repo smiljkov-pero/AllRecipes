@@ -9,6 +9,8 @@ import com.allrecipes.managers.LocalStorageManagerInterface;
 import com.allrecipes.managers.remoteconfig.RemoteConfigManager;
 import com.allrecipes.model.DefaultChannel;
 import com.allrecipes.model.Channel;
+import com.allrecipes.model.FiltersAndSortSettings;
+import com.allrecipes.model.RecipeFilterOption;
 import com.allrecipes.model.RecommendedPlaylists;
 import com.allrecipes.model.SearchChannelVideosResponse;
 import com.allrecipes.model.YoutubeItem;
@@ -22,6 +24,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+
+import org.w3c.dom.Text;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
@@ -54,7 +58,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
     private Disposable fetchChannelVideosDisposable;
     Subscription getCategoriesConfigFromFirebaseSubscription;
 
-    private Channel channel;
+    private Channel currentChannel;
     private String pageToken;
 
     public HomeScreenPresenter(
@@ -77,32 +81,57 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         unsubscribe(getCategoriesConfigFromFirebaseSubscription);
     }
 
-    public void onChannelListClick(Channel channel, String sortBy) {
+    public void onChannelListClick(Channel channel, FiltersAndSortSettings currentFilterSettings) {
+        saveLastUsedChannel(channel);
+        this.currentChannel = channel;
+        fetchYoutubeChannelVideos(null, "", currentFilterSettings);
+    }
+
+    private void saveLastUsedChannel(Channel channel) {
         String categoryJson = new GsonBuilder().create().toJson(channel, Channel.class);
         localStorageManagerInterface.putString(APP_LAST_CHANNEL_USED, categoryJson);
-        this.channel = channel;
-        fetchYoutubeChannelVideos(null, "", sortBy);
+    }
+
+    private String constructSearchFromFilters(String searchCriteria, List<RecipeFilterOption> filters) {
+        StringBuilder filtersCombined = new StringBuilder();
+
+        if (!TextUtils.isEmpty(searchCriteria)) {
+            filtersCombined.append(searchCriteria);
+            if (!filters.isEmpty()) {
+                filtersCombined.append("|");
+            }
+        }
+        for (int i = 0; i < filters.size(); i++) {
+            if (filters.get(i).isChecked()) {
+                filtersCombined.append(filters.get(i).getRecipeFilter());
+                if (i < filters.size() - 1) {
+                    filtersCombined.append("&");
+                }
+            }
+        }
+
+        return filtersCombined.toString();
     }
 
     public void fetchYoutubeChannelVideos(
         final String currentPageToken,
         String searchCriteria,
-        String sortBy
+        FiltersAndSortSettings currentFilterSettings
     ) {
         if (currentPageToken == null) {
             getView().showLoading();
         }
-        if (channel !=null && TextUtils.isEmpty(searchCriteria)) {
-            loadRecommendedPlayLists(channel);
+        if (TextUtils.isEmpty(searchCriteria)) {
+            loadRecommendedPlayLists(currentChannel);
         }
 
         fetchChannelVideosDisposable = googleYoutubeApiManager
             .fetchChannelVideos(
-                channel.getChannelId(),
+                currentChannel.getChannelId(),
                 currentPageToken,
                 remoteConfigManager.getVideoListItemsPerPage(),
-                sortBy,
-                searchCriteria
+                currentFilterSettings.getSort(),
+                constructSearchFromFilters(searchCriteria, currentFilterSettings.getFilters())
             )
             .subscribe(new Consumer<SearchChannelVideosResponse>() {
                 @Override
@@ -134,8 +163,8 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
 
     }
 
-    public void onLoadMore(String searchCriteria, String sortBy) {
-        fetchYoutubeChannelVideos(pageToken, searchCriteria, sortBy);
+    public void onLoadMore(String searchCriteria, FiltersAndSortSettings currentFilterSettings) {
+        fetchYoutubeChannelVideos(pageToken, searchCriteria, currentFilterSettings);
     }
 
     private void fetchPlayListsAndVideos(String channelId) {
@@ -202,19 +231,19 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
             });
     }
 
-    public void onCreate(final String sortBy) {
+    public void onCreate(final FiltersAndSortSettings currentFilterSettings) {
         if (remoteConfigManager.isRemoteConfigNotFetchYet()) {
             remoteConfigManager.reload(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@android.support.annotation.NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
                         remoteConfigManager.activateFetched();
-                        initCurrentChannel(sortBy);
+                        initCurrentChannel(currentFilterSettings);
                     }
                 }
             });
         } else {
-            initCurrentChannel(sortBy);
+            initCurrentChannel(currentFilterSettings);
         }
         initFirebaseDBConfig();
     }
@@ -232,20 +261,21 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         }
     }
 
-    private void initCurrentChannel(String sortBy) {
+    private void initCurrentChannel(FiltersAndSortSettings currentFilterSettings) {
         String lastUsedChannel = localStorageManagerInterface.getString(APP_LAST_CHANNEL_USED, "");
-        channel = new GsonBuilder().create().fromJson(lastUsedChannel, Channel.class);
-        if (channel == null) {
+        currentChannel = new GsonBuilder().create().fromJson(lastUsedChannel, Channel.class);
+        if (currentChannel == null) {
             String remoteConfigString = remoteConfigManager.getDefaultChannel();
-            channel = new GsonBuilder().create()
+            currentChannel = new GsonBuilder().create()
                 .fromJson(remoteConfigString, DefaultChannel.class).defaultChannel;
+            saveLastUsedChannel(currentChannel);
         }
 
-        getView().setToolbarTitleText(channel.getName());
-        fetchYoutubeChannelVideos(null, "", sortBy);
+        getView().setToolbarTitleText(currentChannel.getName());
+        fetchYoutubeChannelVideos(null, "", currentFilterSettings);
     }
 
-    private void loadRecommendedPlayLists(Channel channel){
+    private void loadRecommendedPlayLists(Channel channel) {
         Map<String, RecommendedPlaylists> recommendedPlayLists = channel.getRecommendedPlaylists();
         for (Map.Entry<String,RecommendedPlaylists> recommended : recommendedPlayLists.entrySet()) {
             if (recommended.getValue().getVisible()) {
@@ -256,7 +286,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
 
     private void fetchAppConfigFromFirebase(final boolean isConfigAlreadyExist) {
         getCategoriesConfigFromFirebaseSubscription = firebaseDatabaseManager.fetchChannels()
-                .subscribe(
+            .subscribe(
             new Action1<List<Channel>>() {
                 @Override
                 public void call(List<Channel> channels) {
@@ -264,9 +294,11 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
                         if (!isConfigAlreadyExist) {
                             getView().initChannelsListOverlayAdapter(channels, 0);
                         }
-                        /*for (Channel channel : categories) {
-                            fetchPlayListsAndVideos(channel.channelId);
-                        }*/
+                        for (Channel c: channels) {
+                            if (c.getChannelId().equals(currentChannel.getChannelId())) {
+                                saveLastUsedChannel(c);
+                            }
+                        }
                         localStorageManagerInterface.putString(
                             APP_CACHED_FIREBASE_CONFIG,
                             new GsonBuilder().create().toJson(channels)

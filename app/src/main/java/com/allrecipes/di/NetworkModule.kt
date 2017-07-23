@@ -1,6 +1,7 @@
 package com.allrecipes.di
 
 import android.content.Context
+import com.allrecipes.util.AllRecipesNetworkInterceptor
 import dagger.Module
 import dagger.Provides
 import okhttp3.Cache
@@ -26,6 +27,7 @@ class NetworkModule(val mBaseUrl: String) {
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BODY
         builder.addInterceptor(interceptor)
+        builder.addInterceptor(AllRecipesNetworkInterceptor())
 
         val CACHE_SIZE_BYTES = 1024 * 1024 * 2
 
