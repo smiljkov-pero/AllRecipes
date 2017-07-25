@@ -8,6 +8,12 @@ import java.util.List;
 
 public class YoutubeVideoResponse {
 
+    @SerializedName("nextPageToken")
+    public String nextPageToken;
+
+    @SerializedName("prevPageToken")
+    public String prevPageToken;
+
     @SerializedName("pageInfo")
     public PageInfo pageInfo;
 

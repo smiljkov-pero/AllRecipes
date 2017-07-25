@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.allrecipes.R;
 import com.allrecipes.model.video.VideoItem;
-import com.allrecipes.ui.home.viewholders.listeners.SwipeLaneItemClickListener;
+import com.allrecipes.ui.home.viewholders.listeners.SwipeLaneListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -21,10 +21,9 @@ import butterknife.ButterKnife;
 public class SwipeLaneChannelAdapter extends RecyclerView.Adapter<SwipeLaneChannelAdapter.ViewHolder> {
 
     private List<VideoItem> items;
-    private SwipeLaneItemClickListener listener;
+    private SwipeLaneListener listener;
 
-
-    public SwipeLaneChannelAdapter(List<VideoItem> items, SwipeLaneItemClickListener listener) {
+    public SwipeLaneChannelAdapter(List<VideoItem> items, SwipeLaneListener listener) {
         this.items = items;
         this.listener = listener;
     }

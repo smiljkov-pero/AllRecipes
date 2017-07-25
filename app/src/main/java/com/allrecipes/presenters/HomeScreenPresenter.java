@@ -18,6 +18,7 @@ import com.allrecipes.model.YoutubeSnipped;
 import com.allrecipes.model.playlist.YoutubeChannelItem;
 import com.allrecipes.model.playlist.YoutubePlaylistWithVideos;
 import com.allrecipes.model.video.YoutubeVideoResponse;
+import com.allrecipes.ui.home.viewholders.items.SwipeLaneChannelItem;
 import com.allrecipes.ui.home.views.HomeScreenView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,6 +34,7 @@ import java.util.Map;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
@@ -51,6 +53,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
     private final RemoteConfigManager remoteConfigManager;
 
     private Disposable fetchChannelVideosDisposable;
+    private CompositeDisposable disposables = new CompositeDisposable();
     Subscription getCategoriesConfigFromFirebaseSubscription;
 
     private Channel currentChannel;
@@ -75,6 +78,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
     public void unbindAll() {
         dispose(fetchChannelVideosDisposable);
         unsubscribe(getCategoriesConfigFromFirebaseSubscription);
+        disposables.clear();
     }
 
     public void onChannelListClick(Channel channel, FiltersAndSortSettings currentFilterSettings) {
@@ -197,7 +201,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
     }*/
 
     private void fetchVideosFromPlaylist(final String channelName,final RecommendedPlaylists recommendedPlaylists) {
-        googleYoutubeApiManager.fetchVideosInPlaylist(recommendedPlaylists.getChannelId(), 50)
+       Disposable d = googleYoutubeApiManager.fetchVideosInPlaylist(recommendedPlaylists.getChannelId(), 50, null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<YoutubeVideoResponse>() {
@@ -217,10 +221,11 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
                         Log.e("fetchVideosFromPlaylist","",throwable);
                     }
                 });
+        disposables.add(d);
     }
 
     private Observable<YoutubePlaylistWithVideos> getVideosForEachPlaylist(YoutubeChannelItem channel) {
-        Observable<YoutubeVideoResponse> fetchVideosInPlaylistObservable = googleYoutubeApiManager.fetchVideosInPlaylist(channel.getId(), 50);
+        Observable<YoutubeVideoResponse> fetchVideosInPlaylistObservable = googleYoutubeApiManager.fetchVideosInPlaylist(channel.getId(), 50, null);
         return Observable.zip(Observable.just(channel), fetchVideosInPlaylistObservable,
             new BiFunction<YoutubeChannelItem, YoutubeVideoResponse, YoutubePlaylistWithVideos>() {
                 @Override
@@ -335,5 +340,27 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         getView().setCurrentFilterSettings(filtersAndSortSettings);
 
         return filtersAndSortSettings;
+    }
+
+    public void fetchMoreVideosFromPlaylist(SwipeLaneChannelItem item) {
+        final WeakReference<SwipeLaneChannelItem> weakViewReference = new WeakReference<>(item);
+        Disposable d = googleYoutubeApiManager.fetchVideosInPlaylist(item.getItem().getChannel().getId(), 50, item.getItem().getVideosResponse().nextPageToken)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Consumer<YoutubeVideoResponse>() {
+                @Override
+                public void accept(@NonNull YoutubeVideoResponse youtubeVideoResponse) throws Exception {
+                    SwipeLaneChannelItem view = weakViewReference.get();
+                    if (view != null) {
+                        view.loadMore(youtubeVideoResponse);
+                    }
+                }
+            }, new Consumer<Throwable>() {
+                @Override
+                public void accept(@NonNull Throwable throwable) throws Exception {
+                    Log.e("fetchVideosFromPlaylist","",throwable);
+                }
+            });
+        disposables.add(d);
     }
 }

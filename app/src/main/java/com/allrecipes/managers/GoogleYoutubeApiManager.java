@@ -74,11 +74,15 @@ public class GoogleYoutubeApiManager {
             .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<YoutubeVideoResponse> fetchVideosInPlaylist(String playlistId, int maxResults) {
+    public Observable<YoutubeVideoResponse> fetchVideosInPlaylist(String playlistId, int maxResults, String pageToken) {
         HashMap<String, Object> params = new HashMap<>();
         params.put("playlistId", playlistId);
         params.put("part", "snippet");
         params.put("maxResults", maxResults);
+
+        if (pageToken != null) {
+            params.put("pageToken", pageToken);
+        }
 
         return networkApi.fetchVideosInPlaylist(BuildConfig.YOUTUBE_API_KEY, params)
             .subscribeOn(Schedulers.io())

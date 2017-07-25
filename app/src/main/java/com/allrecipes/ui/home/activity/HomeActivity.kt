@@ -37,7 +37,7 @@ import com.allrecipes.ui.home.viewholders.HomeScreenItemFactory
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper
 import com.allrecipes.ui.home.viewholders.items.SwipeLaneChannelItem
 import com.allrecipes.ui.home.viewholders.items.YoutubeVideoItem
-import com.allrecipes.ui.home.viewholders.listeners.SwipeLaneItemClickListener
+import com.allrecipes.ui.home.viewholders.listeners.SwipeLaneListener
 import com.allrecipes.ui.home.views.HomeScreenView
 import com.allrecipes.ui.videodetails.activity.VideoActivity
 import com.allrecipes.util.KeyboardUtils
@@ -55,7 +55,7 @@ import java.util.ArrayList
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneItemClickListener {
+class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
 
     private val DOUBLE_CLICK_TIMEOUT = 1000
     private var lastClickTime: Long = 0
@@ -535,5 +535,9 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneItemClickListener 
 
     override fun onSwapLaneItemClicked(view: View, item: VideoItem) {
         onItemYoutubeVideoClick(view, YoutubeItem(YoutubeId(), item.snippet))
+    }
+
+    override fun loadMoreOnSwipe(position: Int, item: SwipeLaneChannelItem) {
+        presenter.fetchMoreVideosFromPlaylist(item)
     }
 }

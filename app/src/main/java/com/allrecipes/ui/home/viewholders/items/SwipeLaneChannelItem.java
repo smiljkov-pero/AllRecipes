@@ -8,11 +8,14 @@ import android.widget.TextView;
 
 import com.allrecipes.R;
 import com.allrecipes.model.playlist.YoutubePlaylistWithVideos;
+import com.allrecipes.model.video.YoutubeVideoResponse;
 import com.allrecipes.ui.home.adapters.SwipeLaneChannelAdapter;
 import com.allrecipes.ui.home.viewholders.BaseHomeScreenItem;
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper;
-import com.allrecipes.ui.home.viewholders.listeners.SwipeLaneItemClickListener;
+import com.allrecipes.ui.home.viewholders.listeners.SwipeLaneListener;
+import com.mikepenz.fastadapter_extensions.scroll.EndlessRecyclerOnScrollListener;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import butterknife.BindView;
@@ -21,9 +24,10 @@ import butterknife.ButterKnife;
 public class SwipeLaneChannelItem extends BaseHomeScreenItem {
 
     private YoutubePlaylistWithVideos item;
-    private SwipeLaneItemClickListener listener;
+    private SwipeLaneListener listener;
+    private SwipeLaneChannelAdapter adapter;
 
-    public SwipeLaneChannelItem(HomeScreenModelItemWrapper wrapper, SwipeLaneItemClickListener listener) {
+    public SwipeLaneChannelItem(HomeScreenModelItemWrapper wrapper, SwipeLaneListener listener) {
         super(wrapper);
         this.item = (YoutubePlaylistWithVideos) wrapper.getT();
         this.listener = listener;
@@ -59,9 +63,25 @@ public class SwipeLaneChannelItem extends BaseHomeScreenItem {
         initSwapLane(viewHolder);
     }
 
+    public void loadMore(YoutubeVideoResponse youtubeVideoResponse){
+        item.getVideosResponse().items.addAll(youtubeVideoResponse.items);
+        item.getVideosResponse().nextPageToken = youtubeVideoResponse.nextPageToken;
+        //item.getVideosResponse().prevPageToken = youtubeVideoResponse.prevPageToken;
+        adapter.notifyDataSetChanged();
+    }
+
     private void initSwapLane(SwipeLineChannelViewHolder viewHolder) {
-        SwipeLaneChannelAdapter adapter = new SwipeLaneChannelAdapter(item.getVideosResponse().items, listener);
+        adapter = new SwipeLaneChannelAdapter(item.getVideosResponse().items, listener);
         viewHolder.videosRecyclerView.setAdapter(adapter);
+
+        viewHolder.videosRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener() {
+            @Override
+            public void onLoadMore(int currentPage) {
+                if(listener != null) {
+                    listener.loadMoreOnSwipe(0, SwipeLaneChannelItem.this);
+                }
+            }
+        });
     }
 
     protected static class SwipeLineChannelViewHolder extends BaseViewHolder {
