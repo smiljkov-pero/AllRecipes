@@ -1,5 +1,7 @@
 package com.allrecipes.managers;
 
+import android.text.TextUtils;
+
 import com.allrecipes.BuildConfig;
 import com.allrecipes.di.NetworkApi;
 import com.allrecipes.model.SearchChannelVideosResponse;
@@ -25,13 +27,20 @@ public class GoogleYoutubeApiManager {
         String pageToken,
         long maxResults,
         String order,
-        String searchCriteria
+        String searchCriteria,
+        String oAuthToken
     ) {
         HashMap<String, Object> params = new HashMap<>();
         params.put("channelId", channelId);
         params.put("maxResults", maxResults);
         params.put("part", "snippet,id");
         params.put("order", order);
+        if (!TextUtils.isEmpty(oAuthToken)) {
+            params.put("access_token", oAuthToken);
+        } else {
+            params.put("key", BuildConfig.YOUTUBE_API_KEY);
+        }
+
         if (searchCriteria.length() > 0) {
             params.put("q", searchCriteria);
         }
@@ -39,7 +48,7 @@ public class GoogleYoutubeApiManager {
             params.put("pageToken", pageToken);
         }
 
-        return networkApi.fetchChannelVideos(BuildConfig.YOUTUBE_API_KEY, params)
+        return networkApi.fetchChannelVideos(params)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread());
     }

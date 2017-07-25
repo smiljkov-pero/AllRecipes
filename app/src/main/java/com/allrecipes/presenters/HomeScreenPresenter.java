@@ -17,15 +17,12 @@ import com.allrecipes.model.YoutubeItem;
 import com.allrecipes.model.YoutubeSnipped;
 import com.allrecipes.model.playlist.YoutubeChannelItem;
 import com.allrecipes.model.playlist.YoutubePlaylistWithVideos;
-import com.allrecipes.model.playlist.YoutubePlaylistsResponse;
 import com.allrecipes.model.video.YoutubeVideoResponse;
 import com.allrecipes.ui.home.views.HomeScreenView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
-import org.w3c.dom.Text;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
@@ -34,13 +31,11 @@ import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import rx.Subscription;
 import rx.functions.Action1;
@@ -60,6 +55,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
 
     private Channel currentChannel;
     private String pageToken;
+    private String oAuthToken;
 
     public HomeScreenPresenter(
         HomeScreenView view,
@@ -131,7 +127,8 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
                 currentPageToken,
                 remoteConfigManager.getVideoListItemsPerPage(),
                 currentFilterSettings.getSort(),
-                constructSearchFromFilters(searchCriteria, currentFilterSettings.getFilters())
+                constructSearchFromFilters(searchCriteria, currentFilterSettings.getFilters()),
+                oAuthToken
             )
             .subscribe(new Consumer<SearchChannelVideosResponse>() {
                 @Override
@@ -233,7 +230,8 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
             });
     }
 
-    public void onCreate() {
+    public void onCreate(String oAuthToken) {
+        this.oAuthToken = oAuthToken;
         if (remoteConfigManager.isRemoteConfigNotFetchYet()) {
             reloadFirebaseRemoteConfig(true);
         } else {

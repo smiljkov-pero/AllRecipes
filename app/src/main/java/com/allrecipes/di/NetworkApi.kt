@@ -16,10 +16,7 @@ interface NetworkApi {
     }
 
     @GET("search")
-    fun fetchChannelVideos(
-        @Query("key") key: String,
-        @QueryMap queryParams: HashMap<String, Object>
-    ): Observable<SearchChannelVideosResponse>
+    fun fetchChannelVideos(@QueryMap queryParams: HashMap<String, Object>): Observable<SearchChannelVideosResponse>
 
     @GET("videos")
     fun fetchVideo(

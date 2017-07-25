@@ -6,9 +6,10 @@ import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.opengl.Visibility
+import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
+import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.util.Pair
@@ -19,6 +20,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import com.allrecipes.R
@@ -39,7 +41,6 @@ import com.allrecipes.ui.home.viewholders.listeners.SwipeLaneItemClickListener
 import com.allrecipes.ui.home.views.HomeScreenView
 import com.allrecipes.ui.videodetails.activity.VideoActivity
 import com.allrecipes.util.KeyboardUtils
-import com.google.android.gms.ads.MobileAds
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.mikepenz.fastadapter.FastAdapter
@@ -50,6 +51,7 @@ import com.mikepenz.fastadapter_extensions.scroll.EndlessRecyclerOnScrollListene
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_home.*
+import java.util.ArrayList
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -71,16 +73,40 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneItemClickListener 
     private var isAddressesDropDownVisible = false
     private lateinit var searchTextSubscription: Disposable
     private var currentFilterSettings: FiltersAndSortSettings = FiltersAndSortSettings()
+    private lateinit var oAuthToken: String
 
     @Inject
     lateinit var presenter: HomeScreenPresenter
+
+    companion object {
+        val KEY_OAUTH_TOKEN = "KEY_OAUTH_TOKEN"
+
+        fun newIntent(context: Context, oAuthToken: String): Intent {
+            val intent = Intent(context, HomeActivity::class.java)
+            intent.putExtra(KEY_OAUTH_TOKEN, oAuthToken)
+
+            return intent
+        }
+
+        fun newIntent(context: Context): Intent {
+            val intent = Intent(context, HomeActivity::class.java)
+
+            return intent
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         getApp().createHomeScreenComponent(this).inject(this)
+
+        if (savedInstanceState == null) {
+            oAuthToken = intent.getStringExtra(KEY_OAUTH_TOKEN)
+        } else {
+            oAuthToken = savedInstanceState.getString(KEY_OAUTH_TOKEN)
+        }
         //MobileAds.initialize(this, "ca-app-pub-5253357485536416~1123239941")
-        presenter.onCreate()
+        presenter.onCreate(oAuthToken)
 
         initSwipeRefresh()
         initRecyclerViewAdapter()
@@ -115,6 +141,11 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneItemClickListener 
 
         initActionBar()
         setDefaultAddressListDropDownIcons()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(KEY_OAUTH_TOKEN, oAuthToken)
     }
 
     override fun onPause() {
@@ -475,10 +506,20 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneItemClickListener 
         title_text.text = value
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     internal fun startVideoActivityWithTransition(v: View, intent: Intent) {
+        val statusBar = findViewById(android.R.id.statusBarBackground)
+        val navigationBar = findViewById(android.R.id.navigationBarBackground)
+
+        val pairStatusBar = Pair.create(statusBar, Window.STATUS_BAR_BACKGROUND_TRANSITION_NAME)
+        val pairNavigationBar = Pair.create(navigationBar, Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME)
+        val pairVideoImage = Pair.create(v.findViewById(R.id.videoThumbnail), "VideoImageTransition")
+
         val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
             this,
-            Pair<View, String>(v.findViewById(R.id.videoThumbnail), "VideoImageTransition")
+            pairStatusBar,
+            pairNavigationBar,
+            pairVideoImage
         )
         ActivityCompat.startActivityForResult(this, intent, REQ_CODE_RECIPE_VIDEO, options.toBundle())
     }
