@@ -105,14 +105,6 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        if (isFinishing()) {
-            disconnectGoogleApiClient();
-        }
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
 
@@ -135,12 +127,6 @@ public class LoginActivity extends AppCompatActivity implements
                     handleSignInResult(googleSignInResult);
                 }
             });
-        }
-    }
-
-    public void disconnectGoogleApiClient() {
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
         }
     }
 
