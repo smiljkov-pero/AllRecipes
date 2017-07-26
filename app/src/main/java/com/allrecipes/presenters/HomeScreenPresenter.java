@@ -201,7 +201,9 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
     }*/
 
     private void fetchVideosFromPlaylist(final String channelName,final RecommendedPlaylists recommendedPlaylists) {
-       Disposable d = googleYoutubeApiManager.fetchVideosInPlaylist(recommendedPlaylists.getChannelId(), 50, null)
+       Disposable d = googleYoutubeApiManager.fetchVideosInPlaylist(recommendedPlaylists.getChannelId(),
+                                                                    remoteConfigManager.getVideoListItemsPerPage()
+           , null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<YoutubeVideoResponse>() {
@@ -344,7 +346,9 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
 
     public void fetchMoreVideosFromPlaylist(SwipeLaneChannelItem item) {
         final WeakReference<SwipeLaneChannelItem> weakViewReference = new WeakReference<>(item);
-        Disposable d = googleYoutubeApiManager.fetchVideosInPlaylist(item.getItem().getChannel().getId(), 50, item.getItem().getVideosResponse().nextPageToken)
+        Disposable d = googleYoutubeApiManager.fetchVideosInPlaylist(item.getItem().getChannel().getSnippet().channelId,
+                                                                     remoteConfigManager.getVideoListItemsPerPage(),
+                                                                     item.getItem().getVideosResponse().nextPageToken)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Consumer<YoutubeVideoResponse>() {
@@ -358,7 +362,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
             }, new Consumer<Throwable>() {
                 @Override
                 public void accept(@NonNull Throwable throwable) throws Exception {
-                    Log.e("fetchVideosFromPlaylist","",throwable);
+                    Log.e("fetchVideosFromPlaylist", "", throwable);
                 }
             });
         disposables.add(d);
