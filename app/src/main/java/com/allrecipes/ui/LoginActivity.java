@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.allrecipes.R;
@@ -35,6 +36,9 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import java.io.IOException;
 import java.util.Collections;
 
+import butterknife.BindView;
+import butterknife.OnClick;
+
 /**
  * Activity to demonstrate using the Google Sign In API with a Google API that uses the Google
  * Java Client Library rather than a Google Play services API. See {@link GetContactsTask}
@@ -47,6 +51,9 @@ import java.util.Collections;
 public class LoginActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener {
+
+    @BindView(R.id.skip_login)
+    TextView skipLogin;
 
     private static final String TAG = "LoginActivity";
 
@@ -248,8 +255,9 @@ public class LoginActivity extends AppCompatActivity implements
         protected String doInBackground(Account... params) {
             try {
                 GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(
-                        LoginActivity.this,
-                        Collections.singleton(YOUTUBE_SCOPE));
+                    LoginActivity.this,
+                    Collections.singleton(YOUTUBE_SCOPE)
+                );
                 credential.setSelectedAccount(params[0]);
                 String token = credential.getToken();
 
@@ -284,6 +292,12 @@ public class LoginActivity extends AppCompatActivity implements
 
     void startHomeActivityWithToken(String token) {
         Intent intent = HomeActivity.Companion.newIntent(this, token);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.skip_login)
+    public void onSkipLoginClick() {
+        Intent intent = HomeActivity.Companion.newIntent(this);
         startActivity(intent);
     }
 }

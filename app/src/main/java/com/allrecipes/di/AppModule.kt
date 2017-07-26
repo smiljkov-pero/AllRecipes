@@ -39,9 +39,7 @@ class AppModule(private val context: Context) {
 
     @Provides
     @Singleton
-    fun providesFirebaseDatabaseManager(
-        databaseReference: DatabaseReference
-    ): FirebaseDatabaseManager {
+    fun providesFirebaseDatabaseManager(databaseReference: DatabaseReference): FirebaseDatabaseManager {
         return FirebaseDatabaseManager(databaseReference)
     }
 
@@ -61,8 +59,8 @@ class AppModule(private val context: Context) {
     @Singleton
     fun providesFirebaseRemoteConfig(): FirebaseRemoteConfig {
         val configSettings = FirebaseRemoteConfigSettings.Builder()
-                .setDeveloperModeEnabled(BuildConfig.DEBUG)
-                .build()
+            .setDeveloperModeEnabled(BuildConfig.DEBUG)
+            .build()
         val firebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
         firebaseRemoteConfig.setConfigSettings(configSettings)
 

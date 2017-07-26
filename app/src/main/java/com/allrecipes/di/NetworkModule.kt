@@ -13,8 +13,6 @@ import javax.inject.Singleton
 import okhttp3.logging.HttpLoggingInterceptor
 
 
-
-
 @Module
 class NetworkModule(val mBaseUrl: String) {
 
@@ -31,17 +29,16 @@ class NetworkModule(val mBaseUrl: String) {
 
         val CACHE_SIZE_BYTES = 1024 * 1024 * 2
 
-        builder.cache(
-            Cache(context.cacheDir, CACHE_SIZE_BYTES.toLong())
-        )
+        builder.cache(Cache(context.cacheDir, CACHE_SIZE_BYTES.toLong()))
 
         httpClient = builder.build()
+
         return Retrofit.Builder()
-                .baseUrl(mBaseUrl)
-                .client(httpClient)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
+            .baseUrl(mBaseUrl)
+            .client(httpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
     }
 
     @Provides
