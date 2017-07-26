@@ -21,4 +21,6 @@
     <color name="light_grey">#ebebeb</color>
     <color name="grey_background">#f7f7f7</color>
     <color name="transparent">#00000000</color>
+
+    <color name="overlay">#33000000</color>
 </resources>

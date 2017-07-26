@@ -39,8 +39,11 @@ class AppModule(private val context: Context) {
 
     @Provides
     @Singleton
-    fun providesFirebaseDatabaseManager(databaseReference: DatabaseReference): FirebaseDatabaseManager {
-        return FirebaseDatabaseManager(databaseReference)
+    fun providesFirebaseDatabaseManager(
+        databaseReference: DatabaseReference,
+        localStorageManagerInterface: LocalStorageManagerInterface
+    ): FirebaseDatabaseManager {
+        return FirebaseDatabaseManager(databaseReference, localStorageManagerInterface)
     }
 
     @Provides

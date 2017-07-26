@@ -9,6 +9,10 @@ import de.foodora.android.managers.remoteconfig.ForceUpdate;
 public interface RemoteConfigManager {
     boolean isOpenYoutubeNativePlayer();
 
+    boolean showGoogleLogin();
+
+    boolean canSkipLogin();
+
     String getDefaultChannel();
 
     String getDefaultFilterSort();

@@ -15,5 +15,7 @@ interface AppComponent {
 
     operator fun plus(homeScreenModule: HomeScreenModule): HomeScreenComponent
 
+    operator fun plus(launcherScreenModule: LauncherScreenModule): LauncherScreenComponent
+
     operator fun plus(videoDetailsScreenModule: VideoDetailsScreenModule): VideoDetailsScreenComponent
 }

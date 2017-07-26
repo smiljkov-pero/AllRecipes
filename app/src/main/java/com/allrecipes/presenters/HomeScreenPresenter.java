@@ -45,7 +45,6 @@ import rx.functions.Action1;
 public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
 
     private static final String APP_LAST_CHANNEL_USED = "app.lastChannelUsed";
-    private static final String APP_CACHED_FIREBASE_CONFIG = "app.cachedFirebaseConfig";
 
     private final GoogleYoutubeApiManager googleYoutubeApiManager;
     private final LocalStorageManagerInterface localStorageManagerInterface;
@@ -54,7 +53,6 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
 
     private Disposable fetchChannelVideosDisposable;
     private CompositeDisposable disposables = new CompositeDisposable();
-    Subscription getCategoriesConfigFromFirebaseSubscription;
 
     private Channel currentChannel;
     private String pageToken;
@@ -77,7 +75,6 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
     @Override
     public void unbindAll() {
         dispose(fetchChannelVideosDisposable);
-        unsubscribe(getCategoriesConfigFromFirebaseSubscription);
         disposables.clear();
     }
 
@@ -170,36 +167,6 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
         fetchYoutubeChannelVideos(pageToken, searchCriteria, currentFilterSettings);
     }
 
-    /*private void fetchPlayListsAndVideos(String channelId) {
-        googleYoutubeApiManager.fetchPlaylists(channelId, 50)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .flatMap(new Function<YoutubePlaylistsResponse, ObservableSource<YoutubeChannelItem>>() {
-                @Override
-                public ObservableSource<YoutubeChannelItem> apply(@NonNull YoutubePlaylistsResponse youtubePlaylistsResponse) throws Exception {
-                    return Observable.fromIterable(youtubePlaylistsResponse.getItems());
-                }
-            })
-            .flatMap(new Function<YoutubeChannelItem, ObservableSource<YoutubePlaylistWithVideos>>() {
-                @Override
-                public ObservableSource<YoutubePlaylistWithVideos> apply(@NonNull YoutubeChannelItem youtubeChannelItem) throws Exception {
-                    return getVideosForEachPlaylist(youtubeChannelItem);
-                }
-            }).subscribe(new Consumer<YoutubePlaylistWithVideos>() {
-            @Override
-            public void accept(@NonNull YoutubePlaylistWithVideos youtubePlaylistWithVideos) throws Exception {
-                Log.d("playlist and videos", "playlist name: " + youtubePlaylistWithVideos.getChannel().getSnippet().title);
-                Log.d("playlist and videos", "playlist videos size: " + youtubePlaylistWithVideos.getVideosResponse().items.size());
-                getView().addSwapLaneChannelItemToAdapter(youtubePlaylistWithVideos);
-            }
-        }, new Consumer<Throwable>() {
-            @Override
-            public void accept(@NonNull Throwable throwable) throws Exception {
-                Log.e("playlist and videos", "error fetchPlayListsAndVideos() " + throwable.getMessage());
-            }
-        });
-    }*/
-
     private void fetchVideosFromPlaylist(final String channelName,final RecommendedPlaylists recommendedPlaylists) {
        Disposable d = googleYoutubeApiManager.fetchVideosInPlaylist(recommendedPlaylists.getChannelId(), 50, null)
                 .subscribeOn(Schedulers.io())
@@ -237,55 +204,15 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
 
     public void onCreate(String oAuthToken) {
         this.oAuthToken = oAuthToken;
-        if (remoteConfigManager.isRemoteConfigNotFetchYet()) {
-            reloadFirebaseRemoteConfig(true);
-        } else {
-            initCurrentChannel();
-            reloadFirebaseRemoteConfig(false);
-        }
-        initFirebaseDBConfig();
-    }
 
-    private void reloadFirebaseRemoteConfig(final boolean proceedWithInit) {
-        remoteConfigManager.reload(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@android.support.annotation.NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    remoteConfigManager.activateFetched();
-                    if (proceedWithInit) {
-                        initCurrentChannel();
-                    }
-                }
-            }
-        });
-    }
-
-    private void initFirebaseDBConfig() {
-        String appConfig = localStorageManagerInterface.getString(APP_CACHED_FIREBASE_CONFIG, "");
-
-        if (!TextUtils.isEmpty(appConfig)) {
-            Type listType = new TypeToken<ArrayList<Channel>>(){}.getType();
-            List<Channel> categories = new GsonBuilder().create().fromJson(appConfig, listType);
-            getView().initChannelsListOverlayAdapter(categories, 0);
-            fetchAppConfigFromFirebase(true);
-        } else {
-            fetchAppConfigFromFirebase(false);
-        }
-    }
-
-    private void initCurrentChannel() {
         String lastUsedChannel = localStorageManagerInterface.getString(APP_LAST_CHANNEL_USED, "");
         currentChannel = new GsonBuilder().create().fromJson(lastUsedChannel, Channel.class);
-        if (currentChannel == null) {
-            String remoteConfigString = remoteConfigManager.getDefaultChannel();
-            currentChannel = new GsonBuilder().create()
-                .fromJson(remoteConfigString, DefaultChannel.class).defaultChannel;
-            saveLastUsedChannel(currentChannel);
-        }
 
         getView().setToolbarTitleText(currentChannel.getName());
         FiltersAndSortSettings filtersAndSortSettings = initDefaultFilterAndSortSettings();
         fetchYoutubeChannelVideos(null, "", filtersAndSortSettings);
+
+        getView().initChannelsListOverlayAdapter(firebaseDatabaseManager.restoreFirebaseConfig(), 0);
     }
 
     private void loadRecommendedPlayLists(Channel channel) {
@@ -295,37 +222,6 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
                 fetchVideosFromPlaylist(recommended.getKey(), recommended.getValue());
             }
         }
-    }
-
-    private void fetchAppConfigFromFirebase(final boolean isConfigAlreadyExist) {
-        getCategoriesConfigFromFirebaseSubscription = firebaseDatabaseManager.fetchChannels()
-            .subscribe(
-            new Action1<List<Channel>>() {
-                @Override
-                public void call(List<Channel> channels) {
-                    if (isSubscribedAndViewAvailable(getCategoriesConfigFromFirebaseSubscription)) {
-                        if (!isConfigAlreadyExist) {
-                            getView().initChannelsListOverlayAdapter(channels, 0);
-                        }
-                        for (Channel c: channels) {
-                            if (c.getChannelId().equals(currentChannel.getChannelId())) {
-                                saveLastUsedChannel(c);
-                            }
-                        }
-                        localStorageManagerInterface.putString(
-                            APP_CACHED_FIREBASE_CONFIG,
-                            new GsonBuilder().create().toJson(channels)
-                        );
-                    }
-                }
-            },
-            new Action1<Throwable>() {
-                @Override
-                public void call(Throwable throwable) {
-                    Log.e("getting_app_config", "", throwable);
-                }
-            }
-        );
     }
 
     private FiltersAndSortSettings initDefaultFilterAndSortSettings() {

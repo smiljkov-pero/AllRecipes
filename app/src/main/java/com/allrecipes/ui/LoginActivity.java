@@ -2,19 +2,17 @@ package com.allrecipes.ui;
 
 import android.accounts.Account;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.allrecipes.R;
 import com.allrecipes.ui.home.activity.HomeActivity;
-import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -28,27 +26,21 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
-import java.io.IOException;
 import java.util.Collections;
+import java.util.concurrent.Callable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
-/**
- * Activity to demonstrate using the Google Sign In API with a Google API that uses the Google
- * Java Client Library rather than a Google Play services API. See {@link GetContactsTask}
- * for how to access the People API using this method.
- *
- * In order to use this Activity you must enable the People API on your project. Visit the following
- * link and replace 'YOUR_PROJECT_ID' to enable the API:
- * https://console.developers.google.com/apis/api/people.googleapis.com/overview?project=YOUR_PROJECT_ID
- */
 public class LoginActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener {
@@ -68,16 +60,15 @@ public class LoginActivity extends AppCompatActivity implements
     private static final int RC_SIGN_IN = 9001;
     private static final int RC_RECOVERABLE = 9002;
 
-    // Global instance of the HTTP transport
-    private static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
-
-    // Global instance of the JSON factory
-    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-
     private GoogleApiClient mGoogleApiClient;
-
     private Account mAccount;
     private ProgressDialog mProgressDialog;
+
+    public static Intent newIntent(Context context) {
+        Intent intent = new Intent(context, LoginActivity.class);
+
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +105,14 @@ public class LoginActivity extends AppCompatActivity implements
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        if (isFinishing()) {
+            disconnectGoogleApiClient();
+        }
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
 
@@ -139,6 +138,12 @@ public class LoginActivity extends AppCompatActivity implements
         }
     }
 
+    public void disconnectGoogleApiClient() {
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -158,7 +163,7 @@ public class LoginActivity extends AppCompatActivity implements
         // Handling a user-recoverable auth exception
         if (requestCode == RC_RECOVERABLE) {
             if (resultCode == RESULT_OK) {
-                getContacts();
+                getUserYoutubeToken();
             } else {
                 //Toast.makeText(this, R.string.msg_contacts_failed, Toast.LENGTH_SHORT).show();
             }
@@ -196,20 +201,52 @@ public class LoginActivity extends AppCompatActivity implements
             mAccount = account.getAccount();
 
             // Asynchronously access the People API for the account
-            getContacts();
+            getUserYoutubeToken();
         } else {
             // Clear the local account
             mAccount = null;
         }
     }
 
-    private void getContacts() {
+    private void getUserYoutubeToken() {
         if (mAccount == null) {
-            Log.w(TAG, "getContacts: null account");
+            Log.w(TAG, "getUserYoutubeToken: null account");
             return;
         }
 
-        new GetContactsTask().execute(mAccount);
+        Observable.fromCallable(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(
+                    LoginActivity.this,
+                    Collections.singleton(YOUTUBE_SCOPE)
+                );
+                credential.setSelectedAccount(mAccount);
+                String token = credential.getToken();
+
+                return token;
+            }
+        }).subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Consumer<String>() {
+            @Override
+            public void accept(@io.reactivex.annotations.NonNull String token) throws Exception {
+                hideProgressDialog();
+                if (token != null) {
+                    startHomeActivityWithToken(token);
+                    // Display names
+                    //mDetailTextView.setText(getString(R.string.connections_fmt, msg.toString()));
+                } else {
+                    Log.d(TAG, "getUserYoutubeToken:connections: null");
+                    //mDetailTextView.setText(getString(R.string.connections_fmt, "None"));
+                }
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(@io.reactivex.annotations.NonNull Throwable throwable) throws Exception {
+
+            }
+        });
     }
 
     @Override
@@ -242,55 +279,6 @@ public class LoginActivity extends AppCompatActivity implements
         }
     }
 
-    /**
-     * AsyncTask that uses the credentials from Google Sign In to access the People API.
-     */
-    private class GetContactsTask extends AsyncTask<Account, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showProgressDialog();
-        }
-
-        @Override
-        protected String doInBackground(Account... params) {
-            try {
-                GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(
-                    LoginActivity.this,
-                    Collections.singleton(YOUTUBE_SCOPE)
-                );
-                credential.setSelectedAccount(params[0]);
-                String token = credential.getToken();
-
-                return token;
-            } catch (UserRecoverableAuthIOException userRecoverableException) {
-                Log.w(TAG, "getContacts:recoverable exception", userRecoverableException);
-                startActivityForResult(userRecoverableException.getIntent(), RC_RECOVERABLE);
-            } catch (IOException e) {
-                Log.w(TAG, "getContacts:exception", e);
-            } catch (GoogleAuthException e) {
-                Log.w(TAG, "getToken:exception", e);
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String token) {
-            hideProgressDialog();
-
-            if (token != null) {
-
-                startHomeActivityWithToken(token);
-                // Display names
-                //mDetailTextView.setText(getString(R.string.connections_fmt, msg.toString()));
-            } else {
-                Log.d(TAG, "getContacts:connections: null");
-                //mDetailTextView.setText(getString(R.string.connections_fmt, "None"));
-            }
-        }
-    }
-
     void startHomeActivityWithToken(String token) {
         Intent intent = HomeActivity.Companion.newIntent(this, token);
         startActivity(intent);
@@ -299,6 +287,9 @@ public class LoginActivity extends AppCompatActivity implements
     @OnClick(R.id.skip_login)
     public void onSkipLoginClick() {
         Intent intent = HomeActivity.Companion.newIntent(this);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        finish();
     }
 }

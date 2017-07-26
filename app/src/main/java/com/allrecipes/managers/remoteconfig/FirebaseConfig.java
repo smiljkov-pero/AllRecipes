@@ -21,6 +21,8 @@ public class FirebaseConfig implements RemoteConfigManager {
     private static final String FILTER_CATEGORIES = "filter_categories";
     private static final String DEFAULT_FILTER_SORT = "default_filter_sort";
     private static final String APP_FORCE_UPDATE_VERSION = "app_force_update_version";
+    private static final String SHOW_GOOGLE_LOGIN = "show_google_login";
+    private static final String CAN_SKIP_LOGIN = "can_skip_login";
 
     private final FirebaseRemoteConfig remoteConfig;
 
@@ -31,6 +33,16 @@ public class FirebaseConfig implements RemoteConfigManager {
     @Override
     public boolean isOpenYoutubeNativePlayer() {
         return remoteConfig.getBoolean(OPEN_YOUTUBE_NATIVE_PLAYER);
+    }
+
+    @Override
+    public boolean showGoogleLogin() {
+        return remoteConfig.getBoolean(SHOW_GOOGLE_LOGIN);
+    }
+
+    @Override
+    public boolean canSkipLogin() {
+        return remoteConfig.getBoolean(CAN_SKIP_LOGIN);
     }
 
     @Override
@@ -68,8 +80,7 @@ public class FirebaseConfig implements RemoteConfigManager {
 
     @Override
     public boolean isRemoteConfigNotFetchYet() {
-        return remoteConfig.getInfo().getLastFetchStatus()
-            == FirebaseRemoteConfig.LAST_FETCH_STATUS_NO_FETCH_YET;
+        return remoteConfig.getInfo().getLastFetchStatus() == FirebaseRemoteConfig.LAST_FETCH_STATUS_NO_FETCH_YET;
     }
 
     @Override
