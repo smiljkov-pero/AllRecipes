@@ -73,7 +73,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
     private var isAddressesDropDownVisible = false
     private lateinit var searchTextSubscription: Disposable
     private var currentFilterSettings: FiltersAndSortSettings = FiltersAndSortSettings()
-    private lateinit var oAuthToken: String
+    private var oAuthToken: String? = null
 
     @Inject
     lateinit var presenter: HomeScreenPresenter
@@ -101,9 +101,13 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
         getApp().createHomeScreenComponent(this).inject(this)
 
         if (savedInstanceState == null) {
-            oAuthToken = intent.getStringExtra(KEY_OAUTH_TOKEN)
+            if (intent.hasExtra(KEY_OAUTH_TOKEN)) {
+                oAuthToken = intent.getStringExtra(KEY_OAUTH_TOKEN)
+            }
         } else {
-            oAuthToken = savedInstanceState.getString(KEY_OAUTH_TOKEN)
+            if (savedInstanceState.containsKey(KEY_OAUTH_TOKEN)) {
+                oAuthToken = savedInstanceState.getString(KEY_OAUTH_TOKEN)
+            }
         }
         //MobileAds.initialize(this, "ca-app-pub-5253357485536416~1123239941")
         presenter.onCreate(oAuthToken)

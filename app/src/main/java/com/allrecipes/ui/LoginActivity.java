@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.util.Collections;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -82,7 +83,7 @@ public class LoginActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        ButterKnife.bind(this);
         // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
 
