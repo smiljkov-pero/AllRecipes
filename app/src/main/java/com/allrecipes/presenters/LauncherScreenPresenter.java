@@ -3,14 +3,11 @@ package com.allrecipes.presenters;
 import android.util.Log;
 
 import com.allrecipes.di.managers.FirebaseDatabaseManager;
-import com.allrecipes.managers.GoogleYoutubeApiManager;
 import com.allrecipes.managers.LocalStorageManagerInterface;
 import com.allrecipes.managers.remoteconfig.RemoteConfigManager;
 import com.allrecipes.model.Channel;
 import com.allrecipes.model.DefaultChannel;
-import com.allrecipes.model.video.YoutubeVideoResponse;
 import com.allrecipes.ui.launcher.LauncherView;
-import com.allrecipes.ui.videodetails.views.VideoDetailsView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.GsonBuilder;
@@ -18,9 +15,6 @@ import com.google.gson.GsonBuilder;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import rx.Subscription;
 import rx.functions.Action1;
 
@@ -51,17 +45,17 @@ public class LauncherScreenPresenter extends AbstractPresenter<LauncherView> {
         unsubscribe(getCategoriesConfigFromFirebaseSubscription);
     }
 
-    public void onCreate() {
+    public void onCreate(String token) {
         if (remoteConfigManager.isRemoteConfigNotFetchYet()) {
-            reloadFirebaseRemoteConfig(true);
+            reloadFirebaseRemoteConfig(true, token);
         } else {
-            fetchAppConfigFromFirebase(false);
-            reloadFirebaseRemoteConfig(false);
-            getView().startLoginActivity();
+            fetchAppConfigFromFirebase(false, token);
+            reloadFirebaseRemoteConfig(false, token);
+            getView().startLoginActivity(token);
         }
     }
 
-    private void reloadFirebaseRemoteConfig(final boolean proceedWithInit) {
+    private void reloadFirebaseRemoteConfig(final boolean proceedWithInit, final String token) {
         remoteConfigManager.reload(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@android.support.annotation.NonNull Task<Void> task) {
@@ -72,14 +66,14 @@ public class LauncherScreenPresenter extends AbstractPresenter<LauncherView> {
                         String remoteConfigString = remoteConfigManager.getDefaultChannel();
                         localStorageManagerInterface.putString(APP_LAST_CHANNEL_USED, remoteConfigString);
 
-                        fetchAppConfigFromFirebase(true);
+                        fetchAppConfigFromFirebase(true, token);
                     }
                 }
             }
         });
     }
 
-    private void fetchAppConfigFromFirebase(final boolean initDefaultChannel) {
+    private void fetchAppConfigFromFirebase(final boolean initDefaultChannel, final String token) {
         getCategoriesConfigFromFirebaseSubscription = firebaseDatabaseManager.fetchChannels()
             .subscribe(
                 new Action1<List<Channel>>() {
@@ -99,7 +93,7 @@ public class LauncherScreenPresenter extends AbstractPresenter<LauncherView> {
                             }
 
                             firebaseDatabaseManager.storeFirebaseConfig(channels);
-                            getView().startLoginActivity();
+                            getView().startLoginActivity(token);
                         }
                     }
                 },
