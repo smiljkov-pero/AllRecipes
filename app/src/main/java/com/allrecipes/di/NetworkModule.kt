@@ -1,6 +1,10 @@
 package com.allrecipes.di
 
 import android.content.Context
+import com.allrecipes.App
+import com.allrecipes.BuildConfig
+import com.allrecipes.managers.LocalStorageManagerInterface
+import com.allrecipes.network.HttpClientBuilder
 import com.allrecipes.util.AllRecipesNetworkInterceptor
 import dagger.Module
 import dagger.Provides
@@ -12,27 +16,33 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 import okhttp3.logging.HttpLoggingInterceptor
 
-
 @Module
 class NetworkModule(val mBaseUrl: String) {
 
-    @Singleton
     @Provides
-    internal fun provideRetrofit(context: Context): Retrofit {
-        val httpClient: OkHttpClient
-        val builder: OkHttpClient.Builder = OkHttpClient.Builder()
+    @Singleton
+    fun providesOkHttpClient(
+        context: Context,
+        localStorageManager: LocalStorageManagerInterface
+    ): OkHttpClient {
 
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BODY
-        builder.addInterceptor(interceptor)
-        builder.addInterceptor(AllRecipesNetworkInterceptor())
 
         val CACHE_SIZE_BYTES = 1024 * 1024 * 2
 
-        builder.cache(Cache(context.cacheDir, CACHE_SIZE_BYTES.toLong()))
+        val client = HttpClientBuilder(localStorageManager)
+            .addInterceptor(interceptor)
+            .addInterceptor(AllRecipesNetworkInterceptor())
+            .setCache(Cache(context.cacheDir, CACHE_SIZE_BYTES.toLong()))
+            .build()
 
-        httpClient = builder.build()
+        return client
+    }
 
+    @Singleton
+    @Provides
+    internal fun provideRetrofit(httpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(mBaseUrl)
             .client(httpClient)

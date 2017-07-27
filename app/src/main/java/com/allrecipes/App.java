@@ -37,7 +37,7 @@ public class App extends Application {
             .appModule(new AppModule(getApplicationContext())).build();
     }
 
-    public static AppComponent getAppComponent() {
+    public AppComponent getAppComponent() {
         return appComponent;
     }
 

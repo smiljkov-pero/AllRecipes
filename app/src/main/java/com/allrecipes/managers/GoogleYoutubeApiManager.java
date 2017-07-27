@@ -27,19 +27,13 @@ public class GoogleYoutubeApiManager {
         String pageToken,
         long maxResults,
         String order,
-        String searchCriteria,
-        String oAuthToken
+        String searchCriteria
     ) {
         HashMap<String, Object> params = new HashMap<>();
         params.put("channelId", channelId);
         params.put("maxResults", maxResults);
         params.put("part", "snippet,id");
         params.put("order", order);
-        if (!TextUtils.isEmpty(oAuthToken)) {
-            params.put("access_token", oAuthToken);
-        } else {
-            params.put("key", BuildConfig.YOUTUBE_API_KEY);
-        }
 
         if (searchCriteria.length() > 0) {
             params.put("q", searchCriteria);
@@ -58,7 +52,7 @@ public class GoogleYoutubeApiManager {
         params.put("id", videoId);
         params.put("part", "snippet,contentDetails,statistics");
 
-        return networkApi.fetchVideo(BuildConfig.YOUTUBE_API_KEY, params)
+        return networkApi.fetchVideo(params)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread());
     }
@@ -69,7 +63,7 @@ public class GoogleYoutubeApiManager {
         params.put("part", "snippet,contentDetails");
         params.put("maxResults", maxResults);
 
-        return networkApi.fetchPlaylists(BuildConfig.YOUTUBE_API_KEY, params)
+        return networkApi.fetchPlaylists(params)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread());
     }
@@ -84,7 +78,7 @@ public class GoogleYoutubeApiManager {
             params.put("pageToken", pageToken);
         }
 
-        return networkApi.fetchVideosInPlaylist(BuildConfig.YOUTUBE_API_KEY, params)
+        return networkApi.fetchVideosInPlaylist(params)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread());
     }

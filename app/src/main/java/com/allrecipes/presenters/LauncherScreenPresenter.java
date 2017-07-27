@@ -45,17 +45,17 @@ public class LauncherScreenPresenter extends AbstractPresenter<LauncherView> {
         unsubscribe(getCategoriesConfigFromFirebaseSubscription);
     }
 
-    public void onCreate(String token) {
+    public void onCreate() {
         if (remoteConfigManager.isRemoteConfigNotFetchYet()) {
-            reloadFirebaseRemoteConfig(true, token);
+            reloadFirebaseRemoteConfig(true);
         } else {
-            fetchAppConfigFromFirebase(false, token);
-            reloadFirebaseRemoteConfig(false, token);
-            getView().startLoginActivity(token);
+            fetchAppConfigFromFirebase(false);
+            reloadFirebaseRemoteConfig(false);
+            getView().startLoginActivity();
         }
     }
 
-    private void reloadFirebaseRemoteConfig(final boolean proceedWithInit, final String token) {
+    private void reloadFirebaseRemoteConfig(final boolean proceedWithInit) {
         remoteConfigManager.reload(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@android.support.annotation.NonNull Task<Void> task) {
@@ -66,21 +66,21 @@ public class LauncherScreenPresenter extends AbstractPresenter<LauncherView> {
                         String remoteConfigString = remoteConfigManager.getDefaultChannel();
                         localStorageManagerInterface.putString(APP_LAST_CHANNEL_USED, remoteConfigString);
 
-                        fetchAppConfigFromFirebase(true, token);
+                        fetchAppConfigFromFirebase(true);
                     }
                 }
             }
         });
     }
 
-    private void fetchAppConfigFromFirebase(final boolean initDefaultChannel, final String token) {
+    private void fetchAppConfigFromFirebase(final boolean initDefaultChannel) {
         getCategoriesConfigFromFirebaseSubscription = firebaseDatabaseManager.fetchChannels()
             .subscribe(
                 new Action1<List<Channel>>() {
                     @Override
                     public void call(List<Channel> channels) {
                         if (isSubscribedAndViewAvailable(getCategoriesConfigFromFirebaseSubscription)) {
-
+                            firebaseDatabaseManager.storeFirebaseConfig(channels);
                             if (initDefaultChannel) {
                                 String remoteConfigString = remoteConfigManager.getDefaultChannel();
                                 Channel defaultChannel = new GsonBuilder().create()
@@ -90,10 +90,8 @@ public class LauncherScreenPresenter extends AbstractPresenter<LauncherView> {
                                         saveLastUsedChannel(c);
                                     }
                                 }
+                                getView().startLoginActivity();
                             }
-
-                            firebaseDatabaseManager.storeFirebaseConfig(channels);
-                            getView().startLoginActivity(token);
                         }
                     }
                 },

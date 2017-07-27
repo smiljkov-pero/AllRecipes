@@ -19,20 +19,11 @@ interface NetworkApi {
     fun fetchChannelVideos(@QueryMap queryParams: HashMap<String, Object>): Observable<SearchChannelVideosResponse>
 
     @GET("videos")
-    fun fetchVideo(
-        @Query("key") key: String,
-        @QueryMap queryParams: HashMap<String, Object>
-    ): Observable<YoutubeVideoResponse>
+    fun fetchVideo(@QueryMap queryParams: HashMap<String, Object>): Observable<YoutubeVideoResponse>
 
     @GET("playlists")
-    fun fetchPlaylists(
-        @Query("key") key: String,
-        @QueryMap queryParams: HashMap<String, Object>
-    ): Observable<YoutubePlaylistsResponse>
+    fun fetchPlaylists(@QueryMap queryParams: HashMap<String, Object>): Observable<YoutubePlaylistsResponse>
 
     @GET("playlistItems")
-    fun fetchVideosInPlaylist(
-        @Query("key") key: String,
-        @QueryMap queryParams: HashMap<String, Object>
-    ): Observable<YoutubeVideoResponse>
+    fun fetchVideosInPlaylist(@QueryMap queryParams: HashMap<String, Object>): Observable<YoutubeVideoResponse>
 }

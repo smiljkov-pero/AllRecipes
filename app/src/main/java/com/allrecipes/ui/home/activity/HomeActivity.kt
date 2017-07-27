@@ -1,5 +1,6 @@
 package com.allrecipes.ui.home.activity
 
+import android.accounts.Account
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
@@ -40,7 +41,9 @@ import com.allrecipes.ui.home.viewholders.items.YoutubeVideoItem
 import com.allrecipes.ui.home.viewholders.listeners.SwipeLaneListener
 import com.allrecipes.ui.home.views.HomeScreenView
 import com.allrecipes.ui.videodetails.activity.VideoActivity
+import com.allrecipes.util.Constants
 import com.allrecipes.util.KeyboardUtils
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.mikepenz.fastadapter.FastAdapter
@@ -48,10 +51,13 @@ import com.mikepenz.fastadapter.adapters.FooterAdapter
 import com.mikepenz.fastadapter.adapters.GenericItemAdapter
 import com.mikepenz.fastadapter_extensions.items.ProgressItem
 import com.mikepenz.fastadapter_extensions.scroll.EndlessRecyclerOnScrollListener
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Consumer
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_home.*
-import java.util.ArrayList
+import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -73,17 +79,17 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
     private var isAddressesDropDownVisible = false
     private lateinit var searchTextSubscription: Disposable
     private var currentFilterSettings: FiltersAndSortSettings = FiltersAndSortSettings()
-    private var oAuthToken: String? = null
+    private var loggedInAccount: Account? = null
 
     @Inject
     lateinit var presenter: HomeScreenPresenter
 
     companion object {
-        val KEY_OAUTH_TOKEN = "KEY_OAUTH_TOKEN"
+        val KEY_GOOGLE_ACCOUNT_USER = "KEY_GOOGLE_ACCOUNT_USER"
 
-        fun newIntent(context: Context, oAuthToken: String): Intent {
+        fun newIntent(context: Context, loggedInAccount: Account): Intent {
             val intent = Intent(context, HomeActivity::class.java)
-            intent.putExtra(KEY_OAUTH_TOKEN, oAuthToken)
+            intent.putExtra(KEY_GOOGLE_ACCOUNT_USER, loggedInAccount)
 
             return intent
         }
@@ -101,16 +107,16 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
         getApp().createHomeScreenComponent(this).inject(this)
 
         if (savedInstanceState == null) {
-            if (intent.hasExtra(KEY_OAUTH_TOKEN)) {
-                oAuthToken = intent.getStringExtra(KEY_OAUTH_TOKEN)
+            if (intent.hasExtra(KEY_GOOGLE_ACCOUNT_USER)) {
+                loggedInAccount = intent.getParcelableExtra(KEY_GOOGLE_ACCOUNT_USER)
             }
         } else {
-            if (savedInstanceState.containsKey(KEY_OAUTH_TOKEN)) {
-                oAuthToken = savedInstanceState.getString(KEY_OAUTH_TOKEN)
+            if (savedInstanceState.containsKey(KEY_GOOGLE_ACCOUNT_USER)) {
+                loggedInAccount = savedInstanceState.getParcelable(KEY_GOOGLE_ACCOUNT_USER)
             }
         }
         //MobileAds.initialize(this, "ca-app-pub-5253357485536416~1123239941")
-        presenter.onCreate(oAuthToken)
+        getUserYoutubeToken()
 
         initSwipeRefresh()
         initRecyclerViewAdapter()
@@ -149,7 +155,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(KEY_OAUTH_TOKEN, oAuthToken)
+        outState.putParcelable(KEY_GOOGLE_ACCOUNT_USER, loggedInAccount)
     }
 
     override fun onPause() {
@@ -166,6 +172,36 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
                 currentFilterSettings = data!!.getParcelableExtra(FiltersActivity.KEY_SORT_BY_SETTINGS)
                 presenter.fetchYoutubeChannelVideos(null, searchCriteria, currentFilterSettings)
             }
+        }
+    }
+
+    private fun getUserYoutubeToken() {
+        if (loggedInAccount != null) {
+            showLoading()
+            Observable.fromCallable {
+                val credential = GoogleAccountCredential.usingOAuth2(
+                    this@HomeActivity,
+                    setOf(Constants.YOUTUBE_SCOPE)
+                )
+                credential.selectedAccount = loggedInAccount
+                val token = credential.token
+
+                token
+            }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ token ->
+                    hideLoading()
+                    if (token != null) {
+                        presenter.onCreate(token)
+                    } else {
+                        presenter.onCreate(null)
+                    }
+                }, {
+                    hideLoading()
+                    presenter.onCreate(null)
+                })
+        } else {
+            presenter.onCreate(null)
         }
     }
 
