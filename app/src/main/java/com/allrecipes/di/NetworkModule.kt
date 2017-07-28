@@ -1,10 +1,12 @@
 package com.allrecipes.di
 
 import android.content.Context
+import android.net.ConnectivityManager
 import com.allrecipes.App
 import com.allrecipes.BuildConfig
 import com.allrecipes.managers.LocalStorageManagerInterface
 import com.allrecipes.network.HttpClientBuilder
+import com.allrecipes.network.RequestInterceptor
 import com.allrecipes.util.AllRecipesNetworkInterceptor
 import dagger.Module
 import dagger.Provides
@@ -23,7 +25,8 @@ class NetworkModule(val mBaseUrl: String) {
     @Singleton
     fun providesOkHttpClient(
         context: Context,
-        localStorageManager: LocalStorageManagerInterface
+        localStorageManager: LocalStorageManagerInterface,
+        requestInterceptor: RequestInterceptor
     ): OkHttpClient {
 
         val interceptor = HttpLoggingInterceptor()
@@ -34,6 +37,7 @@ class NetworkModule(val mBaseUrl: String) {
         val client = HttpClientBuilder(localStorageManager)
             .addInterceptor(interceptor)
             .addInterceptor(AllRecipesNetworkInterceptor())
+            .addInterceptor(requestInterceptor)
             .setCache(Cache(context.cacheDir, CACHE_SIZE_BYTES.toLong()))
             .build()
 
@@ -55,5 +59,11 @@ class NetworkModule(val mBaseUrl: String) {
     @Singleton
     internal fun provideApi(retrofit: Retrofit): NetworkApi {
         return retrofit.create(NetworkApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providesRequestInterceptor(connectivityManager: ConnectivityManager): RequestInterceptor {
+        return RequestInterceptor(connectivityManager)
     }
 }

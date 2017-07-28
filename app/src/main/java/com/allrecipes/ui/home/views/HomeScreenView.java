@@ -22,4 +22,6 @@ public interface HomeScreenView extends AbstractPresenterView {
     void addSwapLaneChannelItemToAdapter(YoutubePlaylistWithVideos youtubePlaylistWithVideos, int position);
 
     void setCurrentFilterSettings(FiltersAndSortSettings filtersAndSortSettings);
+
+    void showError(boolean show);
 }

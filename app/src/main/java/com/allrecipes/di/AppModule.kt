@@ -1,6 +1,7 @@
 package com.allrecipes.di
 
 import android.content.Context
+import android.net.ConnectivityManager
 import com.allrecipes.BuildConfig
 import com.allrecipes.di.managers.FirebaseDatabaseManager
 import com.allrecipes.managers.GoogleYoutubeApiManager
@@ -68,5 +69,11 @@ class AppModule(private val context: Context) {
         firebaseRemoteConfig.setConfigSettings(configSettings)
 
         return firebaseRemoteConfig
+    }
+
+    @Provides
+    @Singleton
+    fun providesConnectivityManager(): ConnectivityManager {
+        return context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     }
 }

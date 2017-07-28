@@ -17,6 +17,7 @@ import com.allrecipes.model.YoutubeSnipped;
 import com.allrecipes.model.playlist.YoutubeChannelItem;
 import com.allrecipes.model.playlist.YoutubePlaylistWithVideos;
 import com.allrecipes.model.video.YoutubeVideoResponse;
+import com.allrecipes.network.OfflineException;
 import com.allrecipes.ui.home.viewholders.items.SwipeLaneChannelItem;
 import com.allrecipes.ui.home.views.HomeScreenView;
 import com.allrecipes.util.Constants;
@@ -122,9 +123,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
             )
             .subscribe(new Consumer<SearchChannelVideosResponse>() {
                 @Override
-                public void accept(
-                    @NonNull SearchChannelVideosResponse searchChannelVideosResponse
-                ) throws Exception {
+                public void accept(@NonNull SearchChannelVideosResponse searchChannelVideosResponse) throws Exception {
                     if (isViewAvailable()) {
                         if (currentPageToken == null) {
                             getView().clearAdapterItems();
@@ -146,6 +145,9 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
                     if (isViewAvailable()) {
                         getView().hideLoading();
                         throwable.printStackTrace();
+                        if (throwable instanceof OfflineException) {
+                            getView().showError(true);
+                        }
                     }
                 }
             });

@@ -57,6 +57,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.error_connectivity_layout.*
 import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -142,8 +143,15 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
             searchEditText.setText("")
         }
 
+        RxView.clicks(retryButton)
+            .debounce(700, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+            .subscribe({
+               showError(false)
+               presenter.fetchYoutubeChannelVideos(null, searchCriteria, currentFilterSettings)
+            })
+
         RxView.clicks(sortFilter)
-            .debounce(700, TimeUnit.MILLISECONDS)
+            .debounce(700, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
             .subscribe({
                 val filterIntent = FiltersActivity.newIntent(this@HomeActivity, currentFilterSettings)
                 startActivityForResult(filterIntent, REQ_CODE_CHANGE_FILTER)
@@ -579,5 +587,9 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
 
     override fun loadMoreOnSwipe(position: Int, item: SwipeLaneChannelItem) {
         presenter.fetchMoreVideosFromPlaylist(item)
+    }
+
+    override fun showError(show: Boolean) {
+        error_layout.visibility = if (show) View.VISIBLE else View.GONE
     }
 }

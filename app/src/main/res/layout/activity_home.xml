@@ -1,178 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="com.allrecipes.ui.home.activity.HomeActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/activity_toolbar"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:transitionGroup="true"
-        app:popupTheme="@style/AppTheme"
-        app:theme="@style/ToolbarNormalStyle"
-        tools:targetApi="lollipop">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
 
-        <com.allrecipes.custom.views.AllRecipesTextView
-            android:id="@+id/title_text"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center|center_vertical"
-            android:ellipsize="end"
-            android:gravity="center|center_vertical"
-            android:maxLines="1"
-            android:text="Channels"
-            android:textColor="@color/white"
-            android:textSize="@dimen/s3"
-            app:customFont="fonts/Roboto-Medium.ttf"/>
-
-        <ImageView
-            android:id="@+id/sortFilter"
-            android:layout_width="wrap_content"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/activity_toolbar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginRight="@dimen/d1"
-            android:padding="@dimen/d1"
-            app:srcCompat="@drawable/sort_descending"/>
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:transitionGroup="true"
+            app:popupTheme="@style/AppTheme"
+            app:theme="@style/ToolbarNormalStyle"
+            tools:targetApi="lollipop">
 
-    </android.support.v7.widget.Toolbar>
+            <com.allrecipes.custom.views.AllRecipesTextView
+                android:id="@+id/title_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center|center_vertical"
+                android:ellipsize="end"
+                android:gravity="center|center_vertical"
+                android:maxLines="1"
+                android:text="Channels"
+                android:textColor="@color/white"
+                android:textSize="@dimen/s3"
+                app:customFont="fonts/Roboto-Medium.ttf"/>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/sortFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="@dimen/d1"
+                android:padding="@dimen/d1"
+                app:srcCompat="@drawable/sort_descending"/>
 
-        <android.support.design.widget.CoordinatorLayout
+        </android.support.v7.widget.Toolbar>
+
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/swipeContainer"
+            <android.support.design.widget.CoordinatorLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                android:layout_height="match_parent">
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/list"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:cacheColorHint="@android:color/transparent"
-                    android:clipToPadding="false"
-                    android:dividerHeight="@dimen/d1"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:paddingBottom="@dimen/d1"
-                    android:paddingTop="@dimen/d1"
-                    android:scrollingCache="false"
-                    android:visibility="visible" />
-            </android.support.v4.widget.SwipeRefreshLayout>
+                <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                              android:id="@+id/swipeContainer"
+                                                              android:layout_width="match_parent"
+                                                              android:layout_height="match_parent"
+                                                              app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <android.support.design.widget.AppBarLayout
-                android:id="@+id/app_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/white">
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/list"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:cacheColorHint="@android:color/transparent"
+                        android:clipToPadding="false"
+                        android:dividerHeight="@dimen/d1"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:paddingBottom="@dimen/d1"
+                        android:paddingTop="@dimen/d1"
+                        android:scrollingCache="false"
+                        android:visibility="visible"/>
+                </android.support.v4.widget.SwipeRefreshLayout>
 
-                <LinearLayout
-                    android:id="@+id/search_layout"
+                <android.support.design.widget.AppBarLayout
+                    android:id="@+id/app_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="@dimen/d6_half"
-                    android:orientation="vertical"
-                    app:layout_scrollFlags="scroll|enterAlways">
+                    android:background="@android:color/white">
 
-                    <RelativeLayout
+                    <LinearLayout
+                        android:id="@+id/search_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:minHeight="@dimen/d6_half">
+                        android:minHeight="@dimen/d6_half"
+                        android:orientation="vertical"
+                        app:layout_scrollFlags="scroll|enterAlways">
 
-                        <ImageView
-                            android:id="@+id/search_icon"
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="@dimen/d6_half">
+
+                            <ImageView
+                                android:id="@+id/search_icon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="@dimen/d1_quarter"
+                                android:layout_marginRight="@dimen/d1_quarter"
+                                android:padding="@dimen/d1"
+                                android:src="@drawable/ic_search_gray"/>
+
+                            <EditText
+                                android:id="@+id/searchEditText"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="@dimen/d1"
+                                android:layout_toLeftOf="@+id/search_clear_button"
+                                android:layout_toRightOf="@+id/search_icon"
+                                android:background="@null"
+                                android:gravity="left|center_vertical"
+                                android:hint="e.g. Healthy, Pasta..."
+                                android:imeOptions="actionDone"
+                                android:inputType="textNoSuggestions"
+                                android:lines="1"
+                                android:maxLines="1"
+                                android:singleLine="true"
+                                android:textColor="@color/primary_text"
+                                android:textSize="@dimen/s2"/>
+
+                            <ImageView
+                                android:id="@+id/search_clear_button"
+                                android:layout_width="@dimen/search_clear_button_width"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:background="@color/white"
+                                android:padding="@dimen/d1_quarter"
+                                android:src="@drawable/ic_close_white"
+                                android:tint="@color/primary_text"
+                                android:visibility="gone"/>
+                        </RelativeLayout>
+
+                        <View
+                            android:id="@+id/filter_search_divider"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/d0_eighth"
+                            android:background="@color/listViewDivider"
+                            android:visibility="gone"/>
+
+                        <TextView
+                            android:id="@+id/applied_filters"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_marginLeft="@dimen/d1_quarter"
-                            android:layout_marginRight="@dimen/d1_quarter"
-                            android:padding="@dimen/d1"
-                            android:src="@drawable/ic_search_gray" />
-
-                        <EditText
-                            android:id="@+id/searchEditText"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="@dimen/d1"
-                            android:layout_toLeftOf="@+id/search_clear_button"
-                            android:layout_toRightOf="@+id/search_icon"
-                            android:background="@null"
-                            android:gravity="left|center_vertical"
-                            android:hint="e.g. Healthy, Pasta..."
-                            android:imeOptions="actionDone"
-                            android:inputType="textNoSuggestions"
-                            android:lines="1"
-                            android:maxLines="1"
-                            android:singleLine="true"
-                            android:textColor="@color/primary_text"
-                            android:textSize="@dimen/s2" />
-
-                        <ImageView
-                            android:id="@+id/search_clear_button"
-                            android:layout_width="@dimen/search_clear_button_width"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:background="@color/white"
-                            android:padding="@dimen/d1_quarter"
-                            android:src="@drawable/ic_close_white"
-                            android:tint="@color/primary_text"
+                            android:layout_marginBottom="@dimen/d0_three_quarter"
+                            android:layout_marginLeft="@dimen/d2"
+                            android:layout_marginRight="@dimen/d2"
+                            android:layout_marginTop="@dimen/d0_three_quarter"
                             android:visibility="gone"/>
-                    </RelativeLayout>
+                    </LinearLayout>
 
-                    <View
-                        android:id="@+id/filter_search_divider"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/d0_eighth"
-                        android:background="@color/listViewDivider"
-                        android:visibility="gone"/>
+                </android.support.design.widget.AppBarLayout>
+            </android.support.design.widget.CoordinatorLayout>
 
-                    <TextView
-                        android:id="@+id/applied_filters"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/d0_three_quarter"
-                        android:layout_marginTop="@dimen/d0_three_quarter"
-                        android:layout_marginRight="@dimen/d2"
-                        android:layout_marginLeft="@dimen/d2"
-                        android:visibility="gone"/>
-                </LinearLayout>
-
-            </android.support.design.widget.AppBarLayout>
-        </android.support.design.widget.CoordinatorLayout>
-
-        <RelativeLayout
-            android:id="@+id/containerTopAddressList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="invisible">
-
-            <View
-                android:id="@+id/trans_overlay"
+            <RelativeLayout
+                android:id="@+id/containerTopAddressList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/semi_transparent_black" />
+                android:visibility="invisible">
 
-            <ListView
-                android:id="@+id/dropdown_addresses_listview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:divider="@color/listViewDivider"
-                android:dividerHeight="@dimen/d0_eighth" />
+                <View
+                    android:id="@+id/trans_overlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/semi_transparent_black"/>
 
-        </RelativeLayout>
-    </FrameLayout>
-</LinearLayout>
+                <ListView
+                    android:id="@+id/dropdown_addresses_listview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:divider="@color/listViewDivider"
+                    android:dividerHeight="@dimen/d0_eighth"/>
+
+            </RelativeLayout>
+
+
+        </FrameLayout>
+    </LinearLayout>
+
+    <include
+        android:id="@+id/error_layout"
+        layout="@layout/error_connectivity_layout"
+        android:visibility="gone"/>
+</FrameLayout>

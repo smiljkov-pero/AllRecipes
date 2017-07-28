@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:clickable="true">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/snack_layout">
+
+        <ImageView
+            android:id="@+id/error_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_error_connection"
+            android:scaleType="fitCenter"
+            android:padding="@dimen/d2"/>
+
+    </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/snack_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d7"
+        android:background="@color/design_snackbar_background_color"
+        android:layout_alignParentBottom="true">
+
+        <com.allrecipes.custom.views.AllRecipesTextView
+            android:id="@+id/error_message"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/retryButton"
+            android:gravity="center_vertical|left"
+            android:text="Connection lost"
+            android:textSize="@dimen/design_snackbar_text_size"
+            android:textColor="@android:color/white"
+            android:paddingLeft="@dimen/d3"/>
+
+        <com.allrecipes.custom.views.AllRecipesTextView
+            android:id="@+id/retryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/primary"
+            android:textSize="@dimen/design_snackbar_text_size"
+            android:text="RETRY"
+            android:gravity="center_vertical"
+            android:paddingRight="@dimen/d3"
+            android:paddingLeft="@dimen/d3"
+            android:background="?attr/selectableItemBackground"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>
