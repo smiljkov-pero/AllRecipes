@@ -11,4 +11,8 @@ public interface AbstractPresenterView {
     void hideLoading();
 
     boolean isFinishing();
+
+    void showConnectivityError();
+
+    void hideConnectivityError();
 }

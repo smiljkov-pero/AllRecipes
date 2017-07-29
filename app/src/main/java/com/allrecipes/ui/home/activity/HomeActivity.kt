@@ -143,13 +143,6 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
             searchEditText.setText("")
         }
 
-        RxView.clicks(retryButton)
-            .debounce(700, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
-            .subscribe({
-               showError(false)
-               presenter.fetchYoutubeChannelVideos(null, searchCriteria, currentFilterSettings)
-            })
-
         RxView.clicks(sortFilter)
             .debounce(700, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
             .subscribe({
@@ -470,7 +463,8 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
         fastAdapter.withOnClickListener(onOrdersListClickListener)
     }
 
-    private val onOrdersListClickListener = FastAdapter.OnClickListener<BaseHomeScreenItem> { v, adapter, item, position ->
+    private val onOrdersListClickListener
+        = FastAdapter.OnClickListener<BaseHomeScreenItem> { v, adapter, item, position ->
         if (SystemClock.elapsedRealtime() > lastClickTime + DOUBLE_CLICK_TIMEOUT) {
             lastClickTime = SystemClock.elapsedRealtime()
             if (item.type == R.id.home_screen_video_item) {
@@ -574,7 +568,10 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
 
     override fun addSwapLaneChannelItemToAdapter(youtubePlaylistWithVideos: YoutubePlaylistWithVideos, position: Int) {
         val currentPosition = layoutManager.findFirstVisibleItemPosition()
-        homeScreenItemAdapter.addModel(position, HomeScreenModelItemWrapper(youtubePlaylistWithVideos, R.id.home_swimlane_channel_item, this))
+        homeScreenItemAdapter.addModel(
+            position,
+            HomeScreenModelItemWrapper(youtubePlaylistWithVideos, R.id.home_swimlane_channel_item, this)
+        )
         Log.d("HomeActivity", "added swap lane at position = " +position)
         if (currentPosition == 0 && position == 0) {
             layoutManager.scrollToPosition(0)
@@ -589,7 +586,8 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
         presenter.fetchMoreVideosFromPlaylist(item)
     }
 
-    override fun showError(show: Boolean) {
-        error_layout.visibility = if (show) View.VISIBLE else View.GONE
+    fun retryOnError() {
+        hideConnectivityError()
+        presenter.fetchYoutubeChannelVideos(null, searchCriteria, currentFilterSettings)
     }
 }

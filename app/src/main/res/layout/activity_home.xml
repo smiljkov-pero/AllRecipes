@@ -184,9 +184,4 @@
 
         </FrameLayout>
     </LinearLayout>
-
-    <include
-        android:id="@+id/error_layout"
-        layout="@layout/error_connectivity_layout"
-        android:visibility="gone"/>
 </FrameLayout>

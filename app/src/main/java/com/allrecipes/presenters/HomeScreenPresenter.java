@@ -146,7 +146,7 @@ public class HomeScreenPresenter extends AbstractPresenter<HomeScreenView> {
                         getView().hideLoading();
                         throwable.printStackTrace();
                         if (throwable instanceof OfflineException) {
-                            getView().showError(true);
+                            getView().showConnectivityError();
                         }
                     }
                 }

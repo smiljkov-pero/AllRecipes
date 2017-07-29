@@ -10,10 +10,12 @@ import android.view.WindowManager
 import android.widget.ImageView
 import com.allrecipes.App
 import com.allrecipes.R
+import com.allrecipes.ui.home.activity.HomeActivity
 import com.allrecipes.util.ToastUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
 import com.google.firebase.analytics.FirebaseAnalytics
+import kotlinx.android.synthetic.main.activity_home.*
 
 
 open class BaseActivity : AppCompatActivity() {
@@ -77,5 +79,18 @@ open class BaseActivity : AppCompatActivity() {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             window.statusBarColor = resources.getColor(colorRes)
         }
+    }
+
+    fun showConnectivityError() {
+        val errorLayout = LayoutInflater.from(this).inflate(R.layout.error_connectivity_layout, null)
+        val rootView = findViewById(android.R.id.content) as ViewGroup
+        rootView.addView(errorLayout)
+        errorLayout.findViewById(R.id.retryButton).setOnClickListener {
+            if (this is HomeActivity) this.retryOnError()
+        }
+    }
+
+    fun hideConnectivityError() {
+        (findViewById(android.R.id.content) as ViewGroup).removeView(findViewById(R.id.error_connectivity_layout))
     }
 }
