@@ -15,7 +15,6 @@ import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper;
 import com.allrecipes.ui.home.viewholders.listeners.SwipeLaneListener;
 import com.mikepenz.fastadapter_extensions.scroll.EndlessRecyclerOnScrollListener;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 
 import butterknife.BindView;
