@@ -21,6 +21,6 @@ class VideoDetailsScreenModule(view: VideoDetailsView) {
         googleYoutubeApiManager: GoogleYoutubeApiManager,
         remoteConfigManager: RemoteConfigManager
     ): VideoDetailsScreenPresenter {
-        return VideoDetailsScreenPresenter(view.get(), googleYoutubeApiManager, remoteConfigManager)
+        return VideoDetailsScreenPresenter(view, googleYoutubeApiManager, remoteConfigManager)
     }
 }

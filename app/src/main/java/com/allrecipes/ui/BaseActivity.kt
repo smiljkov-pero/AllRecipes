@@ -10,7 +10,7 @@ import android.view.WindowManager
 import android.widget.ImageView
 import com.allrecipes.App
 import com.allrecipes.R
-import com.allrecipes.ui.home.activity.HomeActivity
+import com.allrecipes.network.OfflineException
 import com.allrecipes.util.ToastUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
@@ -80,21 +80,19 @@ open class BaseActivity : AppCompatActivity() {
         }
     }
 
-    fun showConnectivityError() {
+    private fun showConnectivityError(predicate: () -> Unit) {
         val errorLayout = LayoutInflater.from(this).inflate(R.layout.error_connectivity_layout, null)
         val rootView = findViewById(android.R.id.content) as ViewGroup
         rootView.addView(errorLayout)
         errorLayout.findViewById(R.id.retryButton).setOnClickListener {
-            if (this is HomeActivity) this.retryOnError()
+            hideConnectivityError()
+            predicate()
         }
     }
 
-    fun showConnectivityError(onNoInternet: () -> Unit) {
-        val errorLayout = LayoutInflater.from(this).inflate(R.layout.error_connectivity_layout, null)
-        val rootView = findViewById(android.R.id.content) as ViewGroup
-        rootView.addView(errorLayout)
-        errorLayout.findViewById(R.id.retryButton).setOnClickListener {
-            onNoInternet()
+    fun handleApiError(throwable: Throwable, predicate: () -> Unit) {
+        when(throwable) {
+            is OfflineException -> showConnectivityError(predicate)
         }
     }
 

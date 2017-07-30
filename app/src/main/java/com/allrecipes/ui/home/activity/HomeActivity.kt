@@ -585,9 +585,4 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
     override fun loadMoreOnSwipe(position: Int, item: SwipeLaneChannelItem) {
         presenter.fetchMoreVideosFromPlaylist(item)
     }
-
-    fun retryOnError() {
-        hideConnectivityError()
-        presenter.fetchYoutubeChannelVideos(null, searchCriteria, currentFilterSettings)
-    }
 }

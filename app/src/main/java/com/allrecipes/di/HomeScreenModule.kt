@@ -24,7 +24,7 @@ class HomeScreenModule(view: HomeScreenView) {
         remoteConfigManager: RemoteConfigManager
     ): HomeScreenPresenter {
         return HomeScreenPresenter(
-            view.get(),
+            view,
             googleYoutubeApiManager,
             localStorageManager,
             firebaseDatabaseManager,

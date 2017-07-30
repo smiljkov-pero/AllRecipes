@@ -28,4 +28,6 @@ public interface RemoteConfigManager {
     boolean isRemoteConfigNotFetchYet();
 
     ForceUpdate getForceUpdate();
+
+    int getNumberOfAdsPerItem();
 }

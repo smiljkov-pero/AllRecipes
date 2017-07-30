@@ -23,6 +23,7 @@ public class FirebaseConfig implements RemoteConfigManager {
     private static final String APP_FORCE_UPDATE_VERSION = "app_force_update_version";
     private static final String SHOW_GOOGLE_LOGIN = "show_google_login";
     private static final String CAN_SKIP_LOGIN = "can_skip_login";
+    private static final String INJECT_AD_ON_EACH_N_ITEM = "inject_ad_on_each_n_item";
 
     private final FirebaseRemoteConfig remoteConfig;
 
@@ -62,7 +63,8 @@ public class FirebaseConfig implements RemoteConfigManager {
 
     @Override
     public List<String> getFilterCategories() {
-        Type listType = new TypeToken<List<String>>(){}.getType();
+        Type listType = new TypeToken<List<String>>() {
+        }.getType();
         String filterCategories = remoteConfig.getString(FILTER_CATEGORIES);
 
         return new Gson().fromJson(filterCategories, listType);
@@ -91,5 +93,10 @@ public class FirebaseConfig implements RemoteConfigManager {
         } catch (Exception e) {
             return new ForceUpdate();
         }
+    }
+
+    @Override
+    public int getNumberOfAdsPerItem() {
+        return (int) remoteConfig.getLong(INJECT_AD_ON_EACH_N_ITEM);
     }
 }
