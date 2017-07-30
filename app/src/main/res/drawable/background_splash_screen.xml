@@ -5,7 +5,7 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/recipes_photo"/>
+            android:src="@drawable/splash_screen_big_photo"/>
     </item>
 
 </layer-list>

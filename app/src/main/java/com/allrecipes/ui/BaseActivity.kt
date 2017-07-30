@@ -15,7 +15,6 @@ import com.allrecipes.util.ToastUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
 import com.google.firebase.analytics.FirebaseAnalytics
-import kotlinx.android.synthetic.main.activity_home.*
 
 
 open class BaseActivity : AppCompatActivity() {
@@ -87,6 +86,15 @@ open class BaseActivity : AppCompatActivity() {
         rootView.addView(errorLayout)
         errorLayout.findViewById(R.id.retryButton).setOnClickListener {
             if (this is HomeActivity) this.retryOnError()
+        }
+    }
+
+    fun showConnectivityError(onNoInternet: () -> Unit) {
+        val errorLayout = LayoutInflater.from(this).inflate(R.layout.error_connectivity_layout, null)
+        val rootView = findViewById(android.R.id.content) as ViewGroup
+        rootView.addView(errorLayout)
+        errorLayout.findViewById(R.id.retryButton).setOnClickListener {
+            onNoInternet()
         }
     }
 
