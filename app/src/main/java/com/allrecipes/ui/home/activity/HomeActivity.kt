@@ -24,6 +24,7 @@ import android.view.View
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
+import android.widget.ImageView
 import com.allrecipes.R
 import com.allrecipes.custom.RoundedBackgroundSpan
 import com.allrecipes.model.*

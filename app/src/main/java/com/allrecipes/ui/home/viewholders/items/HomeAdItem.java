@@ -1,10 +1,6 @@
 package com.allrecipes.ui.home.viewholders.items;
 
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.allrecipes.R;
 import com.allrecipes.ui.home.viewholders.BaseHomeScreenItem;
@@ -43,7 +39,9 @@ public class HomeAdItem extends BaseHomeScreenItem {
         super.bindView(holder, payloads);
         HomeAdItem.ViewHolder viewHolder = ((HomeAdItem.ViewHolder) holder);
 
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
+        AdRequest adRequest = new AdRequest.Builder()
+            .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+            .build();
         viewHolder.adView.loadAd(adRequest);
     }
 

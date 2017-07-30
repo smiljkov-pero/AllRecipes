@@ -2,6 +2,7 @@ package com.allrecipes.ui
 
 import android.os.Build
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
@@ -18,14 +19,13 @@ import com.google.firebase.analytics.FirebaseAnalytics
 
 
 open class BaseActivity : AppCompatActivity() {
-    lateinit var mFirebaseAnalytics: FirebaseAnalytics
+    lateinit var firebaseAnalytics: FirebaseAnalytics
     var loadingView: View? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
 
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
     }
 
     fun getApp(): App {
@@ -54,7 +54,7 @@ open class BaseActivity : AppCompatActivity() {
     fun hideLoading() {
         if (loadingView != null) {
             val rootView = findViewById(android.R.id.content) as ViewGroup
-            if (loadingView != null && rootView != null) {
+            if (loadingView != null) {
                 rootView.removeView(loadingView)
             }
         }
@@ -79,6 +79,12 @@ open class BaseActivity : AppCompatActivity() {
             window.statusBarColor = resources.getColor(colorRes)
         }
     }
+    fun handleApiError(throwable: Throwable, predicate: () -> Unit) {
+        when (throwable) {
+            is OfflineException -> showConnectivityError(predicate)
+            else -> showError(throwable, predicate)
+        }
+    }
 
     private fun showConnectivityError(predicate: () -> Unit) {
         val errorLayout = LayoutInflater.from(this).inflate(R.layout.error_connectivity_layout, null)
@@ -90,10 +96,12 @@ open class BaseActivity : AppCompatActivity() {
         }
     }
 
-    fun handleApiError(throwable: Throwable, predicate: () -> Unit) {
-        when(throwable) {
-            is OfflineException -> showConnectivityError(predicate)
-        }
+    private fun showError(throwable: Throwable, predicate: () -> Unit) {
+        Snackbar.make(findViewById(android.R.id.content),
+                      getString(R.string.error_happened_try_again),
+                      Snackbar.LENGTH_LONG)
+            .setAction(getString(R.string.retry)) { predicate() }
+            .show()
     }
 
     fun hideConnectivityError() {
