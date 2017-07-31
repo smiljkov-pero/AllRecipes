@@ -2,10 +2,15 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <item>
+    <item
+        android:drawable="@color/primary"/>
+
+    <item
+        android:left="@dimen/d5"
+        android:right="@dimen/d5">
         <bitmap
             android:gravity="center"
-            android:src="@drawable/splash_screen_big_photo"/>
+            android:src="@drawable/ic_app_launcher_white_text"/>
     </item>
 
 </layer-list>

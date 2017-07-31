@@ -14,9 +14,7 @@
     </style>
 
     <style name="LauncherTheme" parent="@style/AllRecipesTheme">
-<!--
         <item name="android:windowBackground">@drawable/background_splash_screen</item>
--->
         <item name="colorPrimaryDark">@color/overlay</item>
     </style>
 </resources>

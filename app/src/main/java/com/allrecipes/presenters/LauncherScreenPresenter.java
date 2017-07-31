@@ -1,5 +1,6 @@
 package com.allrecipes.presenters;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.allrecipes.di.managers.FirebaseDatabaseManager;
@@ -8,6 +9,9 @@ import com.allrecipes.managers.remoteconfig.RemoteConfigManager;
 import com.allrecipes.model.Channel;
 import com.allrecipes.model.DefaultChannel;
 import com.allrecipes.ui.launcher.LauncherView;
+import com.allrecipes.util.Constants;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.GsonBuilder;
@@ -24,7 +28,7 @@ public class LauncherScreenPresenter extends AbstractPresenter<LauncherView> {
 
     private final RemoteConfigManager remoteConfigManager;
     private final FirebaseDatabaseManager firebaseDatabaseManager;
-    private final LocalStorageManagerInterface localStorageManagerInterface;
+    private final LocalStorageManagerInterface localStorageManager;
 
     Subscription getCategoriesConfigFromFirebaseSubscription;
 
@@ -32,12 +36,12 @@ public class LauncherScreenPresenter extends AbstractPresenter<LauncherView> {
         LauncherView view,
         RemoteConfigManager remoteConfigManager,
         FirebaseDatabaseManager firebaseDatabaseManager,
-        LocalStorageManagerInterface localStorageManagerInterface
+        LocalStorageManagerInterface localStorageManager
     ) {
         super(new WeakReference<>(view));
         this.remoteConfigManager = remoteConfigManager;
         this.firebaseDatabaseManager = firebaseDatabaseManager;
-        this.localStorageManagerInterface = localStorageManagerInterface;
+        this.localStorageManager = localStorageManager;
     }
 
     @Override
@@ -51,7 +55,7 @@ public class LauncherScreenPresenter extends AbstractPresenter<LauncherView> {
         } else {
             fetchAppConfigFromFirebase(false);
             reloadFirebaseRemoteConfig(false);
-            getView().startLoginActivity();
+            checkIfUserWasLoggedInBefore();
         }
     }
 
@@ -64,7 +68,7 @@ public class LauncherScreenPresenter extends AbstractPresenter<LauncherView> {
 
                     if (proceedWithInit) {
                         String remoteConfigString = remoteConfigManager.getDefaultChannel();
-                        localStorageManagerInterface.putString(APP_LAST_CHANNEL_USED, remoteConfigString);
+                        localStorageManager.putString(APP_LAST_CHANNEL_USED, remoteConfigString);
 
                         fetchAppConfigFromFirebase(true);
                     }
@@ -90,7 +94,7 @@ public class LauncherScreenPresenter extends AbstractPresenter<LauncherView> {
                                         saveLastUsedChannel(c);
                                     }
                                 }
-                                getView().startLoginActivity();
+                                checkIfUserWasLoggedInBefore();
                             }
                         }
                     }
@@ -106,6 +110,20 @@ public class LauncherScreenPresenter extends AbstractPresenter<LauncherView> {
 
     private void saveLastUsedChannel(Channel channel) {
         String categoryJson = new GsonBuilder().create().toJson(channel, Channel.class);
-        localStorageManagerInterface.putString(APP_LAST_CHANNEL_USED, categoryJson);
+        localStorageManager.putString(APP_LAST_CHANNEL_USED, categoryJson);
+    }
+
+    private void checkIfUserWasLoggedInBefore() {
+        if (TextUtils.isEmpty(localStorageManager.getString(Constants.GOOGLE_LOGIN_ACCESS_TOKEN, ""))) {
+            getView().startLoginActivity();
+        } else {
+            getView().reloadLoggedInUser();
+        }
+    }
+
+    public void onStart() {
+        if (!TextUtils.isEmpty(localStorageManager.getString(Constants.GOOGLE_LOGIN_ACCESS_TOKEN, ""))) {
+            getView().checkGoogleLogin();
+        }
     }
 }

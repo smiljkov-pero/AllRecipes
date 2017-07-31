@@ -94,6 +94,7 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
             GoogleSignInResult result = opr.get();
             handleSignInResult(result);
         } else {
+            Log.d(TAG, "Not cached sign-in");
             if (remoteConfigManager.showGoogleLogin()) {
                 showProgressDialog();
                 opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
