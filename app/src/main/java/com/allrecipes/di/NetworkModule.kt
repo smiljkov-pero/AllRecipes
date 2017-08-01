@@ -8,6 +8,7 @@ import com.allrecipes.managers.LocalStorageManagerInterface
 import com.allrecipes.network.HttpClientBuilder
 import com.allrecipes.network.RequestInterceptor
 import com.allrecipes.util.AllRecipesNetworkInterceptor
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import okhttp3.Cache
@@ -47,10 +48,14 @@ class NetworkModule(val mBaseUrl: String) {
     @Singleton
     @Provides
     internal fun provideRetrofit(httpClient: OkHttpClient): Retrofit {
+        val gsonBuilder = GsonBuilder()
+            .setDateFormat("yyyy-MM-dd'T'HH:mm:ssz")
+            .create()
+
         return Retrofit.Builder()
             .baseUrl(mBaseUrl)
             .client(httpClient)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gsonBuilder))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
     }

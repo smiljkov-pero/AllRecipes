@@ -1,5 +1,6 @@
 package com.allrecipes.ui.videodetails.activity;
 
+import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.transition.Transition;
 import android.view.MenuItem;
@@ -34,6 +36,8 @@ import com.allrecipes.ui.YoutubePlayerActivity;
 import com.allrecipes.ui.videodetails.views.VideoDetailsView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+
+import java.util.Calendar;
 
 import javax.inject.Inject;
 
@@ -66,6 +70,12 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
     ImageView numberOfLikesIcon;
     @BindView(R.id.number_views)
     TextView numberViews;
+    @BindView(R.id.number_views_label)
+    TextView numberViewsLabel;
+    @BindView(R.id.publishedDate)
+    TextView publishedDate;
+    @BindView(R.id.description_divider)
+    View descriptionDivider;
 
     @Inject
     VideoDetailsScreenPresenter presenter;
@@ -298,7 +308,8 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
         if (isLikeCountBiggerThenThousand) {
             likeCount = likeCount / 1000;
         }
-        numberOfLikes.setText(isLikeCountBiggerThenThousand
+        numberOfLikes.setText(
+            isLikeCountBiggerThenThousand
                 ? likeCount + "K"
                 : item.statistics.likeCount
         );
@@ -309,9 +320,18 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
         if (isViewCountBiggerThenThousand) {
             viewsCount = viewsCount / 1000;
         }
-        numberViews.setText(isViewCountBiggerThenThousand
+        numberViews.setText(
+            isViewCountBiggerThenThousand
                 ? viewsCount + "K"
                 : item.statistics.viewCount
         );
+        numberViewsLabel.setVisibility(View.VISIBLE);
+
+        publishedDate.setText(DateUtils.getRelativeTimeSpanString(
+            item.snippet.publishedAt.getTime(),
+            Calendar.getInstance().getTime().getTime(),
+            0
+        ));
+        descriptionDivider.setVisibility(View.VISIBLE);
     }
 }

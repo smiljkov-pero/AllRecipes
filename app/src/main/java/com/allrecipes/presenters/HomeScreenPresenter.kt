@@ -66,6 +66,9 @@ class HomeScreenPresenter(
                 }
             }
         }
+        if (filtersCombined.contains("|")) {
+            filtersCombined.replace(filtersCombined.length - 1, filtersCombined.length, "")
+        }
 
         return filtersCombined.toString()
     }

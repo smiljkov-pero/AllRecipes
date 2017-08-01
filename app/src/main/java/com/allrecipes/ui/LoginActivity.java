@@ -95,18 +95,14 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
             handleSignInResult(result);
         } else {
             Log.d(TAG, "Not cached sign-in");
-            if (remoteConfigManager.showGoogleLogin()) {
-                showProgressDialog();
-                opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-                    @Override
-                    public void onResult(GoogleSignInResult googleSignInResult) {
-                        hideProgressDialog();
-                        handleSignInResult(googleSignInResult);
-                    }
-                });
-            } else {
-                startHomeActivity();
-            }
+            showProgressDialog();
+            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(@NonNull GoogleSignInResult googleSignInResult) {
+                    hideProgressDialog();
+                    handleSignInResult(googleSignInResult);
+                }
+            });
         }
     }
 
@@ -188,11 +184,6 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.hide();
         }
-    }
-
-    void startHomeActivity() {
-        Intent intent = HomeActivity.Companion.newIntent(this);
-        startActivity(intent);
     }
 
     void startHomeActivityWithGoogleAccount() {

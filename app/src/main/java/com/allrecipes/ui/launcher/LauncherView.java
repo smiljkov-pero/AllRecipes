@@ -9,4 +9,6 @@ public interface LauncherView extends AbstractPresenterView {
     void reloadLoggedInUser();
 
     void checkGoogleLogin();
+
+    void startHomeActivity();
 }

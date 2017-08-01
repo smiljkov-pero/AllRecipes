@@ -5,12 +5,13 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
 import java.util.List;
 
 public class YoutubeSnipped implements Parcelable {
 
     @SerializedName("publishedAt")
-    public String publishedAt;
+    public Date publishedAt;
 
     @SerializedName("title")
     public String title;
@@ -46,7 +47,7 @@ public class YoutubeSnipped implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.publishedAt);
+        dest.writeLong(this.publishedAt != null ? this.publishedAt.getTime() : -1);
         dest.writeString(this.title);
         dest.writeString(this.description);
         dest.writeString(this.channelTitle);
@@ -58,7 +59,8 @@ public class YoutubeSnipped implements Parcelable {
     }
 
     protected YoutubeSnipped(Parcel in) {
-        this.publishedAt = in.readString();
+        long tmpPublishedAt = in.readLong();
+        this.publishedAt = tmpPublishedAt == -1 ? null : new Date(tmpPublishedAt);
         this.title = in.readString();
         this.description = in.readString();
         this.channelTitle = in.readString();
@@ -67,7 +69,6 @@ public class YoutubeSnipped implements Parcelable {
         this.thumbnails = in.readParcelable(YoutubeThumbnailTypes.class.getClassLoader());
         this.categoryId = in.readLong();
         this.resourceId = in.readParcelable(YoutubeId.class.getClassLoader());
-
     }
 
     public static final Creator<YoutubeSnipped> CREATOR = new Creator<YoutubeSnipped>() {
