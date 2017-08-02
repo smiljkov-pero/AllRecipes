@@ -550,17 +550,21 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
         val statusBar = findViewById(android.R.id.statusBarBackground)
         val navigationBar = findViewById(android.R.id.navigationBarBackground)
 
-        val pairStatusBar = Pair.create(statusBar, Window.STATUS_BAR_BACKGROUND_TRANSITION_NAME)
-        val pairNavigationBar = Pair.create(navigationBar, Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME)
+        val pairStatusBar = if (statusBar != null)
+            Pair.create(statusBar, Window.STATUS_BAR_BACKGROUND_TRANSITION_NAME) else null
+        val pairNavigationBar = if (navigationBar != null)
+            Pair.create(navigationBar, Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME) else null
         val pairVideoImage = Pair.create(v.findViewById(R.id.videoThumbnail), "VideoImageTransition")
 
         val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
             this,
-            pairStatusBar,
-            pairNavigationBar,
-            pairVideoImage
+            *toArray(mutableListOf(pairStatusBar, pairNavigationBar, pairVideoImage).filterNotNull())
         )
         ActivityCompat.startActivityForResult(this, intent, REQ_CODE_RECIPE_VIDEO, options.toBundle())
+    }
+
+    inline fun <reified T> toArray(list: List<*>): Array<T> {
+        return (list as List<T>).toTypedArray()
     }
 
     override fun addSwapLaneChannelItemToAdapter(youtubePlaylistWithVideos: YoutubePlaylistWithVideos, position: Int) {

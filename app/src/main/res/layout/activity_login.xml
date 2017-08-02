@@ -42,7 +42,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             android:layout_margin="@dimen/d3"
-            android:text="Skip"
+            android:text="Continue"
             android:textColor="@color/secondary_text"
             android:textSize="@dimen/s3"/>
     </RelativeLayout>
