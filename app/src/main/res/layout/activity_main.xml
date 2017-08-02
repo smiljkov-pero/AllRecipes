@@ -11,18 +11,23 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:background="@color/primary"
+        android:layout_weight="3">
 
-        <TextView
-            android:id="@+id/title_text"
+        <ImageView
+            android:id="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/sign_in_button"
             android:layout_centerInParent="true"
-            android:layout_margin="@dimen/d2"
-            android:text="Sign in with google"
-            android:textColor="@color/primary_text"
-            android:textSize="@dimen/s2"/>
+            app:srcCompat="@drawable/ic_app_launcher_white_text"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:background="@color/primary_dark"
+        android:layout_weight="2">
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"
@@ -30,24 +35,15 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"/>
 
-        <ImageView
-            android:id="@+id/imageView"
+        <TextView
+            android:id="@+id/skip_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/title_text"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="11dp"
-            app:srcCompat="@drawable/ic_app_launcher"/>
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="@dimen/d3"
+            android:text="Skip"
+            android:textColor="@color/secondary_text"
+            android:textSize="@dimen/s3"/>
     </RelativeLayout>
-
-    <TextView
-        android:id="@+id/skip_login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/sign_in_button"
-        android:layout_margin="@dimen/d3"
-        android:layout_gravity="right"
-        android:text="Skip"
-        android:textColor="@color/primary"
-        android:textSize="@dimen/s3"/>
 </LinearLayout>

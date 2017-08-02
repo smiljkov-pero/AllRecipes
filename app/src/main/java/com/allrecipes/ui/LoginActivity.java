@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -37,6 +36,9 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
 
     @BindView(R.id.skip_login)
     TextView skipLogin;
+
+    @BindView(R.id.sign_in_button)
+    SignInButton signInButton;
 
     private static final String TAG = "LoginActivity";
     private static final String KEY_ACCOUNT = "key_account";
@@ -80,8 +82,17 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
 
         skipLogin.setVisibility(remoteConfigManager.canSkipLogin() ? View.VISIBLE : View.GONE);
 
-        SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
+
+        for (int i = 0; i < signInButton.getChildCount(); i++) {
+            View v = signInButton.getChildAt(i);
+
+            if (v instanceof TextView) {
+                TextView tv = (TextView) v;
+                tv.setText("Sign in with Google");
+                return;
+            }
+        }
     }
 
     @Override
