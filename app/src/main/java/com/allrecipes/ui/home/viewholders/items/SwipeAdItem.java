@@ -13,31 +13,31 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class HomeAdItem extends BaseHomeScreenItem {
+public class SwipeAdItem extends BaseHomeScreenItem {
 
-    public HomeAdItem(HomeScreenModelItemWrapper wrapper) {
+    public SwipeAdItem(HomeScreenModelItemWrapper wrapper) {
         super(wrapper);
     }
 
     @Override
     public int getType() {
-        return R.id.home_ad_item;
+        return R.id.swipelane_ad_item;
     }
 
     @Override
     public int getLayoutRes() {
-        return R.layout.item_ad_home;
+        return R.layout.item_ad_swipe_lane;
     }
 
     @Override
-    public HomeAdItem.ViewHolder getViewHolder(View v) {
-        return new HomeAdItem.ViewHolder(v);
+    public SwipeAdItem.ViewHolder getViewHolder(View v) {
+        return new SwipeAdItem.ViewHolder(v);
     }
 
     @Override
     public void bindView(BaseViewHolder holder, List payloads) {
         super.bindView(holder, payloads);
-        HomeAdItem.ViewHolder viewHolder = ((HomeAdItem.ViewHolder) holder);
+        SwipeAdItem.ViewHolder viewHolder = ((SwipeAdItem.ViewHolder) holder);
 
         AdRequest adRequest = new AdRequest.Builder()
             .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)

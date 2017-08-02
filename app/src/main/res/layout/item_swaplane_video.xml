@@ -28,7 +28,6 @@
         android:ellipsize="end"
         android:gravity="start"
         android:lines="1"
-        android:text="adwqqrqwrqwrqwr"
         android:maxLines="1"
         android:singleLine="true"
         android:textColor="@color/primary_text"

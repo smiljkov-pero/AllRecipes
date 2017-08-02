@@ -12,7 +12,10 @@ public class HomeScreenModelItemWrapper {
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
         R.id.home_screen_video_item,
-        R.id.home_swimlane_channel_item
+        R.id.home_swimlane_channel_item,
+        R.id.home_ad_item,
+        R.id.swipelane_video_item,
+        R.id.swipelane_ad_item
     })
     public @interface Type { }
 

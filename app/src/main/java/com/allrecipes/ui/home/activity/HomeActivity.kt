@@ -24,7 +24,6 @@ import android.view.View
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
-import android.widget.ImageView
 import com.allrecipes.R
 import com.allrecipes.custom.RoundedBackgroundSpan
 import com.allrecipes.model.*
@@ -55,11 +54,8 @@ import com.mikepenz.fastadapter_extensions.scroll.EndlessRecyclerOnScrollListene
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.error_connectivity_layout.*
-import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -536,7 +532,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
         homeScreenItemAdapter.addModel(HomeScreenModelItemWrapper(item, R.id.home_screen_video_item))
 
         if (position % 3 == 0) {
-            homeScreenItemAdapter.addModel(HomeScreenModelItemWrapper(null, R.id.item_home_ad))
+            homeScreenItemAdapter.addModel(HomeScreenModelItemWrapper(null, R.id.home_ad_item))
         }
     }
 

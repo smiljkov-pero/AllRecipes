@@ -63,6 +63,11 @@ public class SwipeLaneChannelAdapter extends RecyclerView.Adapter<SwipeLaneChann
     }
 
     @Override
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
+    }
+
+    @Override
     public int getItemCount() {
         return items.size();
     }
