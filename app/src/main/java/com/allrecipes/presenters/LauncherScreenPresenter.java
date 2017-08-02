@@ -115,7 +115,11 @@ public class LauncherScreenPresenter extends AbstractPresenter<LauncherView> {
 
     private void checkIfUserWasLoggedInBefore() {
         if (TextUtils.isEmpty(localStorageManager.getString(Constants.GOOGLE_LOGIN_ACCESS_TOKEN, ""))) {
-            getView().startLoginActivity();
+            if (remoteConfigManager.showGoogleLogin()) {
+                getView().startLoginActivity();
+            } else {
+                getView().startHomeActivity();
+            }
         } else {
             getView().reloadLoggedInUser();
         }

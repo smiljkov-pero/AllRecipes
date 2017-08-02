@@ -55,11 +55,11 @@ public class SwipeLaneChannelAdapter extends RecyclerView.Adapter<SwipeLaneChann
     private void adjustYoutubeImage(final ViewHolder holder, VideoItem item) {
         if (item.snippet != null && item.snippet.thumbnails != null)
             Picasso.with(holder.videoThumbnail.getContext())
-                    .load(item.snippet.thumbnails.mediumThumbnail.url)
-                    .fit()
-                    .centerCrop()
-                    .config(Bitmap.Config.RGB_565)
-                    .into(holder.videoThumbnail);
+                .load(item.snippet.thumbnails.highThumbnail.url)
+                .fit()
+                .centerCrop()
+                .config(Bitmap.Config.RGB_565)
+                .into(holder.videoThumbnail);
     }
 
     @Override

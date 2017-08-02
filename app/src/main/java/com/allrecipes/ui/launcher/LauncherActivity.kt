@@ -58,6 +58,10 @@ class LauncherActivity : BaseActivity(), LauncherView, GoogleApiClient.OnConnect
         startActivity(LoginActivity.newIntent(this))
     }
 
+    override fun startHomeActivity() {
+        startActivity(HomeActivity.newIntent(this))
+    }
+
     override fun reloadLoggedInUser() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestScopes(Scope(Constants.YOUTUBE_SCOPE))
@@ -86,7 +90,7 @@ class LauncherActivity : BaseActivity(), LauncherView, GoogleApiClient.OnConnect
         }
     }
 
-    internal fun startHomeActivityWithGoogleAccount() {
+    fun startHomeActivityWithGoogleAccount() {
         val intent = HomeActivity.newIntent(this, account!!)
         startActivity(intent)
     }

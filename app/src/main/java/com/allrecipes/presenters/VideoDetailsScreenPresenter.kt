@@ -30,15 +30,15 @@ class VideoDetailsScreenPresenter(
         getView().showLoading()
         fetchVideoDisposable = googleYoutubeApiManager.fetchVideo(videoId)
             .subscribe({ response ->
-                           if (isDisposedAndViewAvailable(fetchVideoDisposable)) {
-                               getView().hideLoading()
-                               getView().setVideoDetails(response.items[0])
-                           }
-                       }) { throwable ->
+               if (isDisposedAndViewAvailable(fetchVideoDisposable)) {
+                   getView().hideLoading()
+                   getView().setVideoDetails(response.items[0])
+               }
+            }) { throwable ->
                 if (isDisposedAndViewAvailable(fetchVideoDisposable)) {
                     getView().hideLoading()
                     throwable.printStackTrace()
-                    getView().handleApiError(throwable, {fetchVideo(videoId)})
+                    getView().handleApiError(throwable, { fetchVideo(videoId) })
                 }
             }
     }

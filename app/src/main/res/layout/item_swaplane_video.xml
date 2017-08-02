@@ -13,8 +13,8 @@
 
     <ImageView
         android:id="@+id/videoThumbnail"
-        android:layout_width="270dp"
-        android:layout_height="@dimen/toolbar_layout_image_height"
+        android:layout_width="290dp"
+        android:layout_height="163dp"
         android:scaleType="centerCrop"
         android:src="@color/accent" />
 

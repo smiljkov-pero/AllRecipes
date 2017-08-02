@@ -8,13 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.ImageView
 import com.allrecipes.App
 import com.allrecipes.R
 import com.allrecipes.network.OfflineException
 import com.allrecipes.util.ToastUtils
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget
 import com.google.firebase.analytics.FirebaseAnalytics
 
 
@@ -43,9 +40,6 @@ open class BaseActivity : AppCompatActivity() {
                 rootView.removeView(loadingView)
             } catch (ignore: Exception) {
             }
-            val image = loadingView!!.findViewById(R.id.loadingView) as ImageView
-            val imageViewTarget = GlideDrawableImageViewTarget(image)
-            Glide.with(this).load(R.drawable.eatstreet_loading).into(imageViewTarget)
 
             rootView.addView(loadingView)
         }
@@ -97,11 +91,12 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     private fun showError(throwable: Throwable, predicate: () -> Unit) {
-        Snackbar.make(findViewById(android.R.id.content),
-                      getString(R.string.error_happened_try_again),
-                      Snackbar.LENGTH_LONG)
-            .setAction(getString(R.string.retry)) { predicate() }
-            .show()
+        Snackbar.make(
+            findViewById(android.R.id.content),
+            getString(R.string.error_happened_try_again),
+            Snackbar.LENGTH_LONG
+        ).setAction(getString(R.string.retry)) { predicate() }
+        .show()
     }
 
     fun hideConnectivityError() {
