@@ -5,6 +5,14 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.jakewharton.butterknife'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'AllRecipesKey'
+            keyPassword 'PerVlad#567'
+            storeFile file('../recipes.jks')
+            storePassword 'Ps567608'
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
     defaultConfig {
@@ -21,9 +29,16 @@ android {
         all {
             buildConfigField "String", "YOUTUBE_API_KEY", "\"AIzaSyBjbIL_VsrgXNmkJ5SODu1RBYZx4EHV7mE\""
         }
+        debug {
+            applicationIdSuffix '.dev'
+            debuggable true
+        }
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
+            zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
     compileOptions {

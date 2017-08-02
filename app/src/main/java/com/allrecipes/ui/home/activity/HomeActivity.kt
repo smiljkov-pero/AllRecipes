@@ -485,10 +485,12 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
     }
 
     private fun onItemYoutubeVideoClick(v: View, item: YoutubeItem) {
-        val intent = VideoActivity.newIntent(this, item)
+        if (!item.id.videoId.isNullOrEmpty()) {
+            val intent = VideoActivity.newIntent(this, item)
 
-        startVideoActivityWithTransition(v, intent)
-        overridePendingTransition(0, 0)
+            startVideoActivityWithTransition(v, intent)
+            overridePendingTransition(0, 0)
+        }
     }
 
     private fun createOnVendorsScrollListener() {
