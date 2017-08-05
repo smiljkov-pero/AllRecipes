@@ -5,10 +5,6 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by PeroSmiljkov on 20.06.17.
- */
-
 public class YoutubeId implements Parcelable {
 
     @SerializedName("kind")

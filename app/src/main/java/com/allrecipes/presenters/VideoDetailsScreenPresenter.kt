@@ -1,5 +1,6 @@
 package com.allrecipes.presenters
 
+import com.allrecipes.managers.FavoritesManager
 import com.allrecipes.managers.GoogleYoutubeApiManager
 import com.allrecipes.managers.remoteconfig.RemoteConfigManager
 import com.allrecipes.model.SearchChannelVideosResponse
@@ -17,7 +18,8 @@ import io.reactivex.functions.Consumer
 class VideoDetailsScreenPresenter(
     view: WeakReference<VideoDetailsView>,
     private val googleYoutubeApiManager: GoogleYoutubeApiManager,
-    private val remoteConfigManager: RemoteConfigManager
+    private val remoteConfigManager: RemoteConfigManager,
+    private val favoritesManager: FavoritesManager
 ) : AbstractPresenter<VideoDetailsView>(view) {
 
     private var fetchVideoDisposable: Disposable? = null
@@ -26,19 +28,24 @@ class VideoDetailsScreenPresenter(
         dispose(fetchVideoDisposable)
     }
 
-    fun fetchVideo(videoId: String) {
+    fun fetchVideo(video: YoutubeItem) {
         getView().showLoading()
-        fetchVideoDisposable = googleYoutubeApiManager.fetchVideo(videoId)
+        val id: String
+        if (video.id != null && video.id.videoId != null)
+            id = video.id.videoId
+        else
+            id = video.snippet.resourceId.videoId
+        fetchVideoDisposable = googleYoutubeApiManager.fetchVideo(id)
             .subscribe({ response ->
                if (isDisposedAndViewAvailable(fetchVideoDisposable)) {
                    getView().hideLoading()
-                   getView().setVideoDetails(response.items[0])
+                   getView().setVideoDetails(response.items[0], isSavedAsFavorite(video))
                }
             }) { throwable ->
                 if (isDisposedAndViewAvailable(fetchVideoDisposable)) {
                     getView().hideLoading()
                     throwable.printStackTrace()
-                    getView().handleApiError(throwable, { fetchVideo(videoId) })
+                    getView().handleApiError(throwable, { fetchVideo(video) })
                 }
             }
     }
@@ -49,5 +56,17 @@ class VideoDetailsScreenPresenter(
         } else {
             getView().playVideoWithYoutubeInAppPlayer()
         }
+    }
+
+    fun isSavedAsFavorite(videoItem: YoutubeItem): Boolean {
+        return favoritesManager.findItemInFavorites(videoItem) != null
+    }
+
+    fun removeFavoriteItem(videoItem: YoutubeItem) {
+        favoritesManager.removeChannelFavoriteVideo(videoItem)
+    }
+
+    fun putFavoriteItem(videoItem: YoutubeItem) {
+        favoritesManager.putChannelFavoriteVideo(videoItem)
     }
 }

@@ -8,5 +8,5 @@ public interface VideoDetailsView extends AbstractPresenterView {
 
     void playVideoWithYoutubeNativeAppPlayer();
 
-    void setVideoDetails(VideoItem item);
+    void setVideoDetails(VideoItem item, boolean isFavoriteSaved);
 }

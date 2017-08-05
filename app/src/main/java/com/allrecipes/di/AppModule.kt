@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import com.allrecipes.BuildConfig
 import com.allrecipes.di.managers.FirebaseDatabaseManager
+import com.allrecipes.managers.FavoritesManager
 import com.allrecipes.managers.GoogleYoutubeApiManager
 import com.allrecipes.managers.LocalStorageManager
 import com.allrecipes.managers.LocalStorageManagerInterface
@@ -75,5 +76,11 @@ class AppModule(private val context: Context) {
     @Singleton
     fun providesConnectivityManager(): ConnectivityManager {
         return context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    }
+
+    @Provides
+    @Singleton
+    fun providesFavoritesManager(localStorageManagerInterface: LocalStorageManagerInterface): FavoritesManager {
+        return FavoritesManager(localStorageManagerInterface)
     }
 }

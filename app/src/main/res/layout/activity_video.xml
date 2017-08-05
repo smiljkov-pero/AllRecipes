@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                 xmlns:tools="http://schemas.android.com/tools"
-                                                 android:id="@+id/top_level_view"
-                                                 android:layout_width="match_parent"
-                                                 android:layout_height="match_parent"
-                                                 android:layout_above="@+id/restaurant_footer_actions"
-                                                 android:transitionGroup="true"
-                                                 tools:targetApi="lollipop">
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/top_level_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_above="@+id/restaurant_footer_actions"
+    android:transitionGroup="true"
+    tools:targetApi="lollipop">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar_layout"
@@ -91,17 +92,41 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.allrecipes.custom.views.AllRecipesTextView
-                android:id="@+id/recipe_title"
-                android:layout_width="wrap_content"
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/d2"
-                android:layout_marginRight="@dimen/d2"
                 android:layout_marginTop="@dimen/d2"
-                android:textColor="@color/primary_text"
-                android:textIsSelectable="true"
-                android:textSize="@dimen/s2_half"
-                app:customFont="fonts/Roboto-Medium.ttf"/>
+                android:layout_marginBottom="@dimen/d1">
+
+                <com.allrecipes.custom.views.AllRecipesTextView
+                    android:id="@+id/recipe_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d2"
+                    android:layout_marginRight="@dimen/d2"
+                    android:textColor="@color/primary_text"
+                    android:textIsSelectable="true"
+                    android:textSize="@dimen/s2_half"
+                    app:customFont="fonts/Roboto-Medium.ttf"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/favoriteIcon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+                <ImageView
+                    android:id="@+id/favoriteIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d1"
+                    android:layout_marginRight="@dimen/d1"
+                    android:layout_centerVertical="true"
+                    android:padding="@dimen/d1"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:tag="notSelected"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/ic_favorite_border_black_24dp"/>
+
+            </android.support.constraint.ConstraintLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -111,8 +136,8 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical|left"
                     android:layout_alignParentLeft="true"
+                    android:gravity="center_vertical|left"
                     android:orientation="horizontal">
 
                     <com.allrecipes.custom.views.AllRecipesTextView
@@ -128,8 +153,8 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical|right"
                     android:layout_alignParentRight="true"
+                    android:gravity="center_vertical|right"
                     android:orientation="horizontal">
 
                     <com.allrecipes.custom.views.AllRecipesTextView

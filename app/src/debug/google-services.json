@@ -1,0 +1,73 @@
+{
+  "project_info": {
+    "project_number": "461978387373",
+    "firebase_url": "https://allrecipes-410ba.firebaseio.com",
+    "project_id": "allrecipes-410ba",
+    "storage_bucket": "allrecipes-410ba.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:461978387373:android:c8a9a2a07d7a499e",
+        "android_client_info": {
+          "package_name": "com.allrecipes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "461978387373-vkrvddbd8jpoimadevtk66aflcagsckg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrCLwcyjFUQddWC3fW8R17WyhyixMPNY0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:461978387373:android:929e6bf7e87966de",
+        "android_client_info": {
+          "package_name": "com.allrecipes.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "461978387373-vkrvddbd8jpoimadevtk66aflcagsckg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrCLwcyjFUQddWC3fW8R17WyhyixMPNY0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

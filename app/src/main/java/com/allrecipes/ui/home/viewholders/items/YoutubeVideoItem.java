@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.allrecipes.R;
+import com.allrecipes.model.YoutubeItem;
 import com.allrecipes.ui.home.viewholders.BaseHomeScreenItem;
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper;
 import com.squareup.picasso.Picasso;
@@ -18,11 +19,11 @@ import butterknife.ButterKnife;
 
 public class YoutubeVideoItem extends BaseHomeScreenItem {
 
-    private com.allrecipes.model.YoutubeItem item;
+    private YoutubeItem item;
 
     public YoutubeVideoItem(HomeScreenModelItemWrapper wrapper) {
         super(wrapper);
-        this.item = (com.allrecipes.model.YoutubeItem) wrapper.getT();
+        this.item = (YoutubeItem) wrapper.getT();
     }
 
     public com.allrecipes.model.YoutubeItem getItem() {
@@ -54,7 +55,7 @@ public class YoutubeVideoItem extends BaseHomeScreenItem {
         viewHolder.description.setText(item.snippet.description);
     }
 
-    private void adjustYoutubeImage(final ViewHolder holder, com.allrecipes.model.YoutubeItem item) {
+    private void adjustYoutubeImage(final ViewHolder holder, YoutubeItem item) {
         Picasso.with(holder.context)
             .load(item.snippet.thumbnails.highThumbnail.url)
             .fit()

@@ -1,6 +1,5 @@
 package com.allrecipes.ui.videodetails.activity;
 
-import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -76,6 +75,8 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
     TextView publishedDate;
     @BindView(R.id.description_divider)
     View descriptionDivider;
+    @BindView(R.id.favoriteIcon)
+    ImageView favoriteIcon;
 
     @Inject
     VideoDetailsScreenPresenter presenter;
@@ -161,9 +162,7 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
             video = savedInstanceState.getParcelable(KEY_VIDEO);
         }
 
-        presenter.fetchVideo(video.id != null && video.id.videoId != null
-                                 ? video.id.videoId
-                                 : video.snippet.resourceId.videoId);
+        presenter.fetchVideo(video);
 
         Picasso.with(this)
             .load(video.snippet.thumbnails.highThumbnail.url)
@@ -297,7 +296,7 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
     }
 
     @Override
-    public void setVideoDetails(VideoItem item) {
+    public void setVideoDetails(VideoItem item, boolean isFavoriteSaved) {
         description.setText(Html.fromHtml(item.snippet.description.replace("\n", "<br>")));
         description.setTransformationMethod(new LinkTransformationMethod(mCustomTabsIntent, this));
         description.setMovementMethod(LinkMovementMethod.getInstance());
@@ -333,5 +332,23 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
             0
         ));
         descriptionDivider.setVisibility(View.VISIBLE);
+        favoriteIcon.setVisibility(View.VISIBLE);
+        if (isFavoriteSaved) {
+            favoriteIcon.setImageResource(R.drawable.ic_favorite_black_24dp);
+            favoriteIcon.setTag("selected");
+        }
+    }
+
+    @OnClick(R.id.favoriteIcon)
+    public void onFavoriteIconClick() {
+        if (favoriteIcon.getTag().equals("selected")) {
+            presenter.removeFavoriteItem(video);
+            favoriteIcon.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+            favoriteIcon.setTag("notSelected");
+        } else {
+            presenter.putFavoriteItem(video);
+            favoriteIcon.setImageResource(R.drawable.ic_favorite_black_24dp);
+            favoriteIcon.setTag("selected");
+        }
     }
 }
