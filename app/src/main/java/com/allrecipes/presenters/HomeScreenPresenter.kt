@@ -22,8 +22,6 @@ import java.lang.ref.WeakReference
 import com.google.firebase.analytics.FirebaseAnalytics
 import android.os.Bundle
 
-
-
 class HomeScreenPresenter(
     view: WeakReference<HomeScreenView>,
     private val googleYoutubeApiManager: GoogleYoutubeApiManager,
@@ -112,36 +110,30 @@ class HomeScreenPresenter(
                 constructSearchFromFilters(searchCriteria, currentFilterSettings.filters)
             )
             .subscribe({ searchChannelVideosResponse ->
-                           if (isViewAvailable) {
-                               if (currentPageToken == null) {
-                                   getView().clearAdapterItems()
-                               }
-                               getView().removeBottomListProgress()
-                               val items = searchChannelVideosResponse.items
-                               var position = 0
-                               items.forEach {
-                                   getView().addYoutubeItemToAdapter(it, position)
-                                   position++
-                               }
-                               pageToken = searchChannelVideosResponse.nextPageToken
-                               getView().hideLoading()
+                       if (isViewAvailable) {
+                           if (currentPageToken == null) {
+                               getView().clearAdapterItems()
                            }
-                       }) { throwable ->
+                           getView().removeBottomListProgress()
+                           val items = searchChannelVideosResponse.items
+                           var position = 0
+                           items.forEach {
+                               getView().addYoutubeItemToAdapter(it, position)
+                               position++
+                           }
+                           pageToken = searchChannelVideosResponse.nextPageToken
+                           getView().hideLoading()
+                       }
+                   }) { throwable ->
                 if (isViewAvailable) {
                     getView().hideLoading()
                     throwable.printStackTrace()
                     getView().handleApiError(
                         throwable,
-                        {
-                            fetchYoutubeChannelVideos(currentPageToken,
-                                                      searchCriteria,
-                                                      currentFilterSettings)
-                        }
+                        { fetchYoutubeChannelVideos(currentPageToken, searchCriteria, currentFilterSettings) }
                     )
                 }
-
             }
-
     }
 
     fun onLoadMore(searchCriteria: String?, currentFilterSettings: FiltersAndSortSettings) {

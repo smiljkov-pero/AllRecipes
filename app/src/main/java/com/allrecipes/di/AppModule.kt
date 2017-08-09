@@ -12,6 +12,7 @@ import com.allrecipes.managers.remoteconfig.FirebaseConfig
 import com.allrecipes.managers.remoteconfig.RemoteConfigManager
 import com.allrecipes.tracking.providers.firebase.FirebaseTracker
 import com.allrecipes.tracking.providers.firebase.FirebaseTrackerImpl
+import com.allrecipes.util.NetworkUtils
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -91,5 +92,11 @@ class AppModule(private val context: Context) {
     @Provides
     fun providesFirebaseTracker(context: Context): FirebaseTracker {
         return FirebaseTrackerImpl(FirebaseAnalytics.getInstance(context))
+    }
+
+    @Singleton
+    @Provides
+    fun providesNetworkUtils(context: Context): NetworkUtils {
+        return NetworkUtils(context)
     }
 }

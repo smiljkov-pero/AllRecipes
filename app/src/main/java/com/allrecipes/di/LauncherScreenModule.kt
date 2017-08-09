@@ -1,11 +1,11 @@
 package com.allrecipes.di
 
 import com.allrecipes.managers.FirebaseDatabaseManager
-import com.allrecipes.managers.GoogleYoutubeApiManager
 import com.allrecipes.managers.LocalStorageManagerInterface
 import com.allrecipes.managers.remoteconfig.RemoteConfigManager
 import com.allrecipes.presenters.LauncherScreenPresenter
 import com.allrecipes.ui.launcher.LauncherView
+import com.allrecipes.util.NetworkUtils
 import dagger.Module
 import dagger.Provides
 import java.lang.ref.WeakReference
@@ -16,16 +16,17 @@ class LauncherScreenModule(view: LauncherView) {
 
     @Provides
     fun providesVideoDetailsScreenPresenter(
-        googleYoutubeApiManager: GoogleYoutubeApiManager,
         remoteConfigManager: RemoteConfigManager,
         firebaseDatabaseManager: FirebaseDatabaseManager,
-        localStorageManagerInterface: LocalStorageManagerInterface
+        localStorageManagerInterface: LocalStorageManagerInterface,
+        networkUtils: NetworkUtils
     ): LauncherScreenPresenter {
         return LauncherScreenPresenter(
-            view.get(),
+            view,
             remoteConfigManager,
             firebaseDatabaseManager,
-            localStorageManagerInterface
+            localStorageManagerInterface,
+            networkUtils
         )
     }
 }

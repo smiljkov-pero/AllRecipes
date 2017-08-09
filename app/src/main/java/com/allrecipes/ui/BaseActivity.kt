@@ -73,6 +73,7 @@ open class BaseActivity : AppCompatActivity() {
             window.statusBarColor = resources.getColor(colorRes)
         }
     }
+
     fun handleApiError(throwable: Throwable, predicate: () -> Unit) {
         when (throwable) {
             is OfflineException -> showConnectivityError(predicate)

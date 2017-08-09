@@ -1,6 +1,5 @@
 package com.allrecipes.managers
 
-import android.util.Log
 import com.allrecipes.model.Channel
 import com.allrecipes.util.RxFirebaseDatabase
 import com.google.firebase.database.DataSnapshot

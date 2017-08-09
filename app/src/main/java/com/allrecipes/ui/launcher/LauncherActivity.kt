@@ -31,8 +31,11 @@ class LauncherActivity : BaseActivity(), LauncherView, GoogleApiClient.OnConnect
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
         getApp().createLauncherScreenComponent(this).inject(this)
+    }
 
-        presenter.onCreate()
+    override fun onResume() {
+        super.onResume()
+        presenter.onResume(false)
     }
 
     public override fun onStart() {
@@ -43,11 +46,9 @@ class LauncherActivity : BaseActivity(), LauncherView, GoogleApiClient.OnConnect
     override fun checkGoogleLogin() {
         val opr = Auth.GoogleSignInApi.silentSignIn(googleApiClient)
         if (opr.isDone) {
-            Log.d("LauncherActivity", "Got cached sign-in")
             val result = opr.get()
             handleSignInResult(result)
         } else {
-            Log.d("LauncherActivity", "Not cached sign-in")
             opr.setResultCallback { googleSignInResult ->
                 handleSignInResult(googleSignInResult)
             }
