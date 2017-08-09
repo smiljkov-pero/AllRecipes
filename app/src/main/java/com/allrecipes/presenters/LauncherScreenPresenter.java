@@ -1,26 +1,26 @@
 package com.allrecipes.presenters;
 
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.allrecipes.di.managers.FirebaseDatabaseManager;
+import com.allrecipes.managers.FirebaseDatabaseManager;
 import com.allrecipes.managers.LocalStorageManagerInterface;
 import com.allrecipes.managers.remoteconfig.RemoteConfigManager;
 import com.allrecipes.model.Channel;
 import com.allrecipes.model.DefaultChannel;
 import com.allrecipes.ui.launcher.LauncherView;
 import com.allrecipes.util.Constants;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
 import com.google.gson.GsonBuilder;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
-import rx.Subscription;
-import rx.functions.Action1;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 public class LauncherScreenPresenter extends AbstractPresenter<LauncherView> {
 
@@ -30,7 +30,7 @@ public class LauncherScreenPresenter extends AbstractPresenter<LauncherView> {
     private final FirebaseDatabaseManager firebaseDatabaseManager;
     private final LocalStorageManagerInterface localStorageManager;
 
-    Subscription getCategoriesConfigFromFirebaseSubscription;
+    private Disposable getCategoriesConfigFromFirebaseSubscription;
 
     public LauncherScreenPresenter(
         LauncherView view,
@@ -46,11 +46,12 @@ public class LauncherScreenPresenter extends AbstractPresenter<LauncherView> {
 
     @Override
     public void unbindAll() {
-        unsubscribe(getCategoriesConfigFromFirebaseSubscription);
+        dispose(getCategoriesConfigFromFirebaseSubscription);
     }
 
     public void onCreate() {
         if (remoteConfigManager.isRemoteConfigNotFetchYet()) {
+            // TODO Check for network available here
             reloadFirebaseRemoteConfig(true);
         } else {
             fetchAppConfigFromFirebase(false);
@@ -80,31 +81,35 @@ public class LauncherScreenPresenter extends AbstractPresenter<LauncherView> {
     private void fetchAppConfigFromFirebase(final boolean initDefaultChannel) {
         getCategoriesConfigFromFirebaseSubscription = firebaseDatabaseManager.fetchChannels()
             .subscribe(
-                new Action1<List<Channel>>() {
-                    @Override
-                    public void call(List<Channel> channels) {
-                        if (isSubscribedAndViewAvailable(getCategoriesConfigFromFirebaseSubscription)) {
-                            firebaseDatabaseManager.storeFirebaseConfig(channels);
-                            if (initDefaultChannel) {
-                                String remoteConfigString = remoteConfigManager.getDefaultChannel();
-                                Channel defaultChannel = new GsonBuilder().create()
-                                    .fromJson(remoteConfigString, DefaultChannel.class).defaultChannel;
-                                for (Channel c : channels) {
-                                    if (c.getChannelId().equals(defaultChannel.getChannelId())) {
-                                        saveLastUsedChannel(c);
-                                    }
-                                }
-                                checkIfUserWasLoggedInBefore();
-                            }
-                        }
-                    }
-                },
-                new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        Log.e("getting_app_config", "", throwable);
-                    }
-                }
+                new Consumer<DataSnapshot>() {
+                   @Override
+                   public void accept(@NonNull DataSnapshot dataSnapshot) throws Exception {
+                       List<Channel> channels = new ArrayList<>();
+                       for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                           Channel channel = postSnapshot.getValue(Channel.class);
+                           channels.add(channel);
+                       }
+                       firebaseDatabaseManager.storeFirebaseConfig(channels);
+                       if (isViewAvailable()) {
+                           if (initDefaultChannel) {
+                               String remoteConfigString = remoteConfigManager.getDefaultChannel();
+                               Channel defaultChannel = new GsonBuilder().create()
+                                   .fromJson(remoteConfigString, DefaultChannel.class).defaultChannel;
+                               for (Channel c : channels) {
+                                   if (c.getChannelId().equals(defaultChannel.getChannelId())) {
+                                       saveLastUsedChannel(c);
+                                   }
+                               }
+                               checkIfUserWasLoggedInBefore();
+                           }
+                       }
+                   }
+               }, new Consumer<Throwable>() {
+                   @Override
+                   public void accept(@NonNull Throwable throwable) throws Exception {
+                       throwable.printStackTrace();
+                   }
+               }
             );
     }
 

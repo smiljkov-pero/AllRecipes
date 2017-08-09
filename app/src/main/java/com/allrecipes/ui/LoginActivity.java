@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.allrecipes.R;
 import com.allrecipes.managers.remoteconfig.RemoteConfigManager;
+import com.allrecipes.tracking.providers.firebase.FirebaseTracker;
 import com.allrecipes.ui.home.activity.HomeActivity;
 import com.allrecipes.util.Constants;
 import com.google.android.gms.auth.api.Auth;
@@ -58,6 +59,9 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
 
     @Inject
     RemoteConfigManager remoteConfigManager;
+
+    @Inject
+    FirebaseTracker firebaseTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -204,6 +208,10 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
 
     @OnClick(R.id.skip_login)
     public void onSkipLoginClick() {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("skip_login", true);
+        firebaseTracker.logEvent("skip_login", bundle);
+
         Intent intent = HomeActivity.Companion.newIntent(this);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

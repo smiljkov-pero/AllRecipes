@@ -1,13 +1,13 @@
-package com.allrecipes.di.managers
+package com.allrecipes.managers
 
-import com.allrecipes.managers.LocalStorageManagerInterface
+import android.util.Log
 import com.allrecipes.model.Channel
-import com.google.firebase.database.*
+import com.allrecipes.util.RxFirebaseDatabase
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseReference
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.kelvinapps.rxfirebase.DataSnapshotMapper
-import com.kelvinapps.rxfirebase.RxFirebaseDatabase
-import java.util.ArrayList
+import io.reactivex.Maybe
 
 class FirebaseDatabaseManager(databaseReference: DatabaseReference, localStorageManagerInterface: LocalStorageManagerInterface) {
 
@@ -18,12 +18,10 @@ class FirebaseDatabaseManager(databaseReference: DatabaseReference, localStorage
         val APP_CACHED_FIREBASE_CONFIG = "app.cachedFirebaseConfig"
     }
 
-    fun fetchChannels(): rx.Observable<MutableList<Channel>> {
+    fun fetchChannels(): Maybe<DataSnapshot> {
         val ref = fireBaseDb.database.getReference("categories")
 
-        return RxFirebaseDatabase
-                .observeSingleValueEvent(ref, DataSnapshotMapper.listOf(Channel::class.java))
-                .cache()
+        return RxFirebaseDatabase.observeSingleValueEvent(ref)
     }
 
     fun storeFirebaseConfig(channels: List<Channel>) {
@@ -36,6 +34,7 @@ class FirebaseDatabaseManager(databaseReference: DatabaseReference, localStorage
     fun restoreFirebaseConfig(): List<Channel> {
         val appConfig = localStorageManagerInterface.getString(APP_CACHED_FIREBASE_CONFIG, "")
         val listType = object : TypeToken<ArrayList<Channel>>() {}.type
+
         return GsonBuilder().create().fromJson<List<Channel>>(appConfig, listType)
     }
 }

@@ -1,8 +1,5 @@
 package com.allrecipes.managers;
 
-import android.text.TextUtils;
-
-import com.allrecipes.BuildConfig;
 import com.allrecipes.di.NetworkApi;
 import com.allrecipes.model.SearchChannelVideosResponse;
 import com.allrecipes.model.playlist.YoutubePlaylistsResponse;

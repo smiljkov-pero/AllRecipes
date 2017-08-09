@@ -1,10 +1,11 @@
 package com.allrecipes.di
 
-import com.allrecipes.di.managers.FirebaseDatabaseManager
+import com.allrecipes.managers.FirebaseDatabaseManager
 import com.allrecipes.managers.GoogleYoutubeApiManager
 import com.allrecipes.managers.LocalStorageManagerInterface
 import com.allrecipes.managers.remoteconfig.RemoteConfigManager
 import com.allrecipes.presenters.HomeScreenPresenter
+import com.allrecipes.tracking.providers.firebase.FirebaseTracker
 import com.allrecipes.ui.home.views.HomeScreenView
 
 import java.lang.ref.WeakReference
@@ -21,14 +22,16 @@ class HomeScreenModule(view: HomeScreenView) {
         googleYoutubeApiManager: GoogleYoutubeApiManager,
         localStorageManager: LocalStorageManagerInterface,
         firebaseDatabaseManager: FirebaseDatabaseManager,
-        remoteConfigManager: RemoteConfigManager
+        remoteConfigManager: RemoteConfigManager,
+        firebaseTracker: FirebaseTracker
     ): HomeScreenPresenter {
         return HomeScreenPresenter(
             view,
             googleYoutubeApiManager,
             localStorageManager,
             firebaseDatabaseManager,
-            remoteConfigManager
+            remoteConfigManager,
+            firebaseTracker
         )
     }
 }

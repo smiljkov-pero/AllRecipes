@@ -44,6 +44,7 @@ import com.allrecipes.ui.videodetails.activity.VideoActivity
 import com.allrecipes.util.Constants
 import com.allrecipes.util.KeyboardUtils
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
+import com.google.firebase.crash.FirebaseCrash
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.mikepenz.fastadapter.FastAdapter
@@ -103,7 +104,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         getApp().createHomeScreenComponent(this).inject(this)
-
+        logCustomError("App started")
         if (savedInstanceState == null) {
             if (intent.hasExtra(KEY_GOOGLE_ACCOUNT_USER)) {
                 loggedInAccount = intent.getParcelableExtra(KEY_GOOGLE_ACCOUNT_USER)
@@ -149,6 +150,18 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
 
         initActionBar()
         setDefaultAddressListDropDownIcons()
+    }
+
+    override fun getScreenNameForTracking(): String {
+        return "HomeScreen"
+    }
+
+    fun logCustomError(message: String) {
+        try {
+            FirebaseCrash.log(message)
+        } catch (e: Exception) {
+        }
+
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

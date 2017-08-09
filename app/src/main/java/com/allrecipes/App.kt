@@ -4,22 +4,11 @@ import android.app.Application
 import android.content.Context
 import android.support.multidex.MultiDex
 import android.widget.ImageView
-
-import com.allrecipes.di.AppComponent
-import com.allrecipes.di.AppModule
-import com.allrecipes.di.DaggerAppComponent
-import com.allrecipes.di.HomeScreenComponent
-import com.allrecipes.di.HomeScreenModule
-import com.allrecipes.di.LauncherScreenComponent
-import com.allrecipes.di.LauncherScreenModule
-import com.allrecipes.di.NetworkApi
-import com.allrecipes.di.NetworkModule
-import com.allrecipes.di.VideoDetailsScreenComponent
-import com.allrecipes.di.VideoDetailsScreenModule
+import com.allrecipes.di.*
 import com.allrecipes.ui.home.views.HomeScreenView
-import com.allrecipes.ui.launcher.LauncherActivity
 import com.allrecipes.ui.launcher.LauncherView
 import com.allrecipes.ui.videodetails.views.VideoDetailsView
+import com.google.firebase.FirebaseApp
 import com.squareup.picasso.Picasso
 
 class App : Application() {
@@ -31,6 +20,8 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        FirebaseApp.initializeApp(this)
+        DebugUtils.initDebugTools(this)
         appComponent = DaggerAppComponent.builder()
             .networkModule(NetworkModule(NetworkApi.BASE_URL))
             .appModule(AppModule(applicationContext)).build()

@@ -102,4 +102,8 @@ open class BaseActivity : AppCompatActivity() {
     fun hideConnectivityError() {
         (findViewById(android.R.id.content) as ViewGroup).removeView(findViewById(R.id.error_connectivity_layout))
     }
+
+    open fun getScreenNameForTracking(): String? {
+        return null
+    }
 }

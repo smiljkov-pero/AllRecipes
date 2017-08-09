@@ -1,6 +1,6 @@
 package com.allrecipes.di
 
-import com.allrecipes.di.managers.FirebaseDatabaseManager
+import com.allrecipes.managers.FirebaseDatabaseManager
 import com.allrecipes.managers.GoogleYoutubeApiManager
 import com.allrecipes.managers.LocalStorageManagerInterface
 import com.allrecipes.managers.remoteconfig.RemoteConfigManager

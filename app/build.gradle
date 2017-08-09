@@ -58,6 +58,11 @@ android {
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/rxjava.properties'
     }
+    sourceSets {
+        debug.setRoot('src/debug')
+        release.setRoot('src/release')
+        main.java.srcDirs += 'src/main/kotlin'
+    }
 }
 
 kapt {
@@ -133,7 +138,6 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxjava:2.1.0'
     compile 'com.jakewharton.rxbinding2:rxbinding-appcompat-v7-kotlin:2.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.kelvinapps:rxfirebase:0.0.15'
     compile 'com.mikepenz:fastadapter-commons:2.6.0@aar'
     compile 'com.mikepenz:fastadapter-extensions:2.6.0@aar'
     compile 'com.mikepenz:materialize:1.0.2@aar'

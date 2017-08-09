@@ -2,13 +2,14 @@ package com.allrecipes.presenters
 
 import android.text.TextUtils
 import android.util.Log
-import com.allrecipes.di.managers.FirebaseDatabaseManager
+import com.allrecipes.managers.FirebaseDatabaseManager
 import com.allrecipes.managers.GoogleYoutubeApiManager
 import com.allrecipes.managers.LocalStorageManagerInterface
 import com.allrecipes.managers.remoteconfig.RemoteConfigManager
 import com.allrecipes.model.*
 import com.allrecipes.model.playlist.YoutubeChannelItem
 import com.allrecipes.model.playlist.YoutubePlaylistWithVideos
+import com.allrecipes.tracking.providers.firebase.FirebaseTracker
 import com.allrecipes.ui.home.viewholders.items.SwipeLaneChannelItem
 import com.allrecipes.ui.home.views.HomeScreenView
 import com.allrecipes.util.Constants
@@ -18,13 +19,18 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
+import com.google.firebase.analytics.FirebaseAnalytics
+import android.os.Bundle
+
+
 
 class HomeScreenPresenter(
     view: WeakReference<HomeScreenView>,
     private val googleYoutubeApiManager: GoogleYoutubeApiManager,
     private val localStorageManagerInterface: LocalStorageManagerInterface,
     private val firebaseDatabaseManager: FirebaseDatabaseManager,
-    private val remoteConfigManager: RemoteConfigManager
+    private val remoteConfigManager: RemoteConfigManager,
+    private val firebaseTracker: FirebaseTracker
 ) : AbstractPresenter<HomeScreenView>(view) {
 
     private var fetchChannelVideosDisposable: Disposable? = null
@@ -73,6 +79,17 @@ class HomeScreenPresenter(
         return filtersCombined.toString()
     }
 
+    fun trackVideoSearch(searchCriteria: String?, sort: String, filters: String) {
+        val bundle = Bundle()
+        bundle.putString(FirebaseAnalytics.Param.SEARCH_TERM, searchCriteria)
+        bundle.putString("filters", filters)
+        bundle.putString("sort", sort)
+        bundle.putString("channel_id", currentChannel.channelId)
+        bundle.putString("channel_name", currentChannel.name)
+
+        firebaseTracker.logEvent(FirebaseAnalytics.Event.SEARCH, bundle)
+    }
+
     fun fetchYoutubeChannelVideos(
         currentPageToken: String?,
         searchCriteria: String?,
@@ -80,6 +97,7 @@ class HomeScreenPresenter(
     ) {
         if (currentPageToken == null) {
             getView().showLoading()
+            trackVideoSearch(searchCriteria, currentFilterSettings.sort, currentFilterSettings.filters.joinToString())
         }
         if (TextUtils.isEmpty(searchCriteria) && TextUtils.isEmpty(currentPageToken)) {
             loadRecommendedPlayLists(currentChannel)

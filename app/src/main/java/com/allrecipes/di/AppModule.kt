@@ -3,13 +3,16 @@ package com.allrecipes.di
 import android.content.Context
 import android.net.ConnectivityManager
 import com.allrecipes.BuildConfig
-import com.allrecipes.di.managers.FirebaseDatabaseManager
+import com.allrecipes.managers.FirebaseDatabaseManager
 import com.allrecipes.managers.FavoritesManager
 import com.allrecipes.managers.GoogleYoutubeApiManager
 import com.allrecipes.managers.LocalStorageManager
 import com.allrecipes.managers.LocalStorageManagerInterface
 import com.allrecipes.managers.remoteconfig.FirebaseConfig
 import com.allrecipes.managers.remoteconfig.RemoteConfigManager
+import com.allrecipes.tracking.providers.firebase.FirebaseTracker
+import com.allrecipes.tracking.providers.firebase.FirebaseTrackerImpl
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
@@ -82,5 +85,11 @@ class AppModule(private val context: Context) {
     @Singleton
     fun providesFavoritesManager(localStorageManagerInterface: LocalStorageManagerInterface): FavoritesManager {
         return FavoritesManager(localStorageManagerInterface)
+    }
+
+    @Singleton
+    @Provides
+    fun providesFirebaseTracker(context: Context): FirebaseTracker {
+        return FirebaseTrackerImpl(FirebaseAnalytics.getInstance(context))
     }
 }
