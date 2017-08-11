@@ -31,11 +31,7 @@ class LauncherActivity : BaseActivity(), LauncherView, GoogleApiClient.OnConnect
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
         getApp().createLauncherScreenComponent(this).inject(this)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        presenter.onResume(false)
+        presenter.onCreate(false)
     }
 
     public override fun onStart() {

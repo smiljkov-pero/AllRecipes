@@ -35,12 +35,12 @@ class LauncherScreenPresenter(
         dispose(getCategoriesConfigFromFirebaseSubscription)
     }
 
-    fun onResume(reloadConfig: Boolean) {
+    fun onCreate(reloadConfig: Boolean) {
         if (remoteConfigManager.isRemoteConfigNotFetchYet || reloadConfig) {
             if (networkUtils.isNetworkAvailable) {
                 reloadFirebaseRemoteConfig(true)
             } else {
-                getView().handleApiError(OfflineException(), { onResume(false) })
+                getView().handleApiError(OfflineException(), { onCreate(false) })
             }
         } else {
             if (!firebaseDatabaseManager.restoreFirebaseConfig().isEmpty()
@@ -50,7 +50,7 @@ class LauncherScreenPresenter(
                 reloadFirebaseRemoteConfig(false)
                 checkIfUserWasLoggedInBefore()
             } else {
-                getView().handleApiError(OfflineException(), { onResume(true) })
+                getView().handleApiError(OfflineException(), { onCreate(true) })
             }
         }
     }
