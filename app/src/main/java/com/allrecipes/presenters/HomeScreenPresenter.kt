@@ -105,7 +105,7 @@ class HomeScreenPresenter(
             loadRecommendedPlayLists(currentChannel)
         }
 
-        if (currentPageToken == null || searchCriteria == null) {
+        if (currentPageToken == null && searchCriteria == null && currentFilterSettings.isAtLeastOneFilterSet ) {
             fatchHomeYoutubeVideos(currentPageToken, searchCriteria, currentFilterSettings)
         } else {
             searchYoutubeVideos(currentPageToken, currentFilterSettings, searchCriteria)
