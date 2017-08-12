@@ -77,6 +77,8 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
     View descriptionDivider;
     @BindView(R.id.favoriteIcon)
     ImageView favoriteIcon;
+    @BindView(R.id.duration)
+    TextView duration;
 
     @Inject
     VideoDetailsScreenPresenter presenter;
@@ -337,6 +339,9 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
             favoriteIcon.setImageResource(R.drawable.ic_favorite_black_24dp);
             favoriteIcon.setTag("selected");
         }
+        duration
+            .setText(item.contentDetails.duration.replace("PT","").replace("H",":").replace("M",":").replace("S",""));
+        duration.setVisibility(View.VISIBLE);
     }
 
     @OnClick(R.id.favoriteIcon)
