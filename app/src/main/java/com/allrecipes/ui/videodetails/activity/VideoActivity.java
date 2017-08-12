@@ -358,9 +358,35 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
             favoriteIcon.setImageResource(R.drawable.ic_favorite_black_24dp);
             favoriteIcon.setTag("selected");
         }
+        String videoDuration = item.contentDetails.duration.replace("PT","").replace("H",":").replace("M",":").replace("S","");
+
         duration
-            .setText(item.contentDetails.duration.replace("PT","").replace("H",":").replace("M",":").replace("S",""));
+            .setText(getVideoDuration(videoDuration));
         duration.setVisibility(View.VISIBLE);
+    }
+
+    private String getVideoDuration(String duration) {
+        String[] videoDurationSeparated = duration.split(":");
+        StringBuilder builder = new StringBuilder();
+        if (videoDurationSeparated.length == 3) {
+            String hours = getFormattedTimeSlot(videoDurationSeparated[0]);
+            String minutes = getFormattedTimeSlot(videoDurationSeparated[1]);
+            String seconds = getFormattedTimeSlot(videoDurationSeparated[2]);
+            builder.append(hours + ":" + minutes + ":" + seconds);
+        } else if (videoDurationSeparated.length == 2) {
+            String minutes = getFormattedTimeSlot(videoDurationSeparated[0]);
+            String seconds = getFormattedTimeSlot(videoDurationSeparated[1]);
+            builder.append( minutes + ":" + seconds);
+        } else if (videoDurationSeparated.length == 1) {
+            String seconds = getFormattedTimeSlot(videoDurationSeparated[0]);
+            builder.append(seconds);
+        }
+
+        return builder.toString();
+    }
+
+    private String getFormattedTimeSlot(String time) {
+        return time.length() == 1 ? "0" + time : time;
     }
 
     @OnClick(R.id.favoriteIcon)
