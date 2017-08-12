@@ -5,8 +5,10 @@ import android.net.ConnectivityManager
 import com.allrecipes.App
 import com.allrecipes.BuildConfig
 import com.allrecipes.managers.LocalStorageManagerInterface
+import com.allrecipes.model.YoutubeId
 import com.allrecipes.network.HttpClientBuilder
 import com.allrecipes.network.RequestInterceptor
+import com.allrecipes.network.YoutubeItemIdDeserializer
 import com.allrecipes.util.AllRecipesNetworkInterceptor
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -50,6 +52,7 @@ class NetworkModule(val mBaseUrl: String) {
     internal fun provideRetrofit(httpClient: OkHttpClient): Retrofit {
         val gsonBuilder = GsonBuilder()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ssz")
+            .registerTypeAdapter(YoutubeId::class.java, YoutubeItemIdDeserializer())
             .create()
 
         return Retrofit.Builder()

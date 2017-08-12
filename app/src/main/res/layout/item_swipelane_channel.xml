@@ -2,15 +2,13 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/restaurantImageWrapper"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/d1"
     android:layout_marginLeft="@dimen/d2"
     android:layout_marginRight="@dimen/d2"
-    android:layout_marginTop="@dimen/d1"
-    android:paddingBottom="@dimen/d1_three_quarter">
+    android:layout_marginTop="@dimen/d1">
 
     <com.allrecipes.custom.views.AllRecipesTextView
         android:id="@+id/name"
@@ -20,13 +18,13 @@
         android:gravity="start"
         android:lines="1"
         android:maxLines="1"
-        android:text=""
         android:textColor="@color/primary_text"
         android:textSize="@dimen/s2_half"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:customFont="fonts/Roboto-Medium.ttf"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/videosRecyclerView"

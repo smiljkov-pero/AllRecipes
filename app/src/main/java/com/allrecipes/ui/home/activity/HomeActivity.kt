@@ -462,7 +462,6 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
 
         fastAdapter = FastAdapter()
         homeScreenItemFactory = HomeScreenItemFactory(
-            resources.getDimensionPixelSize(R.dimen.toolbar_layout_image_height)
         )
 
         homeScreenItemAdapter = GenericItemAdapter<HomeScreenModelItemWrapper, BaseHomeScreenItem>(homeScreenItemFactory)
@@ -480,9 +479,6 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
             if (item.type == R.id.home_screen_video_item) {
                 val youtubeVideoItem = item as YoutubeVideoItem
                 onItemYoutubeVideoClick(v, youtubeVideoItem.item)
-            } else if (item.type == R.id.home_swimlane_channel_item) {
-                //onItemYoutubeVideoClick(v, item as YoutubeVideoItem)
-                val swipeLaneChannelItem = item as SwipeLaneChannelItem
             }
         }
 
@@ -498,16 +494,13 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
     }
 
     private fun onItemYoutubeVideoClick(v: View, item: YoutubeItem) {
-        if (!item.id.videoId.isNullOrEmpty()) {
-            val intent = VideoActivity.newIntent(this, item)
+        val intent = VideoActivity.newIntent(this, item)
 
-            startVideoActivityWithTransition(v, intent)
-            overridePendingTransition(0, 0)
-        }
+        startVideoActivityWithTransition(v, intent)
+        overridePendingTransition(0, 0)
     }
 
     private fun createOnVendorsScrollListener() {
-        var con: Context  = this
         onVendorsScrollListener = object : EndlessRecyclerOnScrollListener(footerAdapter) {
             override fun onLoadMore(currentPage: Int) {
                 removeBottomListProgress()
@@ -594,8 +587,8 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
         }
     }
 
-    override fun onSwapLaneItemClicked(view: View, item: VideoItem) {
-        onItemYoutubeVideoClick(view, YoutubeItem(YoutubeId(item.id), item.snippet))
+    override fun onSwapLaneItemClicked(view: View, item: YoutubeItem) {
+        onItemYoutubeVideoClick(view, item)
     }
 
     override fun loadMoreOnSwipe(position: Int, item: SwipeLaneChannelItem) {

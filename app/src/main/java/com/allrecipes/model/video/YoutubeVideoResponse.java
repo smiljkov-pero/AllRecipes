@@ -1,6 +1,7 @@
 package com.allrecipes.model.video;
 
 import com.allrecipes.model.PageInfo;
+import com.allrecipes.model.YoutubeItem;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;

@@ -1,14 +1,12 @@
 package com.allrecipes.ui.home.viewholders.items;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.allrecipes.R;
-import com.allrecipes.model.video.VideoItem;
-import com.allrecipes.ui.home.adapters.SwipeLaneChannelAdapter;
+import com.allrecipes.model.YoutubeItem;
 import com.allrecipes.ui.home.viewholders.BaseHomeScreenItem;
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper;
 import com.squareup.picasso.Picasso;
@@ -20,14 +18,14 @@ import butterknife.ButterKnife;
 
 public class SwipeLaneVideoItem extends BaseHomeScreenItem {
 
-    private VideoItem item;
+    private YoutubeItem item;
 
     public SwipeLaneVideoItem(HomeScreenModelItemWrapper wrapper) {
         super(wrapper);
-        this.item = (VideoItem) wrapper.getT();
+        this.item = (YoutubeItem) wrapper.getT();
     }
 
-    public VideoItem getItem() {
+    public YoutubeItem getItem() {
         return item;
     }
 
@@ -56,7 +54,7 @@ public class SwipeLaneVideoItem extends BaseHomeScreenItem {
 
     }
 
-    private void adjustYoutubeImage(final SwipeLaneVideoItem.ViewHolder holder, VideoItem item) {
+    private void adjustYoutubeImage(final SwipeLaneVideoItem.ViewHolder holder, YoutubeItem item) {
         if (item.snippet != null && item.snippet.thumbnails != null)
             Picasso.with(holder.videoThumbnail.getContext())
                 .load(item.snippet.thumbnails.mediumThumbnail.url)

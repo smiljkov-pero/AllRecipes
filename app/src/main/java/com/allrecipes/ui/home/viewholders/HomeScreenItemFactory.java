@@ -12,10 +12,7 @@ import com.mikepenz.fastadapter.utils.Function;
 
 public class HomeScreenItemFactory implements Function<HomeScreenModelItemWrapper, BaseHomeScreenItem> {
 
-    private int imageHeight;
-
-    public HomeScreenItemFactory(int imageHeight) {
-        this.imageHeight = imageHeight;
+    public HomeScreenItemFactory() {
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.allrecipes.model;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SearchChannelVideosResponse {
 
@@ -19,5 +20,5 @@ public class SearchChannelVideosResponse {
     public PageInfo pageInfo;
 
     @SerializedName("items")
-    public ArrayList<YoutubeItem> items;
+    public List<YoutubeItem> items;
 }

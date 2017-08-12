@@ -20,9 +20,6 @@ interface NetworkApi {
     @GET("videos")
     fun fetchVideo(@QueryMap queryParams: HashMap<String, Object>): Observable<YoutubeVideoResponse>
 
-    @GET("playlists")
-    fun fetchPlaylists(@QueryMap queryParams: HashMap<String, Object>): Observable<YoutubePlaylistsResponse>
-
     @GET("playlistItems")
-    fun fetchVideosInPlaylist(@QueryMap queryParams: HashMap<String, Object>): Observable<YoutubeVideoResponse>
+    fun fetchVideosInPlaylist(@QueryMap queryParams: HashMap<String, Object>): Observable<SearchChannelVideosResponse>
 }

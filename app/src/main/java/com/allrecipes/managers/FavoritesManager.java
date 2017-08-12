@@ -2,12 +2,11 @@ package com.allrecipes.managers;
 
 import android.support.annotation.Nullable;
 
+import com.allrecipes.model.SearchChannelVideosResponse;
 import com.allrecipes.model.YoutubeItem;
 import com.allrecipes.model.YoutubeSnipped;
 import com.allrecipes.model.playlist.YoutubeChannelItem;
 import com.allrecipes.model.playlist.YoutubePlaylistWithVideos;
-import com.allrecipes.model.video.VideoItem;
-import com.allrecipes.model.video.YoutubeVideoResponse;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
@@ -17,7 +16,6 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 
 public class FavoritesManager {
@@ -44,15 +42,8 @@ public class FavoritesManager {
             @Override
             public YoutubePlaylistWithVideos apply(@NonNull Object o) throws Exception {
                 List<YoutubeItem> youtubeItems = getChannelFavorites(channelId);
-                List<VideoItem> videoItems = new ArrayList<>();
-                for (YoutubeItem youtubeItem: youtubeItems) {
-                    VideoItem videoItem = new VideoItem();
-                    videoItem.snippet = youtubeItem.snippet;
-                    videoItem.id = youtubeItem.id.videoId;
-                    videoItems.add(videoItem);
-                }
-                YoutubeVideoResponse youtubeVideoResponse = new YoutubeVideoResponse();
-                youtubeVideoResponse.items = videoItems;
+                SearchChannelVideosResponse youtubeVideoResponse = new SearchChannelVideosResponse();
+                youtubeVideoResponse.items = youtubeItems;
 
                 YoutubeChannelItem channelItem = new YoutubeChannelItem();
                 YoutubeSnipped youtubeSnipped = new YoutubeSnipped();

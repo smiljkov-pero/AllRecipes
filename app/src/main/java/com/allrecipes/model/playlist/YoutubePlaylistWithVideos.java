@@ -1,13 +1,14 @@
 package com.allrecipes.model.playlist;
 
+import com.allrecipes.model.SearchChannelVideosResponse;
 import com.allrecipes.model.video.YoutubeVideoResponse;
 
 public class YoutubePlaylistWithVideos {
     private YoutubeChannelItem channel;
-    private YoutubeVideoResponse videosResponse;
+    private SearchChannelVideosResponse videosResponse;
     private int position;
 
-    public YoutubePlaylistWithVideos(YoutubeChannelItem channel, YoutubeVideoResponse videosResponse, int position) {
+    public YoutubePlaylistWithVideos(YoutubeChannelItem channel, SearchChannelVideosResponse videosResponse, int position) {
         this.channel = channel;
         this.videosResponse = videosResponse;
         this.position = position;
@@ -21,11 +22,11 @@ public class YoutubePlaylistWithVideos {
         this.channel = channel;
     }
 
-    public YoutubeVideoResponse getVideosResponse() {
+    public SearchChannelVideosResponse getVideosResponse() {
         return videosResponse;
     }
 
-    public void setVideosResponse(YoutubeVideoResponse videosResponse) {
+    public void setVideosResponse(SearchChannelVideosResponse videosResponse) {
         this.videosResponse = videosResponse;
     }
 

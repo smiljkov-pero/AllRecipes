@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.allrecipes.R;
+import com.allrecipes.model.YoutubeItem;
 import com.allrecipes.model.video.VideoItem;
 import com.allrecipes.ui.home.viewholders.listeners.SwipeLaneListener;
 import com.squareup.picasso.Picasso;
@@ -20,10 +21,10 @@ import butterknife.ButterKnife;
 
 public class SwipeLaneChannelAdapter extends RecyclerView.Adapter<SwipeLaneChannelAdapter.ViewHolder> {
 
-    private List<VideoItem> items;
+    private List<YoutubeItem> items;
     private SwipeLaneListener listener;
 
-    public SwipeLaneChannelAdapter(List<VideoItem> items, SwipeLaneListener listener) {
+    public SwipeLaneChannelAdapter(List<YoutubeItem> items, SwipeLaneListener listener) {
         this.items = items;
         this.listener = listener;
     }
@@ -38,7 +39,7 @@ public class SwipeLaneChannelAdapter extends RecyclerView.Adapter<SwipeLaneChann
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-         final VideoItem item = items.get(position);
+         final YoutubeItem item = items.get(position);
 
         holder.name.setText(item.snippet.title);
         adjustYoutubeImage(holder, item);
@@ -52,7 +53,7 @@ public class SwipeLaneChannelAdapter extends RecyclerView.Adapter<SwipeLaneChann
         });
     }
 
-    private void adjustYoutubeImage(final ViewHolder holder, VideoItem item) {
+    private void adjustYoutubeImage(final ViewHolder holder, YoutubeItem item) {
         if (item.snippet != null && item.snippet.thumbnails != null)
             Picasso.with(holder.videoThumbnail.getContext())
                 .load(item.snippet.thumbnails.highThumbnail.url)

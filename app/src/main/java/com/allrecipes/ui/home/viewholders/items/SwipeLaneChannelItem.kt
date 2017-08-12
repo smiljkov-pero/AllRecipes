@@ -17,12 +17,13 @@ import com.mikepenz.fastadapter_extensions.scroll.EndlessRecyclerOnScrollListene
 
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.allrecipes.model.SearchChannelVideosResponse
 import com.allrecipes.ui.home.viewholders.HomeScreenItemFactory
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.adapters.GenericItemAdapter
 
-class SwipeLaneChannelItem(wrapper: HomeScreenModelItemWrapper, private val listener: SwipeLaneListener?) : BaseHomeScreenItem(
-    wrapper) {
+class SwipeLaneChannelItem(wrapper: HomeScreenModelItemWrapper, private val listener: SwipeLaneListener?)
+    : BaseHomeScreenItem(wrapper) {
     val item: YoutubePlaylistWithVideos
     private var adapter: SwipeLaneChannelAdapter? = null
 
@@ -58,22 +59,15 @@ class SwipeLaneChannelItem(wrapper: HomeScreenModelItemWrapper, private val list
 
         item.videosResponse.items.forEachIndexed { index, videoItem ->
             swipeLineItemAdapter.addModel(HomeScreenModelItemWrapper(videoItem, R.id.swipelane_video_item))
-            /*if (index % 3 == 0) {
-                swipeLineItemAdapter.addModel(HomeScreenModelItemWrapper(null, R.id.swipelane_ad_item))
-            }*/
         }
 
     }
 
-    fun loadMore(youtubeVideoResponse: YoutubeVideoResponse) {
+    fun loadMore(youtubeVideoResponse: SearchChannelVideosResponse) {
         youtubeVideoResponse.items.forEachIndexed { index, videoItem ->
             swipeLineItemAdapter.addModel(HomeScreenModelItemWrapper(videoItem, R.id.swipelane_video_item))
-            /*if (index % 3 == 0) {
-                swipeLineItemAdapter.addModel(HomeScreenModelItemWrapper(videoItem, R.id.swipelane_ad_item))
-            }*/
         }
         item.videosResponse.nextPageToken = youtubeVideoResponse.nextPageToken
-        //item.getVideosResponse().prevPageToken = youtubeVideoResponse.prevPageToken;
     }
 
     private fun initRecyclerViewAdapter(videosRecyclerView: RecyclerView, context: Context) {
@@ -84,7 +78,7 @@ class SwipeLaneChannelItem(wrapper: HomeScreenModelItemWrapper, private val list
         videosRecyclerView.layoutManager = layoutManager
 
         fastAdapter = FastAdapter()
-        swipeLaneItemFactory = HomeScreenItemFactory(0)
+        swipeLaneItemFactory = HomeScreenItemFactory()
 
         swipeLineItemAdapter = GenericItemAdapter<HomeScreenModelItemWrapper, BaseHomeScreenItem>(swipeLaneItemFactory)
         videosRecyclerView.adapter = swipeLineItemAdapter.wrap(fastAdapter)
@@ -101,13 +95,11 @@ class SwipeLaneChannelItem(wrapper: HomeScreenModelItemWrapper, private val list
         }
     }
 
-    private val onOrdersListClickListener
-        = FastAdapter.OnClickListener<BaseHomeScreenItem> { v, adapter, item, position ->
-            if (item.type == R.id.swipelane_video_item) {
-                val casted: SwipeLaneVideoItem = item as SwipeLaneVideoItem
-                listener?.onSwapLaneItemClicked(v, casted.item)
-            }
-
+    private val onOrdersListClickListener = FastAdapter.OnClickListener<BaseHomeScreenItem> { v, adapter, item, position ->
+        if (item.type == R.id.swipelane_video_item) {
+            val casted: SwipeLaneVideoItem = item as SwipeLaneVideoItem
+            listener?.onSwapLaneItemClicked(v, casted.item)
+        }
         true
     }
 

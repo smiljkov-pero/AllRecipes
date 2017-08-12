@@ -101,20 +101,19 @@ class HomeScreenPresenter(
             getView().showLoading()
             trackVideoSearch(searchCriteria, currentFilterSettings.sort, currentFilterSettings.filters.joinToString())
         }
-        if (TextUtils.isEmpty(searchCriteria) && TextUtils.isEmpty(currentPageToken)) {
-            loadRecommendedPlayLists(currentChannel)
-        }
 
-        if (currentPageToken == null && searchCriteria == null && currentFilterSettings.isAtLeastOneFilterSet ) {
-            fatchHomeYoutubeVideos(currentPageToken, searchCriteria, currentFilterSettings)
+        if (TextUtils.isEmpty(currentPageToken) && TextUtils.isEmpty(searchCriteria) && !currentFilterSettings.isAtLeastOneFilterSet ) {
+            fetchHomeYoutubeVideos(currentPageToken, searchCriteria, currentFilterSettings)
         } else {
             searchYoutubeVideos(currentPageToken, currentFilterSettings, searchCriteria)
         }
     }
 
-    private fun fatchHomeYoutubeVideos(currentPageToken: String?,
-                                       searchCriteria: String?,
-                                       currentFilterSettings: FiltersAndSortSettings) {
+    private fun fetchHomeYoutubeVideos(
+        currentPageToken: String?,
+        searchCriteria: String?,
+        currentFilterSettings: FiltersAndSortSettings
+    ) {
         val videosObservable: Observable<SearchChannelVideosResponse> = googleYoutubeApiManager
             .fetchChannelVideos(
                 currentChannel.channelId,
@@ -123,9 +122,7 @@ class HomeScreenPresenter(
                 currentFilterSettings.sort,
                 constructSearchFromFilters(searchCriteria, currentFilterSettings.filters))
 
-        val swipeLanesObservable: Observable<List<YoutubePlaylistWithVideos>> = loadRecommendedPlayListsZip(
-            currentChannel)
-
+        val swipeLanesObservable: Observable<List<YoutubePlaylistWithVideos>> = loadRecommendedPlayListsZip(currentChannel)
         val favoritesObservable: Observable<YoutubePlaylistWithVideos> = favoritesManager.getFavoriteVideos(currentChannel.channelId)
 
         Observable.zip(videosObservable, swipeLanesObservable, favoritesObservable,
@@ -171,17 +168,21 @@ class HomeScreenPresenter(
                                t.printStackTrace()
                                getView().handleApiError(
                                    t, {
-                                   fetchYoutubeChannelVideos(currentPageToken,
-                                                             searchCriteria,
-                                                             currentFilterSettings)
-                               }
-                               )
+                                   fetchYoutubeChannelVideos(
+                                       currentPageToken,
+                                       searchCriteria,
+                                       currentFilterSettings
+                                   )
+                               })
                            }
                        })
     }
 
-    private fun searchYoutubeVideos(currentPageToken: String?,
-                                    currentFilterSettings: FiltersAndSortSettings, searchCriteria: String?) {
+    private fun searchYoutubeVideos(
+        currentPageToken: String?,
+        currentFilterSettings: FiltersAndSortSettings,
+        searchCriteria: String?
+    ) {
         fetchChannelVideosDisposable = googleYoutubeApiManager
             .fetchChannelVideos(
                 currentChannel.channelId,
@@ -221,30 +222,7 @@ class HomeScreenPresenter(
         fetchYoutubeChannelVideos(pageToken, searchCriteria, currentFilterSettings)
     }
 
-    private fun fetchVideosFromPlaylist(channelName: String, recommendedPlaylists: RecommendedPlaylists) {
-        val d = googleYoutubeApiManager.fetchVideosInPlaylist(
-            recommendedPlaylists.channelId,
-            remoteConfigManager.videoListItemsPerPage, null
-        ).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ youtubeVideoResponse ->
-                           val channelItem = YoutubeChannelItem()
-                           val youtubeSnipped = YoutubeSnipped()
-                           youtubeSnipped.title = channelName
-                           youtubeSnipped.channelId = recommendedPlaylists.channelId
-                           youtubeSnipped.channelTitle = channelName
-                           channelItem.snippet = youtubeSnipped
-                           getView().addSwapLaneChannelItemToAdapter(YoutubePlaylistWithVideos(
-                               channelItem,
-                               youtubeVideoResponse,
-                               recommendedPlaylists.position
-                           ), recommendedPlaylists.position)
-                       }) { throwable -> Log.e("fetchVideosFromPlaylist", "", throwable) }
-        disposables.add(d)
-    }
-
-    private fun getSwipeLaneChannelSubscription(channelName: String,
-                                                recommendedPlaylists: RecommendedPlaylists)
+    private fun getSwipeLaneChannelSubscription(channelName: String, recommendedPlaylists: RecommendedPlaylists)
         : Observable<YoutubePlaylistWithVideos> {
         val s: Observable<YoutubePlaylistWithVideos> = googleYoutubeApiManager.fetchVideosInPlaylist(
             recommendedPlaylists.channelId,
@@ -282,15 +260,6 @@ class HomeScreenPresenter(
         fetchYoutubeChannelVideos(null, "", filtersAndSortSettings)
 
         getView().initChannelsListOverlayAdapter(firebaseDatabaseManager.restoreFirebaseConfig(), 0)
-    }
-
-    private fun loadRecommendedPlayLists(channel: Channel) {
-        val recommendedPlayLists = channel.recommendedPlaylists
-        for ((key, value) in recommendedPlayLists) {
-            if (value.visible) {
-                fetchVideosFromPlaylist(key, value)
-            }
-        }
     }
 
     private fun loadRecommendedPlayListsZip(channel: Channel): Observable<List<YoutubePlaylistWithVideos>> {
@@ -344,7 +313,6 @@ class HomeScreenPresenter(
     }
 
     companion object {
-
         private val APP_LAST_CHANNEL_USED = "app.lastChannelUsed"
     }
 }
