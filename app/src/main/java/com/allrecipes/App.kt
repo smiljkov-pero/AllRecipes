@@ -8,6 +8,7 @@ import com.allrecipes.di.*
 import com.allrecipes.ui.home.views.HomeScreenView
 import com.allrecipes.ui.launcher.LauncherView
 import com.allrecipes.ui.videodetails.views.VideoDetailsView
+import com.google.android.gms.ads.MobileAds
 import com.google.firebase.FirebaseApp
 import com.squareup.picasso.Picasso
 
@@ -22,6 +23,8 @@ class App : Application() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
         DebugUtils.initDebugTools(this)
+        MobileAds.initialize(this,
+                             getString(R.string.admob_id))
         appComponent = DaggerAppComponent.builder()
             .networkModule(NetworkModule(NetworkApi.BASE_URL))
             .appModule(AppModule(applicationContext)).build()
