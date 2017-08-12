@@ -127,7 +127,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 ads:adSize="SMART_BANNER"
-                ads:adUnitId="@string/ad_unit_id_M001_280_132_item_homescreen">
+                ads:adUnitId="@string/admob_id">
             </com.google.android.gms.ads.AdView>
 
             <android.support.constraint.ConstraintLayout
@@ -261,7 +261,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 ads:adSize="SMART_BANNER"
-                ads:adUnitId="@string/ad_unit_id_M001_280_132_item_homescreen">
+                ads:adUnitId="@string/admob_id">
             </com.google.android.gms.ads.AdView>
 
         </LinearLayout>

@@ -222,12 +222,10 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
 
     private void initAds() {
         AdRequest adViewBelowImageRequest = new AdRequest.Builder()
-            .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
             .build();
         adViewBelowImage.loadAd(adViewBelowImageRequest);
 
         AdRequest adBlowTextDescriptionRequest = new AdRequest.Builder()
-            .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
             .build();
         adViewBelowTextDescription.loadAd(adBlowTextDescriptionRequest);
     }

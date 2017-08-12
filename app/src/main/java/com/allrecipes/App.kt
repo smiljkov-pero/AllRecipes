@@ -22,9 +22,9 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
+        MobileAds.initialize(this, getString(R.string.admob_id))
         DebugUtils.initDebugTools(this)
-        MobileAds.initialize(this,
-                             getString(R.string.admob_id))
+
         appComponent = DaggerAppComponent.builder()
             .networkModule(NetworkModule(NetworkApi.BASE_URL))
             .appModule(AppModule(applicationContext)).build()

@@ -40,6 +40,7 @@ class HomeScreenPresenter(
 
     private var currentChannel: Channel = Channel()
     private var pageToken: String? = null
+    private var favoritesCount = 0
 
     override fun unbindAll() {
         dispose(fetchChannelVideosDisposable)
@@ -133,6 +134,7 @@ class HomeScreenPresenter(
                            homeZipItems.videos = youtubeVideos
                            homeZipItems.swipeLanes = swipeLanes
                            homeZipItems.favoriteVideos = favoriteVideos
+                           favoritesCount = favoriteVideos?.videosResponse?.items?.size!!
                            homeZipItems
                        })
             .subscribeOn(Schedulers.io())
@@ -314,5 +316,11 @@ class HomeScreenPresenter(
 
     companion object {
         private val APP_LAST_CHANNEL_USED = "app.lastChannelUsed"
+    }
+
+    fun onResume(currentFilterSettings: FiltersAndSortSettings) {
+        if (favoritesCount != favoritesManager.getChannelFavorites(currentChannel.channelId).size) {
+            fetchYoutubeChannelVideos(null, "", currentFilterSettings)
+        }
     }
 }

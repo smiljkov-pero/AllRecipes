@@ -40,7 +40,6 @@ public class HomeAdItem extends BaseHomeScreenItem {
         HomeAdItem.ViewHolder viewHolder = ((HomeAdItem.ViewHolder) holder);
 
         AdRequest adRequest = new AdRequest.Builder()
-            .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
             .build();
         viewHolder.adView.loadAd(adRequest);
     }

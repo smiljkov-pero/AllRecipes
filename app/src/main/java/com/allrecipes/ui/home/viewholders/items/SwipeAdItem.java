@@ -40,7 +40,6 @@ public class SwipeAdItem extends BaseHomeScreenItem {
         SwipeAdItem.ViewHolder viewHolder = ((SwipeAdItem.ViewHolder) holder);
 
         AdRequest adRequest = new AdRequest.Builder()
-            .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
             .build();
         viewHolder.adView.loadAd(adRequest);
     }

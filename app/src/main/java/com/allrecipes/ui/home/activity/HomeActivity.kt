@@ -28,7 +28,6 @@ import com.allrecipes.R
 import com.allrecipes.custom.RoundedBackgroundSpan
 import com.allrecipes.model.*
 import com.allrecipes.model.playlist.YoutubePlaylistWithVideos
-import com.allrecipes.model.video.VideoItem
 import com.allrecipes.presenters.HomeScreenPresenter
 import com.allrecipes.ui.BaseActivity
 import com.allrecipes.ui.filters.FiltersActivity
@@ -114,16 +113,13 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
                 loggedInAccount = savedInstanceState.getParcelable(KEY_GOOGLE_ACCOUNT_USER)
             }
         }
-        //MobileAds.initialize(this, "ca-app-pub-5253357485536416~1123239941")
         getUserYoutubeToken()
 
         initSwipeRefresh()
         initRecyclerViewAdapter()
 
         list.setOnTouchListener({ view: View, motionEvent: MotionEvent ->
-            if (containerTopAddressList != null
-                && containerTopAddressList.visibility == View.VISIBLE
-            ) {
+            if (containerTopAddressList != null && containerTopAddressList.visibility == View.VISIBLE) {
                 closeAddressListOverlay()
             }
             if (searchEditText != null) {
@@ -268,6 +264,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
         super.onResume()
         initSearchTextOnTextChangeEvents()
         initAppliedFiltersText()
+        presenter.onResume(currentFilterSettings)
     }
 
     fun initAppliedFiltersText() {
