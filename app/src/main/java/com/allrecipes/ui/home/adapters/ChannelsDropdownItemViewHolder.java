@@ -33,7 +33,7 @@ public class ChannelsDropdownItemViewHolder extends RecyclerView.ViewHolder {
         description.setText(channel.getDescription());
         Picasso.with(context)
                 .load(channel.getImage())
-                //.placeholder(R.drawable.restaurant_placeholder)
+                .placeholder(R.drawable.ic_item_placeholder)
                 .config(Bitmap.Config.RGB_565)
                 .into(channelImage);
     }

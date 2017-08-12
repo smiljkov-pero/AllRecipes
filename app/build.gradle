@@ -32,8 +32,6 @@ android {
         debug {
             applicationIdSuffix '.dev'
             debuggable true
-            minifyEnabled true
-
         }
         release {
             minifyEnabled true

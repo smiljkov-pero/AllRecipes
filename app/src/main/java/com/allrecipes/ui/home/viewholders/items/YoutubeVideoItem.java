@@ -60,7 +60,7 @@ public class YoutubeVideoItem extends BaseHomeScreenItem {
             .load(item.snippet.thumbnails.highThumbnail.url)
             .fit()
             .centerCrop()
-            //.placeholder(R.drawable.restaurant_placeholder)
+            .placeholder(R.drawable.ic_item_placeholder)
             .config(Bitmap.Config.RGB_565)
             .into(holder.videoThumbnail);
     }
