@@ -1,9 +1,10 @@
 package com.allrecipes.presenters
 
+import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
-import com.allrecipes.managers.FirebaseDatabaseManager
 import com.allrecipes.managers.FavoritesManager
+import com.allrecipes.managers.FirebaseDatabaseManager
 import com.allrecipes.managers.GoogleYoutubeApiManager
 import com.allrecipes.managers.LocalStorageManagerInterface
 import com.allrecipes.managers.remoteconfig.RemoteConfigManager
@@ -14,6 +15,7 @@ import com.allrecipes.tracking.providers.firebase.FirebaseTracker
 import com.allrecipes.ui.home.viewholders.items.SwipeLaneChannelItem
 import com.allrecipes.ui.home.views.HomeScreenView
 import com.allrecipes.util.Constants
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.GsonBuilder
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -22,8 +24,6 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Function3
 import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
-import com.google.firebase.analytics.FirebaseAnalytics
-import android.os.Bundle
 
 class HomeScreenPresenter(
     view: WeakReference<HomeScreenView>,

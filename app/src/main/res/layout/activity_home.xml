@@ -32,7 +32,7 @@
                 android:ellipsize="end"
                 android:gravity="center|center_vertical"
                 android:maxLines="1"
-                android:text="Channels"
+                android:text=""
                 android:textColor="@color/white"
                 android:textSize="@dimen/s3"
                 app:customFont="fonts/Roboto-Medium.ttf"/>

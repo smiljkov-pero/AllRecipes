@@ -35,7 +35,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:text="Filters"
+                    android:text="@string/APP_FILTERS"
                     android:textColor="@color/white"/>
 
             </android.support.v7.widget.Toolbar>
@@ -58,7 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/d3"
-                    android:text="Sort by:"
+                    android:text="@string/APP_SORT_BY"
                     android:textColor="@color/primary_text"
                     android:textSize="@dimen/s2_quarter"
                     app:customFont="fonts/Roboto-Medium.ttf"
@@ -80,7 +80,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/d0_half"
                         android:buttonTint="@color/colorPrimaryDark"
-                        android:text="Date"
+                        android:text="@string/APP_DATE"
                         android:textColor="@color/primary_text"
                         app:customFont="fonts/Roboto-Regular.ttf"/>
 
@@ -90,7 +90,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/d0_half"
                         android:buttonTint="@color/colorPrimaryDark"
-                        android:text="Rating"
+                        android:text="@string/APP_RATING"
                         android:textColor="@color/primary_text"
                         app:customFont="fonts/Roboto-Regular.ttf"/>
 
@@ -100,7 +100,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/d0_half"
                         android:buttonTint="@color/colorPrimaryDark"
-                        android:text="Relevance"
+                        android:text="@string/APP_RELEVANCE"
                         android:textColor="@color/primary_text"
                         app:customFont="fonts/Roboto-Regular.ttf"/>
 
@@ -110,7 +110,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/d0_half"
                         android:buttonTint="@color/colorPrimaryDark"
-                        android:text="Name"
+                        android:text="@string/APP_NAME"
                         android:textColor="@color/primary_text"
                         app:customFont="fonts/Roboto-Regular.ttf"/>
 
@@ -119,7 +119,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:buttonTint="@color/colorPrimaryDark"
-                        android:text="Views"
+                        android:text="@string/APP_VIEWS"
                         android:textColor="@color/primary_text"
                         app:customFont="fonts/Roboto-Regular.ttf"/>
                 </RadioGroup>
@@ -129,7 +129,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/d3"
-                    android:text="Filter by:"
+                    android:text="@string/APP_FILTER_BY"
                     android:textColor="@color/primary_text"
                     android:textSize="@dimen/s2_quarter"
                     app:customFont="fonts/Roboto-Medium.ttf"
@@ -156,7 +156,7 @@
             android:layout_alignParentBottom="true"
             android:layout_gravity="bottom"
             android:background="@drawable/button_bkg"
-            android:text="Apply Filters"
+            android:text="@string/APP_APPLY_FILTERS"
             android:textColor="@color/white"
             android:textSize="@dimen/s2"
             tools:customFont="fonts/Roboto-Regular.ttf"/>

@@ -202,7 +202,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
                         android:layout_marginLeft="@dimen/d1"
-                        android:text="views"
+                        android:text=""
                         android:textColor="@color/secondary_text"
                         android:textSize="@dimen/s1_half"
                         android:visibility="gone"

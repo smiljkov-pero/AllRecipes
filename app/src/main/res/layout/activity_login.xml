@@ -42,7 +42,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             android:layout_margin="@dimen/d2"
-            android:text="Continue"
+            android:text="@string/APP_CONTINUE"
             android:textColor="@color/white"
             android:textSize="@dimen/s3"/>
     </RelativeLayout>
