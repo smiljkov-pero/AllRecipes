@@ -57,10 +57,10 @@
                 android:layout_margin="@dimen/d2"
                 android:background="@drawable/rounded_corner_bkg"
                 android:gravity="center"
-                android:paddingBottom="@dimen/d0_half"
+                android:paddingBottom="@dimen/d0_quarter"
                 android:paddingLeft="@dimen/d1"
                 android:paddingRight="@dimen/d1"
-                android:paddingTop="@dimen/d0_half"
+                android:paddingTop="@dimen/d0_quarter"
                 android:textColor="@color/white"
                 android:textSize="@dimen/s1_three_quarter"
                 android:visibility="gone"
@@ -73,7 +73,18 @@
                 android:layout_gravity="center"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/youtube_play"
+                android:src="@drawable/ic_youtube_logo"
+                app:layout_collapseMode="parallax"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|bottom"
+                android:fitsSystemWindows="true"
+                android:scaleType="fitXY"
+                android:layout_marginLeft="@dimen/d2"
+                android:layout_marginBottom="@dimen/d2"
+                android:src="@drawable/ic_pwrd_by_youtube_white"
                 app:layout_collapseMode="parallax"/>
 
             <android.support.v7.widget.Toolbar

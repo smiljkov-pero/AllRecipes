@@ -175,7 +175,7 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
 
         Picasso.with(this)
             .load(video.snippet.thumbnails.highThumbnail.url)
-            //.placeholder(R.drawable.restaurant_placeholder)
+            .placeholder(R.drawable.ic_item_placeholder)
             .noFade()
             .into(videoThumbnail, new Callback() {
                 @Override
