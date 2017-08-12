@@ -3,6 +3,7 @@ package com.allrecipes.presenters
 import android.text.TextUtils
 import android.util.Log
 import com.allrecipes.managers.FirebaseDatabaseManager
+import com.allrecipes.managers.FavoritesManager
 import com.allrecipes.managers.GoogleYoutubeApiManager
 import com.allrecipes.managers.LocalStorageManagerInterface
 import com.allrecipes.managers.remoteconfig.RemoteConfigManager
@@ -14,9 +15,11 @@ import com.allrecipes.ui.home.viewholders.items.SwipeLaneChannelItem
 import com.allrecipes.ui.home.views.HomeScreenView
 import com.allrecipes.util.Constants
 import com.google.gson.GsonBuilder
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Function3
 import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -28,7 +31,8 @@ class HomeScreenPresenter(
     private val localStorageManagerInterface: LocalStorageManagerInterface,
     private val firebaseDatabaseManager: FirebaseDatabaseManager,
     private val remoteConfigManager: RemoteConfigManager,
-    private val firebaseTracker: FirebaseTracker
+    private val firebaseTracker: FirebaseTracker,
+    private val favoritesManager: FavoritesManager
 ) : AbstractPresenter<HomeScreenView>(view) {
 
     private var fetchChannelVideosDisposable: Disposable? = null
@@ -101,6 +105,83 @@ class HomeScreenPresenter(
             loadRecommendedPlayLists(currentChannel)
         }
 
+        if (currentPageToken == null || searchCriteria == null) {
+            fatchHomeYoutubeVideos(currentPageToken, searchCriteria, currentFilterSettings)
+        } else {
+            searchYoutubeVideos(currentPageToken, currentFilterSettings, searchCriteria)
+        }
+    }
+
+    private fun fatchHomeYoutubeVideos(currentPageToken: String?,
+                                       searchCriteria: String?,
+                                       currentFilterSettings: FiltersAndSortSettings) {
+        val videosObservable: Observable<SearchChannelVideosResponse> = googleYoutubeApiManager
+            .fetchChannelVideos(
+                currentChannel.channelId,
+                currentPageToken,
+                remoteConfigManager.videoListItemsPerPage,
+                currentFilterSettings.sort,
+                constructSearchFromFilters(searchCriteria, currentFilterSettings.filters))
+
+        val swipeLanesObservable: Observable<List<YoutubePlaylistWithVideos>> = loadRecommendedPlayListsZip(
+            currentChannel)
+
+        val favoritesObservable: Observable<YoutubePlaylistWithVideos> = favoritesManager.getFavoriteVideos(currentChannel.channelId)
+
+        Observable.zip(videosObservable, swipeLanesObservable, favoritesObservable,
+                       Function3 { youtubeVideos: SearchChannelVideosResponse,
+                                   swipeLanes: List<YoutubePlaylistWithVideos>,
+                                   favoriteVideos: YoutubePlaylistWithVideos ->
+                           val homeZipItems: HomeZipResult = HomeZipResult()
+                           homeZipItems.videos = youtubeVideos
+                           homeZipItems.swipeLanes = swipeLanes
+                           homeZipItems.favoriteVideos = favoriteVideos
+                           homeZipItems
+                       })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ homeZip ->
+                           if (isViewAvailable) {
+                               getView().hideLoading()
+
+                               if (currentPageToken == null) {
+                                   getView().clearAdapterItems()
+                               }
+                               getView().removeBottomListProgress()
+                               val items = homeZip.videos.items
+                               var position = 0
+                               items.forEach {
+                                   getView().addYoutubeItemToAdapter(it, position)
+                                   position++
+                               }
+                               pageToken = homeZip.videos.nextPageToken
+
+                               homeZip.swipeLanes.forEach {
+                                   getView().addSwapLaneChannelItemToAdapter(it, it.position)
+                               }
+
+                               val userHasFavVideos: Boolean? = homeZip.favoriteVideos?.videosResponse?.items?.isEmpty()
+                               if (userHasFavVideos != null && userHasFavVideos == false) {
+                                   getView().addSwapLaneChannelItemToAdapter(homeZip.favoriteVideos!!, 0)
+                               }
+                           }
+                       }, { t ->
+                           if (isViewAvailable) {
+                               getView().hideLoading()
+                               t.printStackTrace()
+                               getView().handleApiError(
+                                   t, {
+                                   fetchYoutubeChannelVideos(currentPageToken,
+                                                             searchCriteria,
+                                                             currentFilterSettings)
+                               }
+                               )
+                           }
+                       })
+    }
+
+    private fun searchYoutubeVideos(currentPageToken: String?,
+                                    currentFilterSettings: FiltersAndSortSettings, searchCriteria: String?) {
         fetchChannelVideosDisposable = googleYoutubeApiManager
             .fetchChannelVideos(
                 currentChannel.channelId,
@@ -155,11 +236,38 @@ class HomeScreenPresenter(
                            channelItem.snippet = youtubeSnipped
                            getView().addSwapLaneChannelItemToAdapter(YoutubePlaylistWithVideos(
                                channelItem,
-                               youtubeVideoResponse
+                               youtubeVideoResponse,
+                               recommendedPlaylists.position
                            ), recommendedPlaylists.position)
                        }) { throwable -> Log.e("fetchVideosFromPlaylist", "", throwable) }
         disposables.add(d)
     }
+
+    private fun getSwipeLaneChannelSubscription(channelName: String,
+                                                recommendedPlaylists: RecommendedPlaylists)
+        : Observable<YoutubePlaylistWithVideos> {
+        val s: Observable<YoutubePlaylistWithVideos> = googleYoutubeApiManager.fetchVideosInPlaylist(
+            recommendedPlaylists.channelId,
+            remoteConfigManager.videoListItemsPerPage, null
+        )
+            .flatMap({ youtubeVideoResponse ->
+                         val channelItem = YoutubeChannelItem()
+                         val youtubeSnipped = YoutubeSnipped()
+                         youtubeSnipped.title = channelName
+                         youtubeSnipped.channelId = recommendedPlaylists.channelId
+                         youtubeSnipped.channelTitle = channelName
+                         channelItem.snippet = youtubeSnipped
+                         val response = YoutubePlaylistWithVideos(
+                             channelItem,
+                             youtubeVideoResponse,
+                             recommendedPlaylists.position
+                         )
+                         Observable.just(response)
+                     })
+
+        return s
+    }
+
 
     fun onCreate(oAuthToken: String?) {
         if (!TextUtils.isEmpty(oAuthToken)) {
@@ -183,6 +291,26 @@ class HomeScreenPresenter(
                 fetchVideosFromPlaylist(key, value)
             }
         }
+    }
+
+    private fun loadRecommendedPlayListsZip(channel: Channel): Observable<List<YoutubePlaylistWithVideos>> {
+        val swipeLanesObservables: ArrayList<Observable<YoutubePlaylistWithVideos>> = ArrayList()
+        val recommendedPlayLists = channel.recommendedPlaylists
+        for ((key, value) in recommendedPlayLists) {
+            if (value.visible) {
+                val observable: Observable<YoutubePlaylistWithVideos> = getSwipeLaneChannelSubscription(key, value)
+                swipeLanesObservables.add(observable)
+            }
+        }
+
+        if (swipeLanesObservables.isEmpty()) {
+            return Observable.just(emptyList())
+        }
+
+        return Observable.zip(swipeLanesObservables, {
+            t: Array<out Any> ->
+            t.toList() as List<YoutubePlaylistWithVideos>
+        })
     }
 
     private fun initDefaultFilterAndSortSettings(): FiltersAndSortSettings {

@@ -595,7 +595,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
     }
 
     override fun onSwapLaneItemClicked(view: View, item: VideoItem) {
-        onItemYoutubeVideoClick(view, YoutubeItem(YoutubeId(), item.snippet))
+        onItemYoutubeVideoClick(view, YoutubeItem(YoutubeId(item.id), item.snippet))
     }
 
     override fun loadMoreOnSwipe(position: Int, item: SwipeLaneChannelItem) {

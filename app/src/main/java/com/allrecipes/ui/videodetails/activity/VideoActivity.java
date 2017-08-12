@@ -33,6 +33,8 @@ import com.allrecipes.presenters.VideoDetailsScreenPresenter;
 import com.allrecipes.ui.BaseActivity;
 import com.allrecipes.ui.YoutubePlayerActivity;
 import com.allrecipes.ui.videodetails.views.VideoDetailsView;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -79,6 +81,10 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
     ImageView favoriteIcon;
     @BindView(R.id.duration)
     TextView duration;
+    @BindView(R.id.adViewBelowImage)
+    AdView adViewBelowImage;
+    @BindView(R.id.adViewBelowTextDescription)
+    AdView adViewBelowTextDescription;
 
     @Inject
     VideoDetailsScreenPresenter presenter;
@@ -165,6 +171,7 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
         }
 
         presenter.fetchVideo(video);
+        initAds();
 
         Picasso.with(this)
             .load(video.snippet.thumbnails.highThumbnail.url)
@@ -211,6 +218,18 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
         mCustomTabsIntent = new CustomTabsIntent.Builder(mCustomTabsSession)
                 .setShowTitle(true)
                 .build();
+    }
+
+    private void initAds() {
+        AdRequest adViewBelowImageRequest = new AdRequest.Builder()
+            .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+            .build();
+        adViewBelowImage.loadAd(adViewBelowImageRequest);
+
+        AdRequest adBlowTextDescriptionRequest = new AdRequest.Builder()
+            .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+            .build();
+        adViewBelowTextDescription.loadAd(adBlowTextDescriptionRequest);
     }
 
     @Override

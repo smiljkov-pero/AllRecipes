@@ -58,9 +58,9 @@ class SwipeLaneChannelItem(wrapper: HomeScreenModelItemWrapper, private val list
 
         item.videosResponse.items.forEachIndexed { index, videoItem ->
             swipeLineItemAdapter.addModel(HomeScreenModelItemWrapper(videoItem, R.id.swipelane_video_item))
-            if (index % 3 == 0) {
+            /*if (index % 3 == 0) {
                 swipeLineItemAdapter.addModel(HomeScreenModelItemWrapper(null, R.id.swipelane_ad_item))
-            }
+            }*/
         }
 
     }
@@ -68,9 +68,9 @@ class SwipeLaneChannelItem(wrapper: HomeScreenModelItemWrapper, private val list
     fun loadMore(youtubeVideoResponse: YoutubeVideoResponse) {
         youtubeVideoResponse.items.forEachIndexed { index, videoItem ->
             swipeLineItemAdapter.addModel(HomeScreenModelItemWrapper(videoItem, R.id.swipelane_video_item))
-            if (index % 3 == 0) {
+            /*if (index % 3 == 0) {
                 swipeLineItemAdapter.addModel(HomeScreenModelItemWrapper(videoItem, R.id.swipelane_ad_item))
-            }
+            }*/
         }
         item.videosResponse.nextPageToken = youtubeVideoResponse.nextPageToken
         //item.getVideosResponse().prevPageToken = youtubeVideoResponse.prevPageToken;

@@ -1,6 +1,7 @@
 package com.allrecipes.di
 
 import com.allrecipes.managers.FirebaseDatabaseManager
+import com.allrecipes.managers.FavoritesManager
 import com.allrecipes.managers.GoogleYoutubeApiManager
 import com.allrecipes.managers.LocalStorageManagerInterface
 import com.allrecipes.managers.remoteconfig.RemoteConfigManager
@@ -23,7 +24,9 @@ class HomeScreenModule(view: HomeScreenView) {
         localStorageManager: LocalStorageManagerInterface,
         firebaseDatabaseManager: FirebaseDatabaseManager,
         remoteConfigManager: RemoteConfigManager,
-        firebaseTracker: FirebaseTracker
+        firebaseTracker: FirebaseTracker,
+        favoritesManager: FavoritesManager
+
     ): HomeScreenPresenter {
         return HomeScreenPresenter(
             view,
@@ -31,7 +34,8 @@ class HomeScreenModule(view: HomeScreenView) {
             localStorageManager,
             firebaseDatabaseManager,
             remoteConfigManager,
-            firebaseTracker
+            firebaseTracker,
+            favoritesManager
         )
     }
 }

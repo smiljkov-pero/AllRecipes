@@ -218,4 +218,16 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
         startActivity(intent);
         finish();
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        hideProgressDialog();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        hideProgressDialog();
+    }
 }

@@ -41,9 +41,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:layout_margin="@dimen/d3"
+            android:layout_margin="@dimen/d2"
             android:text="Continue"
-            android:textColor="@color/secondary_text"
+            android:textColor="@color/white"
             android:textSize="@dimen/s3"/>
     </RelativeLayout>
 </LinearLayout>

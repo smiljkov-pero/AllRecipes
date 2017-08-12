@@ -26,7 +26,7 @@ public class SwipeAdItem extends BaseHomeScreenItem {
 
     @Override
     public int getLayoutRes() {
-        return R.layout.item_ad_swipe_lane;
+        return R.layout.item_ad_swipe_lane ;
     }
 
     @Override
