@@ -34,6 +34,6 @@ class FirebaseDatabaseManager(databaseReference: DatabaseReference, localStorage
         val appConfig = localStorageManagerInterface.getString(APP_CACHED_FIREBASE_CONFIG, "")
         val listType = object : TypeToken<ArrayList<Channel>>() {}.type
 
-        return GsonBuilder().create().fromJson<List<Channel>>(appConfig, listType)
+        return if (appConfig.isNotEmpty()) GsonBuilder().create().fromJson<List<Channel>>(appConfig, listType) else emptyList<Channel>()
     }
 }

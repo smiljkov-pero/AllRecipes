@@ -50,7 +50,7 @@ class LauncherScreenPresenter(
                 reloadFirebaseRemoteConfig(false)
                 checkIfUserWasLoggedInBefore()
             } else {
-                getView().handleApiError(OfflineException(), { onCreate(true) })
+                onCreate(true)
             }
         }
     }
