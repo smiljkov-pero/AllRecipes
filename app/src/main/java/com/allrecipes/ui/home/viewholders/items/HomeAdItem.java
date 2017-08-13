@@ -8,6 +8,7 @@ import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -45,8 +46,8 @@ public class HomeAdItem extends BaseHomeScreenItem {
     @Override
     public void bindView(BaseViewHolder holder, List payloads) {
         super.bindView(holder, payloads);
-        final HomeAdItem.ViewHolder viewHolder = ((HomeAdItem.ViewHolder) holder);
-
+        HomeAdItem.ViewHolder viewHolder = ((HomeAdItem.ViewHolder) holder);
+        final WeakReference<HomeAdItem.ViewHolder> viewHolderWeakReference = new WeakReference<ViewHolder>(viewHolder);
         Observable.fromCallable(new Callable<AdRequest>() {
             @Override
             public AdRequest call() throws Exception {
@@ -62,7 +63,10 @@ public class HomeAdItem extends BaseHomeScreenItem {
             .subscribe(new Consumer<AdRequest>() {
                 @Override
                 public void accept(@NonNull AdRequest adRequest) throws Exception {
-                    viewHolder.adView.loadAd(adRequest);
+                    HomeAdItem.ViewHolder holder = viewHolderWeakReference.get();
+                    if(holder != null) {
+                        holder.adView.loadAd(adRequest);
+                    }
                 }
         });
     }

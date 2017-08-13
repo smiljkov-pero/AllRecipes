@@ -9,6 +9,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.NativeExpressAdView;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -44,7 +45,8 @@ public class SwipeAdItem extends BaseHomeScreenItem {
     @Override
     public void bindView(BaseViewHolder holder, List payloads) {
         super.bindView(holder, payloads);
-        final SwipeAdItem.ViewHolder viewHolder = ((SwipeAdItem.ViewHolder) holder);
+        SwipeAdItem.ViewHolder viewHolder = ((SwipeAdItem.ViewHolder) holder);
+        final WeakReference<SwipeAdItem.ViewHolder> viewHolderWeakReference = new WeakReference<>(viewHolder);
 
         Observable.fromCallable(new Callable<AdRequest>() {
             @Override
@@ -60,7 +62,10 @@ public class SwipeAdItem extends BaseHomeScreenItem {
             .subscribe(new Consumer<AdRequest>() {
                 @Override
                 public void accept(@NonNull AdRequest adRequest) throws Exception {
-                    viewHolder.adView.loadAd(adRequest);
+                    SwipeAdItem.ViewHolder holder = viewHolderWeakReference.get();
+                    if (holder != null) {
+                        holder.adView.loadAd(adRequest);
+                    }
                 }
             });
     }
