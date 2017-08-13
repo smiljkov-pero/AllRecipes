@@ -64,7 +64,7 @@ class HomeScreenPresenter(
         if (!TextUtils.isEmpty(searchCriteria)) {
             filtersCombined.append(searchCriteria)
             if (!filters.isEmpty()) {
-                filtersCombined.append("&")
+                filtersCombined.append("+")
             }
         }
         for (i in filters.indices) {
@@ -163,6 +163,7 @@ class HomeScreenPresenter(
                                if (userHasFavVideos != null && userHasFavVideos == false) {
                                    getView().addSwapLaneChannelItemToAdapter(homeZip.favoriteVideos!!, 0)
                                }
+                               showFiltersTooltip()
                            }
                        }, { t ->
                            if (isViewAvailable) {
@@ -178,6 +179,15 @@ class HomeScreenPresenter(
                                })
                            }
                        })
+    }
+
+    private fun showFiltersTooltip() {
+        val isShownBefore = localStorageManagerInterface.getBoolean("filters_tooltip_shown", false)
+
+        if (!isShownBefore) {
+            getView().showFiltersTooltip()
+            localStorageManagerInterface.putBoolean("filters_tooltip_shown", true)
+        }
     }
 
     private fun searchYoutubeVideos(
@@ -207,6 +217,7 @@ class HomeScreenPresenter(
                            }
                            pageToken = searchChannelVideosResponse.nextPageToken
                            getView().hideLoading()
+                           showFiltersTooltip()
                        }
                    }) { throwable ->
                 if (isViewAvailable) {
@@ -261,7 +272,7 @@ class HomeScreenPresenter(
         val filtersAndSortSettings = initDefaultFilterAndSortSettings()
         fetchYoutubeChannelVideos(null, "", filtersAndSortSettings)
 
-        getView().initChannelsListOverlayAdapter(firebaseDatabaseManager.restoreFirebaseConfig(), 0)
+        getView().initChannelsListOverlayAdapter(firebaseDatabaseManager.restoreFirebaseConfig(), currentChannel.channelId)
     }
 
     private fun loadRecommendedPlayListsZip(channel: Channel): Observable<List<YoutubePlaylistWithVideos>> {

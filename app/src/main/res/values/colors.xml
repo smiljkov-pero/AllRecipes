@@ -23,4 +23,5 @@
     <color name="transparent">#00000000</color>
 
     <color name="overlay">#33000000</color>
+    <color name="tooltip_background">#276fbf</color>
 </resources>

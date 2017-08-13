@@ -16,6 +16,7 @@
     <string name="APP_VIEWS">Views</string>
     <string name="APP_FILTER_BY">Filter by:</string>
     <string name="APP_APPLY_FILTERS">Apply Filters</string>
-
+    <string name="APP_SIGN_IN_WITH_GOOGLE">Sign in with Google</string>
+    <string name="APP_FILTER_TOOLTIP_MSG">Filter and sort recipes</string>
 
 </resources>

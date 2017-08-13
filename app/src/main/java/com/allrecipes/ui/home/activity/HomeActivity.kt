@@ -7,6 +7,7 @@ import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
@@ -55,6 +56,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import it.sephiroth.android.library.tooltip.Tooltip
 import kotlinx.android.synthetic.main.activity_home.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -65,6 +67,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
     private var lastClickTime: Long = 0
     private val REQ_CODE_RECIPE_VIDEO = 998
     private val REQ_CODE_CHANGE_FILTER = 996
+    private val ADDRESS_TOOLTIP_ID = 101
 
     lateinit var fastAdapter: FastAdapter<BaseHomeScreenItem>
     lateinit var footerAdapter: FooterAdapter<ProgressItem>
@@ -300,13 +303,16 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
         inputMethodManger.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    override fun initChannelsListOverlayAdapter(channels: List<Channel>, selectedPosition: Int) {
-        dropdown_addresses_listview.adapter = ChannelsListDropdownAdapter(applicationContext, channels, selectedPosition)
+    override fun initChannelsListOverlayAdapter(channels: List<Channel>, currentChannelId: String) {
+        dropdown_addresses_listview.adapter = ChannelsListDropdownAdapter(applicationContext, channels, currentChannelId)
         dropdown_addresses_listview.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val channel: Channel = channels[position]
             presenter.onChannelListClick(channel, currentFilterSettings)
             title_text.text = channel.name
             closeAddressListOverlay()
+            val adapter = (parent.adapter as ChannelsListDropdownAdapter)
+            adapter.setCurrentChannelId(channel.channelId)
+            adapter.notifyDataSetChanged()
         }
         trans_overlay.setOnTouchListener({ view: View, motionEvent: MotionEvent ->
             closeAddressListOverlay()
@@ -592,5 +598,23 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
 
     override fun loadMoreOnSwipe(position: Int, item: SwipeLaneChannelItem) {
         presenter.fetchMoreVideosFromPlaylist(item)
+    }
+
+    override fun showFiltersTooltip() {
+        val build = Tooltip.Builder(ADDRESS_TOOLTIP_ID)
+            .anchor(sortFilter, Tooltip.Gravity.BOTTOM)
+            .closePolicy(Tooltip.ClosePolicy()
+                .insidePolicy(true, false)
+                .outsidePolicy(true, false), 4500)
+            .showDelay(800)
+            .withStyleId(R.style.ToolTipLayoutRecipesStyle)
+            .text(resources.getText(R.string.APP_FILTER_TOOLTIP_MSG))
+            .withArrow(true)
+            .withOverlay(false)
+            .typeface(Typeface.createFromAsset(assets, Constants.DEFAULT_FONT))
+            .fadeDuration(600)
+            .build()
+        Tooltip.make(this, build)
+            .show()
     }
 }

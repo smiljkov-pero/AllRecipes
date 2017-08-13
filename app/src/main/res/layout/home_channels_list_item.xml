@@ -1,60 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:background="@color/white"
     android:paddingBottom="@dimen/d2_half"
     android:paddingLeft="@dimen/d2"
     android:paddingRight="@dimen/d2"
-    android:background="@color/white"
     android:paddingTop="@dimen/d2_half">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/channelImage"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/d1_quarter">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
-        <ImageView
-            android:id="@+id/channelImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+    <com.allrecipes.custom.views.AllRecipesTextView
+        android:id="@+id/channelName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/d1_three_quarter"
+        android:layout_marginStart="@dimen/d1_three_quarter"
+        android:textAllCaps="true"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/s2"
+        app:customFont="fonts/Roboto-Regular.ttf"
+        app:layout_constraintStart_toEndOf="@id/channelImage"
+        app:layout_constraintTop_toTopOf="parent"/>
 
-        <com.allrecipes.custom.views.AllRecipesTextView
-            android:id="@+id/channelName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/d1_three_quarter"
-            android:layout_marginStart="@dimen/d1_three_quarter"
-            android:textAllCaps="true"
-            android:textColor="@color/primary_text"
-            android:textSize="@dimen/s2"
-            app:customFont="fonts/Roboto-Regular.ttf"/>
+    <ImageView
+        android:id="@+id/selectedChannelIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_checkmark_pink"
+        android:tint="@color/colorPrimaryDark"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
-    </LinearLayout>
+    <com.allrecipes.custom.views.AllRecipesTextView
+        android:id="@+id/description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/secondary_text"
+        android:layout_marginTop="@dimen/d1_quarter"
+        android:textSize="@dimen/s1_three_quarter"
+        app:customFont="fonts/Roboto-Regular.ttf"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/channelImage"/>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.allrecipes.custom.views.AllRecipesTextView
-            android:id="@+id/description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:textColor="@color/secondary_text"
-            android:textSize="@dimen/s1_three_quarter"
-            app:customFont="fonts/Roboto-Regular.ttf"/>
-
-        <ImageView
-            android:id="@+id/selectedAddressIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/ic_checkmark_pink"
-            android:visibility="gone"/>
-
-    </RelativeLayout>
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

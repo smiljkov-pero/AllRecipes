@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.allrecipes.R;
 import com.allrecipes.managers.remoteconfig.RemoteConfigManager;
 import com.allrecipes.tracking.providers.firebase.FirebaseTracker;
+import com.allrecipes.tracking.providers.firebase.UserPropertiesManager;
 import com.allrecipes.ui.home.activity.HomeActivity;
 import com.allrecipes.util.Constants;
 import com.google.android.gms.auth.api.Auth;
@@ -63,6 +64,9 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
     @Inject
     FirebaseTracker firebaseTracker;
 
+    @Inject
+    UserPropertiesManager userPropertiesManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,8 +97,8 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
 
             if (v instanceof TextView) {
                 TextView tv = (TextView) v;
-                tv.setText("Sign in with Google");
-                return;
+                tv.setText(R.string.APP_SIGN_IN_WITH_GOOGLE);
+                break;
             }
         }
     }
@@ -134,6 +138,11 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
+            if (result.isSuccess()) {
+                Bundle bundle = new Bundle();
+                bundle.putString("email", result.getSignInAccount().getAccount().name);
+                firebaseTracker.logEvent("login_google_user", bundle);
+            }
         }
 
         if (requestCode == RC_RECOVERABLE) {
@@ -202,6 +211,7 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
     }
 
     void startHomeActivityWithGoogleAccount() {
+        userPropertiesManager.setBasicUserProperties(account);
         Intent intent = HomeActivity.Companion.newIntent(this, account);
         startActivityForResult(intent, RC_HOME_SCREEN);
     }

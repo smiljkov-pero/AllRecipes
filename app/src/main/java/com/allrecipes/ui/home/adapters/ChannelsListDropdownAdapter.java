@@ -14,18 +14,22 @@ import java.util.List;
 
 public class ChannelsListDropdownAdapter extends ArrayAdapter<Channel> {
 
-    private final List<Channel> channels;
-    private final int selectedPosition;
+    private List<Channel> channels;
+    private String currentChannelId;
 
-    public ChannelsListDropdownAdapter(Context context, List<Channel> channels, int selectedPosition) {
+    public ChannelsListDropdownAdapter(Context context, List<Channel> channels, String currentChannelId) {
         super(context, 0, channels);
         this.channels = channels;
-        this.selectedPosition = selectedPosition;
+        this.currentChannelId = currentChannelId;
     }
 
     @Override
     public int getCount() {
         return channels.size();
+    }
+
+    public void setCurrentChannelId(String currentChannelId) {
+        this.currentChannelId = currentChannelId;
     }
 
     @NonNull
@@ -41,7 +45,7 @@ public class ChannelsListDropdownAdapter extends ArrayAdapter<Channel> {
             viewHolder = (ChannelsDropdownItemViewHolder) convertView.getTag();
         }
         Channel channel = channels.get(position);
-        viewHolder.initItemViewDetails(getContext(), channel, selectedPosition == position);
+        viewHolder.initItemViewDetails(getContext(), channel, currentChannelId);
 
         return convertView;
     }

@@ -49,104 +49,111 @@
             android:clipToPadding="false"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <android.support.constraint.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:descendantFocusability="blocksDescendants">
 
-                <com.allrecipes.custom.views.AllRecipesTextView
-                    android:id="@+id/sortLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/d3"
-                    android:text="@string/APP_SORT_BY"
-                    android:textColor="@color/primary_text"
-                    android:textSize="@dimen/s2_quarter"
-                    app:customFont="fonts/Roboto-Medium.ttf"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="parent"/>
-
-                <RadioGroup
-                    android:id="@+id/sortByGroup"
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/d2"
-                    android:orientation="vertical"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/sortLabel">
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                    <com.allrecipes.custom.views.AllRecipesRadioButton
-                        android:id="@+id/radio_date"
+                    <com.allrecipes.custom.views.AllRecipesTextView
+                        android:id="@+id/filterLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/d0_half"
-                        android:buttonTint="@color/colorPrimaryDark"
-                        android:text="@string/APP_DATE"
+                        android:layout_margin="@dimen/d3"
+                        android:text="@string/APP_FILTER_BY"
                         android:textColor="@color/primary_text"
-                        app:customFont="fonts/Roboto-Regular.ttf"/>
+                        android:textSize="@dimen/s2_quarter"
+                        app:customFont="fonts/Roboto-Medium.ttf"/>
 
-                    <com.allrecipes.custom.views.AllRecipesRadioButton
-                        android:id="@+id/radio_rating"
-                        android:layout_width="wrap_content"
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/filter_recycler_view"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/d0_half"
-                        android:buttonTint="@color/colorPrimaryDark"
-                        android:text="@string/APP_RATING"
-                        android:textColor="@color/primary_text"
-                        app:customFont="fonts/Roboto-Regular.ttf"/>
+                        android:layout_marginLeft="@dimen/d3"/>
 
-                    <com.allrecipes.custom.views.AllRecipesRadioButton
-                        android:id="@+id/radio_relevance"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/d0_half"
-                        android:buttonTint="@color/colorPrimaryDark"
-                        android:text="@string/APP_RELEVANCE"
-                        android:textColor="@color/primary_text"
-                        app:customFont="fonts/Roboto-Regular.ttf"/>
+                </LinearLayout>
 
-                    <com.allrecipes.custom.views.AllRecipesRadioButton
-                        android:id="@+id/radio_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/d0_half"
-                        android:buttonTint="@color/colorPrimaryDark"
-                        android:text="@string/APP_NAME"
-                        android:textColor="@color/primary_text"
-                        app:customFont="fonts/Roboto-Regular.ttf"/>
-
-                    <com.allrecipes.custom.views.AllRecipesRadioButton
-                        android:id="@+id/radio_view_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:buttonTint="@color/colorPrimaryDark"
-                        android:text="@string/APP_VIEWS"
-                        android:textColor="@color/primary_text"
-                        app:customFont="fonts/Roboto-Regular.ttf"/>
-                </RadioGroup>
-
-                <com.allrecipes.custom.views.AllRecipesTextView
-                    android:id="@+id/filterLabel"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/d3"
-                    android:text="@string/APP_FILTER_BY"
-                    android:textColor="@color/primary_text"
-                    android:textSize="@dimen/s2_quarter"
-                    app:customFont="fonts/Roboto-Medium.ttf"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/sortByGroup"/>
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/filter_recycler_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/d3"
-                    android:layout_marginTop="@dimen/d2"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/filterLabel"/>
+                    <com.allrecipes.custom.views.AllRecipesTextView
+                        android:id="@+id/sortLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/d3"
+                        android:text="@string/APP_SORT_BY"
+                        android:textColor="@color/primary_text"
+                        android:textSize="@dimen/s2_quarter"
+                        app:customFont="fonts/Roboto-Medium.ttf"/>
 
+                    <RadioGroup
+                        android:id="@+id/sortByGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d3"
+                        android:orientation="vertical">
 
-            </android.support.constraint.ConstraintLayout>
+                        <com.allrecipes.custom.views.AllRecipesRadioButton
+                            android:id="@+id/radio_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/d0_half"
+                            android:buttonTint="@color/colorPrimaryDark"
+                            android:text="@string/APP_DATE"
+                            android:textColor="@color/primary_text"
+                            app:customFont="fonts/Roboto-Regular.ttf"/>
+
+                        <com.allrecipes.custom.views.AllRecipesRadioButton
+                            android:id="@+id/radio_rating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/d0_half"
+                            android:buttonTint="@color/colorPrimaryDark"
+                            android:text="@string/APP_RATING"
+                            android:textColor="@color/primary_text"
+                            app:customFont="fonts/Roboto-Regular.ttf"/>
+
+                        <com.allrecipes.custom.views.AllRecipesRadioButton
+                            android:id="@+id/radio_relevance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/d0_half"
+                            android:buttonTint="@color/colorPrimaryDark"
+                            android:text="@string/APP_RELEVANCE"
+                            android:textColor="@color/primary_text"
+                            app:customFont="fonts/Roboto-Regular.ttf"/>
+
+                        <com.allrecipes.custom.views.AllRecipesRadioButton
+                            android:id="@+id/radio_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/d0_half"
+                            android:buttonTint="@color/colorPrimaryDark"
+                            android:text="@string/APP_NAME"
+                            android:textColor="@color/primary_text"
+                            app:customFont="fonts/Roboto-Regular.ttf"/>
+
+                        <com.allrecipes.custom.views.AllRecipesRadioButton
+                            android:id="@+id/radio_view_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:buttonTint="@color/colorPrimaryDark"
+                            android:text="@string/APP_VIEWS"
+                            android:textColor="@color/primary_text"
+                            app:customFont="fonts/Roboto-Regular.ttf"/>
+                    </RadioGroup>
+
+                </LinearLayout>
+            </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
 
         <Button

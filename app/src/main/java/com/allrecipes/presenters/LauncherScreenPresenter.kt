@@ -8,6 +8,7 @@ import com.allrecipes.managers.remoteconfig.RemoteConfigManager
 import com.allrecipes.model.Channel
 import com.allrecipes.model.DefaultChannel
 import com.allrecipes.network.OfflineException
+import com.allrecipes.tracking.providers.firebase.UserPropertiesManager
 import com.allrecipes.ui.launcher.LauncherView
 import com.allrecipes.util.Constants
 import com.allrecipes.util.NetworkUtils
@@ -22,7 +23,8 @@ class LauncherScreenPresenter(
     private val remoteConfigManager: RemoteConfigManager,
     private val firebaseDatabaseManager: FirebaseDatabaseManager,
     private val localStorageManager: LocalStorageManagerInterface,
-    private val networkUtils: NetworkUtils
+    private val networkUtils: NetworkUtils,
+    private val userPropertiesManager: UserPropertiesManager
 ) : AbstractPresenter<LauncherView>(view) {
 
     companion object {
@@ -36,6 +38,7 @@ class LauncherScreenPresenter(
     }
 
     fun onCreate(reloadConfig: Boolean) {
+        userPropertiesManager.setUserCountry(networkUtils.networkCountryIso)
         if (remoteConfigManager.isRemoteConfigNotFetchYet || reloadConfig) {
             if (networkUtils.isNetworkAvailable) {
                 reloadFirebaseRemoteConfig(true)

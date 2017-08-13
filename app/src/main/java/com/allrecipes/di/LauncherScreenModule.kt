@@ -4,6 +4,7 @@ import com.allrecipes.managers.FirebaseDatabaseManager
 import com.allrecipes.managers.LocalStorageManagerInterface
 import com.allrecipes.managers.remoteconfig.RemoteConfigManager
 import com.allrecipes.presenters.LauncherScreenPresenter
+import com.allrecipes.tracking.providers.firebase.UserPropertiesManager
 import com.allrecipes.ui.launcher.LauncherView
 import com.allrecipes.util.NetworkUtils
 import dagger.Module
@@ -19,14 +20,16 @@ class LauncherScreenModule(view: LauncherView) {
         remoteConfigManager: RemoteConfigManager,
         firebaseDatabaseManager: FirebaseDatabaseManager,
         localStorageManagerInterface: LocalStorageManagerInterface,
-        networkUtils: NetworkUtils
+        networkUtils: NetworkUtils,
+        userPropertiesManager: UserPropertiesManager
     ): LauncherScreenPresenter {
         return LauncherScreenPresenter(
             view,
             remoteConfigManager,
             firebaseDatabaseManager,
             localStorageManagerInterface,
-            networkUtils
+            networkUtils,
+            userPropertiesManager
         )
     }
 }

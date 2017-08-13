@@ -3,6 +3,7 @@ package com.allrecipes.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.telephony.TelephonyManager;
 
 public class NetworkUtils {
 
@@ -18,5 +19,11 @@ public class NetworkUtils {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public String getNetworkCountryIso() {
+        TelephonyManager tel = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+
+        return tel.getNetworkCountryIso();
     }
 }

@@ -13,11 +13,12 @@ interface HomeScreenView : AbstractPresenterView {
 
     fun clearAdapterItems()
 
-    fun initChannelsListOverlayAdapter(categories: List<Channel>, i: Int)
+    fun initChannelsListOverlayAdapter(categories: List<Channel>, i: String)
 
     fun setToolbarTitleText(value: String)
 
     fun addSwapLaneChannelItemToAdapter(youtubePlaylistWithVideos: YoutubePlaylistWithVideos, position: Int)
 
     fun setCurrentFilterSettings(filtersAndSortSettings: FiltersAndSortSettings)
+    fun showFiltersTooltip()
 }

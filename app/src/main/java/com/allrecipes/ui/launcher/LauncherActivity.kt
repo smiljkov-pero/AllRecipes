@@ -6,6 +6,7 @@ import android.util.Log
 
 import com.allrecipes.R
 import com.allrecipes.presenters.LauncherScreenPresenter
+import com.allrecipes.tracking.providers.firebase.UserPropertiesManager
 import com.allrecipes.ui.BaseActivity
 import com.allrecipes.ui.LoginActivity
 import com.allrecipes.ui.home.activity.HomeActivity
@@ -26,6 +27,9 @@ class LauncherActivity : BaseActivity(), LauncherView, GoogleApiClient.OnConnect
 
     @Inject
     lateinit var presenter: LauncherScreenPresenter
+
+    @Inject
+    lateinit var userPropertiesManager: UserPropertiesManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +92,7 @@ class LauncherActivity : BaseActivity(), LauncherView, GoogleApiClient.OnConnect
     }
 
     fun startHomeActivityWithGoogleAccount() {
+        userPropertiesManager.setBasicUserProperties(account)
         val intent = HomeActivity.newIntent(this, account!!)
         startActivity(intent)
     }
