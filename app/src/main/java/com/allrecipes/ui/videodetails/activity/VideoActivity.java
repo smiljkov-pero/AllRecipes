@@ -39,6 +39,8 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -50,6 +52,8 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
 
     private static final String KEY_VIDEO = "KEY_VIDEO";
     final String CUSTOM_TAB_PACKAGE_NAME = "com.android.chrome";
+    private static final String regex2two = "(?<=[^\\d])(\\d)(?=[^\\d])";
+    private static final String two = "0$1";
 
     @BindView(R.id.viewGrayOverlay)
     View viewGrayOverlay;
@@ -360,35 +364,33 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
             favoriteIcon.setImageResource(R.drawable.ic_favorite_black_24dp);
             favoriteIcon.setTag("selected");
         }
-        String videoDuration = item.contentDetails.duration.replace("PT","").replace("H",":").replace("M",":").replace("S","");
-
-        duration
-            .setText(getVideoDuration(videoDuration));
-        duration.setVisibility(View.VISIBLE);
+        setDurationValue(item.contentDetails.duration);
     }
 
-    private String getVideoDuration(String duration) {
-        String[] videoDurationSeparated = duration.split(":");
-        StringBuilder builder = new StringBuilder();
-        if (videoDurationSeparated.length == 3) {
-            String hours = getFormattedTimeSlot(videoDurationSeparated[0]);
-            String minutes = getFormattedTimeSlot(videoDurationSeparated[1]);
-            String seconds = getFormattedTimeSlot(videoDurationSeparated[2]);
-            builder.append(hours + ":" + minutes + ":" + seconds);
-        } else if (videoDurationSeparated.length == 2) {
-            String minutes = getFormattedTimeSlot(videoDurationSeparated[0]);
-            String seconds = getFormattedTimeSlot(videoDurationSeparated[1]);
-            builder.append( minutes + ":" + seconds);
-        } else if (videoDurationSeparated.length == 1) {
-            String seconds = getFormattedTimeSlot(videoDurationSeparated[0]);
-            builder.append(seconds);
+    private void setDurationValue(String durationValue) {
+        HashMap<String, String> durationRegexMap = new HashMap<>();
+        durationRegexMap.put("PT(\\d\\d)S", "00:$1");
+        durationRegexMap.put("PT(\\d\\d)M", "$1:00");
+        durationRegexMap.put("PT(\\d\\d)H", "$1:00:00");
+        durationRegexMap.put("PT(\\d\\d)M(\\d\\d)S", "$1:$2");
+        durationRegexMap.put("PT(\\d\\d)H(\\d\\d)S", "$1:00:$2");
+        durationRegexMap.put("PT(\\d\\d)H(\\d\\d)M", "$1:$2:00");
+        durationRegexMap.put("PT(\\d\\d)H(\\d\\d)M(\\d\\d)S", "$1:$2:$3");
+
+        String d = durationValue.replaceAll(regex2two, two);
+        String regex = getRegex(d, durationRegexMap);
+        if (regex != null) {
+            String newDurationValue = d.replaceAll(regex, durationRegexMap.get(regex));
+            duration.setText(newDurationValue);
+            duration.setVisibility(View.VISIBLE);
         }
-
-        return builder.toString();
     }
 
-    private String getFormattedTimeSlot(String time) {
-        return time.length() == 1 ? "0" + time : time;
+    private String getRegex(String date, HashMap<String, String> durationRegexMap) {
+        for (String r : durationRegexMap.keySet())
+            if (Pattern.matches(r, date))
+                return r;
+        return null;
     }
 
     @OnClick(R.id.favoriteIcon)
