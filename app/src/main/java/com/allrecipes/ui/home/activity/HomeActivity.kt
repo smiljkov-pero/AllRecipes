@@ -534,7 +534,9 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
     }
 
     override fun addYoutubeItemToAdapter(item: com.allrecipes.model.YoutubeItem, position: Int) {
-        homeScreenItemAdapter.addModel(HomeScreenModelItemWrapper(item, R.id.home_screen_video_item))
+        if (TextUtils.equals(item?.id?.kind, "youtube#video")) {
+            homeScreenItemAdapter.addModel(HomeScreenModelItemWrapper(item, R.id.home_screen_video_item))
+        }
 
         if (position % 3 == 0) {
             homeScreenItemAdapter.addModel(HomeScreenModelItemWrapper(null, R.id.home_ad_item))

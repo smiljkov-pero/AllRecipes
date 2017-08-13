@@ -227,14 +227,14 @@ class HomeScreenPresenter(
     private fun getSwipeLaneChannelSubscription(channelName: String, recommendedPlaylists: RecommendedPlaylists)
         : Observable<YoutubePlaylistWithVideos> {
         val s: Observable<YoutubePlaylistWithVideos> = googleYoutubeApiManager.fetchVideosInPlaylist(
-            recommendedPlaylists.channelId,
+            recommendedPlaylists.playlistId,
             remoteConfigManager.videoListItemsPerPage, null
         )
             .flatMap({ youtubeVideoResponse ->
                          val channelItem = YoutubeChannelItem()
                          val youtubeSnipped = YoutubeSnipped()
                          youtubeSnipped.title = channelName
-                         youtubeSnipped.channelId = recommendedPlaylists.channelId
+                         youtubeSnipped.channelId = recommendedPlaylists.playlistId
                          youtubeSnipped.channelTitle = channelName
                          channelItem.snippet = youtubeSnipped
                          val response = YoutubePlaylistWithVideos(
