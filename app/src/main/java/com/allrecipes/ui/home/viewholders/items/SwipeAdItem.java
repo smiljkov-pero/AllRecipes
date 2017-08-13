@@ -7,11 +7,18 @@ import com.allrecipes.ui.home.viewholders.BaseHomeScreenItem;
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.NativeExpressAdView;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class SwipeAdItem extends BaseHomeScreenItem {
 
@@ -26,7 +33,7 @@ public class SwipeAdItem extends BaseHomeScreenItem {
 
     @Override
     public int getLayoutRes() {
-        return R.layout.item_ad_swipe_lane ;
+        return R.layout.item_ad_swipe_lane;
     }
 
     @Override
@@ -37,19 +44,31 @@ public class SwipeAdItem extends BaseHomeScreenItem {
     @Override
     public void bindView(BaseViewHolder holder, List payloads) {
         super.bindView(holder, payloads);
-        SwipeAdItem.ViewHolder viewHolder = ((SwipeAdItem.ViewHolder) holder);
+        final SwipeAdItem.ViewHolder viewHolder = ((SwipeAdItem.ViewHolder) holder);
 
-        AdRequest adRequest = new AdRequest.Builder()
-            .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-            .addTestDevice("892B020FF18C6AB6C3F019DF8029AACE")
-            .build();
-        viewHolder.adView.loadAd(adRequest);
+        Observable.fromCallable(new Callable<AdRequest>() {
+            @Override
+            public AdRequest call() throws Exception {
+                AdRequest adRequest = new AdRequest.Builder()
+                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                    .addTestDevice("892B020FF18C6AB6C3F019DF8029AACE")
+                    .build();
+                return adRequest;
+            }
+        }).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Consumer<AdRequest>() {
+                @Override
+                public void accept(@NonNull AdRequest adRequest) throws Exception {
+                    viewHolder.adView.loadAd(adRequest);
+                }
+            });
     }
 
     protected static class ViewHolder extends BaseViewHolder {
 
         @BindView(R.id.adView)
-        AdView adView;
+        NativeExpressAdView adView;
 
         public ViewHolder(View view) {
             super(view);

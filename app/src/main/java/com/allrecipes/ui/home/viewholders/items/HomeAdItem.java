@@ -9,9 +9,17 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 public class HomeAdItem extends BaseHomeScreenItem {
 
@@ -37,13 +45,26 @@ public class HomeAdItem extends BaseHomeScreenItem {
     @Override
     public void bindView(BaseViewHolder holder, List payloads) {
         super.bindView(holder, payloads);
-        HomeAdItem.ViewHolder viewHolder = ((HomeAdItem.ViewHolder) holder);
+        final HomeAdItem.ViewHolder viewHolder = ((HomeAdItem.ViewHolder) holder);
 
-        AdRequest adRequest = new AdRequest.Builder()
-            .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-            .addTestDevice("892B020FF18C6AB6C3F019DF8029AACE")
-            .build();
-        viewHolder.adView.loadAd(adRequest);
+        Observable.fromCallable(new Callable<AdRequest>() {
+            @Override
+            public AdRequest call() throws Exception {
+                AdRequest adRequest = new AdRequest.Builder()
+                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                    .addTestDevice("892B020FF18C6AB6C3F019DF8029AACE")
+                    .build();
+                return adRequest;
+            }
+        })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Consumer<AdRequest>() {
+                @Override
+                public void accept(@NonNull AdRequest adRequest) throws Exception {
+                    viewHolder.adView.loadAd(adRequest);
+                }
+        });
     }
 
     protected static class ViewHolder extends BaseViewHolder {

@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/d1"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_marginRight="@dimen/d3"
+    android:layout_marginTop="@dimen/d1"
+    android:paddingBottom="@dimen/d1">
 
-    <com.google.android.gms.ads.AdView
+    <com.google.android.gms.ads.NativeExpressAdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/adView"
         android:layout_centerInParent="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        ads:adSize="FLUID"
+        ads:adSize="290x163"
         ads:adUnitId="@string/ad_unit_id_M001_280_132_item_homescreen">
-    </com.google.android.gms.ads.AdView>
+    </com.google.android.gms.ads.NativeExpressAdView>
 
-</RelativeLayout>
+</LinearLayout>

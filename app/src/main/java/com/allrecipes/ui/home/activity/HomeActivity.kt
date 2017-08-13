@@ -586,6 +586,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
             position,
             HomeScreenModelItemWrapper(youtubePlaylistWithVideos, R.id.home_swimlane_channel_item, this)
         )
+
         Log.d("HomeActivity", "added swap lane at position = " +position)
         if (currentPosition == 0 && position == 0) {
             layoutManager.scrollToPosition(0)
