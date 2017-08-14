@@ -75,7 +75,7 @@ class HomeScreenPresenter(
                 }
             }
         }
-        if (filtersCombined.contains("|")) {
+        if (filtersCombined.isNotEmpty()) {
             filtersCombined.replace(filtersCombined.length - 1, filtersCombined.length, "")
         }
 
