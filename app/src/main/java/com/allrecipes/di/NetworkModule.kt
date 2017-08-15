@@ -2,24 +2,21 @@ package com.allrecipes.di
 
 import android.content.Context
 import android.net.ConnectivityManager
-import com.allrecipes.App
-import com.allrecipes.BuildConfig
 import com.allrecipes.managers.LocalStorageManagerInterface
 import com.allrecipes.model.YoutubeId
 import com.allrecipes.network.HttpClientBuilder
 import com.allrecipes.network.RequestInterceptor
 import com.allrecipes.network.YoutubeItemIdDeserializer
-import com.allrecipes.util.AllRecipesNetworkInterceptor
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import okhttp3.Cache
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
-import okhttp3.logging.HttpLoggingInterceptor
 
 @Module
 class NetworkModule(val mBaseUrl: String) {
@@ -39,7 +36,6 @@ class NetworkModule(val mBaseUrl: String) {
 
         val client = HttpClientBuilder(localStorageManager)
             .addInterceptor(interceptor)
-            .addInterceptor(AllRecipesNetworkInterceptor())
             .addInterceptor(requestInterceptor)
             .setCache(Cache(context.cacheDir, CACHE_SIZE_BYTES.toLong()))
             .build()

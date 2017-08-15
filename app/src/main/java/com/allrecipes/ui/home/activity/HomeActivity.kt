@@ -308,11 +308,14 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
         dropdown_addresses_listview.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val channel: Channel = channels[position]
             presenter.onChannelListClick(channel, currentFilterSettings)
+            search_clear_button.visibility = View.GONE
+            searchEditText.setText("")
             title_text.text = channel.name
             closeAddressListOverlay()
             val adapter = (parent.adapter as ChannelsListDropdownAdapter)
             adapter.setCurrentChannelId(channel.channelId)
             adapter.notifyDataSetChanged()
+            initAppliedFiltersText()
         }
         trans_overlay.setOnTouchListener({ view: View, motionEvent: MotionEvent ->
             closeAddressListOverlay()

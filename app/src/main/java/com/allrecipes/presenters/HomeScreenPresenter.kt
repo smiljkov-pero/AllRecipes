@@ -48,6 +48,7 @@ class HomeScreenPresenter(
     }
 
     fun onChannelListClick(channel: Channel, currentFilterSettings: FiltersAndSortSettings) {
+        clearFilterAndSortSettings(currentFilterSettings)
         saveLastUsedChannel(channel)
         this.currentChannel = channel
         fetchYoutubeChannelVideos(null, "", currentFilterSettings)
@@ -307,6 +308,13 @@ class HomeScreenPresenter(
         getView().setCurrentFilterSettings(filtersAndSortSettings)
 
         return filtersAndSortSettings
+    }
+
+    fun clearFilterAndSortSettings(filtersAndSortSettings: FiltersAndSortSettings) {
+        filtersAndSortSettings.sort = remoteConfigManager.defaultFilterSort
+        for (filters in filtersAndSortSettings.filters) {
+            filters.setIsChecked(false)
+        }
     }
 
     fun fetchMoreVideosFromPlaylist(item: SwipeLaneChannelItem) {

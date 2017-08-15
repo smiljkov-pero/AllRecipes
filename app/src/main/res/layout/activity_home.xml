@@ -117,7 +117,7 @@
                                 android:layout_toRightOf="@+id/search_icon"
                                 android:background="@null"
                                 android:gravity="left|center_vertical"
-                                android:hint="e.g. Healthy, Pasta..."
+                                android:hint="@string/APP_SEARCH_HINT"
                                 android:imeOptions="actionDone"
                                 android:inputType="textNoSuggestions"
                                 android:lines="1"
