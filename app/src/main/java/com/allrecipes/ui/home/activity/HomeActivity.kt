@@ -38,6 +38,7 @@ import com.allrecipes.ui.home.viewholders.HomeScreenItemFactory
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper
 import com.allrecipes.ui.home.viewholders.items.SwipeLaneChannelItem
 import com.allrecipes.ui.home.viewholders.items.YoutubeVideoItem
+import com.allrecipes.ui.home.viewholders.listeners.AdViewListener
 import com.allrecipes.ui.home.viewholders.listeners.SwipeLaneListener
 import com.allrecipes.ui.home.views.HomeScreenView
 import com.allrecipes.ui.videodetails.activity.VideoActivity
@@ -57,11 +58,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import it.sephiroth.android.library.tooltip.Tooltip
+import kotlinx.android.synthetic.main.activity_filters.*
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.item_swipelane_channel.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
+class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener, AdViewListener {
 
     private val DOUBLE_CLICK_TIMEOUT = 1000
     private var lastClickTime: Long = 0
@@ -339,7 +342,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
 
     fun changeActionBarIconToClear() {
         title_text.visibility = View.VISIBLE
-        activity_toolbar.setNavigationOnClickListener({
+        activity_toolbar_home.setNavigationOnClickListener({
             closeAddressListOverlay()
         })
     }
@@ -415,7 +418,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
     fun changeActionBarDefaultDrawerIcon() {
         val actionBar = supportActionBar
         actionBar!!.setHomeAsUpIndicator(null)
-        activity_toolbar.setNavigationOnClickListener(null)
+        activity_toolbar_home.setNavigationOnClickListener(null)
         title_text.visibility = View.VISIBLE
     }
 
@@ -452,7 +455,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
     }
 
     fun initActionBar() {
-        setSupportActionBar(activity_toolbar)
+        setSupportActionBar(activity_toolbar_home)
         val actionBar = supportActionBar
         actionBar!!.setDisplayShowTitleEnabled(false)
         actionBar.setDisplayHomeAsUpEnabled(false)
@@ -548,7 +551,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
         }
 
         if (position % 3 == 0) {
-            homeScreenItemAdapter.addModel(HomeScreenModelItemWrapper(null, R.id.home_ad_item))
+            homeScreenItemAdapter.addModel(HomeScreenModelItemWrapper(null, R.id.home_ad_item, this))
         }
     }
 
@@ -620,5 +623,9 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
             .build()
         Tooltip.make(this, build)
             .show()
+    }
+
+    override fun getScrollState(): Int {
+        return videosRecyclerView.scrollState
     }
 }

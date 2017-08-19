@@ -85,8 +85,9 @@ class AppModule(private val context: Context) {
 
     @Provides
     @Singleton
-    fun providesFavoritesManager(localStorageManagerInterface: LocalStorageManagerInterface): FavoritesManager {
-        return FavoritesManager(localStorageManagerInterface)
+    fun providesFavoritesManager(localStorageManagerInterface: LocalStorageManagerInterface,
+                                 context: Context): FavoritesManager {
+        return FavoritesManager(localStorageManagerInterface, context)
     }
 
     @Singleton

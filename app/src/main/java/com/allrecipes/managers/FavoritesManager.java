@@ -1,7 +1,10 @@
 package com.allrecipes.managers;
 
+import android.content.Context;
 import android.support.annotation.Nullable;
 
+import com.allrecipes.App;
+import com.allrecipes.R;
 import com.allrecipes.model.SearchChannelVideosResponse;
 import com.allrecipes.model.YoutubeItem;
 import com.allrecipes.model.YoutubeSnipped;
@@ -23,9 +26,11 @@ public class FavoritesManager {
     private static final String CHANNEL_FAVORITE_VIDEOS = "channel_favorite_videos_";
 
     private final LocalStorageManagerInterface localStorageManager;
+    private final Context context;
 
-    public FavoritesManager(LocalStorageManagerInterface localStorageManager) {
+    public FavoritesManager(LocalStorageManagerInterface localStorageManager, Context context) {
         this.localStorageManager = localStorageManager;
+        this.context = context;
     }
 
     public List<YoutubeItem> getChannelFavorites(String channelId) {
@@ -47,9 +52,9 @@ public class FavoritesManager {
 
                 YoutubeChannelItem channelItem = new YoutubeChannelItem();
                 YoutubeSnipped youtubeSnipped = new YoutubeSnipped();
-                youtubeSnipped.title = "Favorites";
+                youtubeSnipped.title = context.getString(R.string.APP_FAVORITES);
                 youtubeSnipped.channelId = channelId;
-                youtubeSnipped.channelTitle = "Favorites";
+                youtubeSnipped.channelTitle = context.getString(R.string.APP_FAVORITES);
                 channelItem.setSnippet(youtubeSnipped);
 
                 channelItem.setId(channelId);

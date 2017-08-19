@@ -217,7 +217,7 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
             }
         };
 
-        CustomTabsClient.bindCustomTabsService(this, CUSTOM_TAB_PACKAGE_NAME, mCustomTabsServiceConnection);
+        CustomTabsClient.bindCustomTabsService(getApplicationContext(), CUSTOM_TAB_PACKAGE_NAME, mCustomTabsServiceConnection);
 
         mCustomTabsIntent = new CustomTabsIntent.Builder(mCustomTabsSession)
                 .setShowTitle(true)

@@ -7,6 +7,7 @@ import com.allrecipes.ui.home.viewholders.items.SwipeAdItem;
 import com.allrecipes.ui.home.viewholders.items.SwipeLaneChannelItem;
 import com.allrecipes.ui.home.viewholders.items.SwipeLaneVideoItem;
 import com.allrecipes.ui.home.viewholders.items.YoutubeVideoItem;
+import com.allrecipes.ui.home.viewholders.listeners.AdViewListener;
 import com.allrecipes.ui.home.viewholders.listeners.SwipeLaneListener;
 import com.mikepenz.fastadapter.utils.Function;
 
@@ -23,7 +24,7 @@ public class HomeScreenItemFactory implements Function<HomeScreenModelItemWrappe
             case R.id.home_swimlane_channel_item:
                 return new SwipeLaneChannelItem(wrapper, (SwipeLaneListener) wrapper.getListener());
             case R.id.home_ad_item:
-                return new HomeAdItem(wrapper);
+                return new HomeAdItem(wrapper,(AdViewListener) wrapper.getListener());
             case R.id.swipelane_video_item:
                 return new SwipeLaneVideoItem(wrapper);
             case R.id.swipelane_ad_item:

@@ -19,5 +19,6 @@
     <string name="APP_SIGN_IN_WITH_GOOGLE">Sign in with Google</string>
     <string name="APP_FILTER_TOOLTIP_MSG">Filter and sort recipes</string>
     <string name="APP_SEARCH_HINT">e.g. Avocado, Egg...</string>
+    <string name="APP_FAVORITES">Favorites</string>
 
 </resources>
