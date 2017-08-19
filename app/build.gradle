@@ -5,6 +5,9 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.jakewharton.butterknife'
 
 android {
+    def VERSION_CODE = rootProject.versionCode
+    def VERSION_NAME = "${rootProject.versionName}"
+
     signingConfigs {
         config {
             keyAlias 'AllRecipesKey'
@@ -19,11 +22,14 @@ android {
         applicationId "com.allrecipes"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionCode VERSION_CODE
+        versionName VERSION_NAME
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
+        manifestPlaceholders = [appName: "Recipes"]
+        renderscriptTargetApi 25
+        renderscriptSupportModeEnabled true
     }
     buildTypes {
         all {
@@ -32,6 +38,7 @@ android {
         debug {
             applicationIdSuffix '.dev'
             debuggable true
+            manifestPlaceholders = [appNameSuffix: ' (Dev-' + VERSION_CODE + ')']
         }
         release {
             minifyEnabled true
@@ -39,11 +46,13 @@ android {
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
             signingConfig signingConfigs.config
+            manifestPlaceholders = [appNameSuffix: ""]
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
+        encoding = 'UTF-8'
     }
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES.txt'
@@ -63,6 +72,11 @@ android {
         release.setRoot('src/release')
         main.java.srcDirs += 'src/main/kotlin'
     }
+    dexOptions {
+        javaMaxHeapSize "2048M"
+        preDexLibraries = false
+    }
+    useLibrary 'org.apache.http.legacy'
 }
 
 kapt {
@@ -158,3 +172,15 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
+
+afterEvaluate {
+    tasks.matching {
+        it.name.startsWith('dex')
+    }.each { dx ->
+        if (dx.additionalParameters == null) {
+            dx.additionalParameters = ['--multi-dex']
+        } else {
+            dx.additionalParameters += '--multi-dex'
+        }
+    }
+}

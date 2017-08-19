@@ -27,7 +27,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import com.allrecipes.R
 import com.allrecipes.custom.RoundedBackgroundSpan
-import com.allrecipes.model.*
+import com.allrecipes.model.Channel
+import com.allrecipes.model.FiltersAndSortSettings
+import com.allrecipes.model.YoutubeItem
 import com.allrecipes.model.playlist.YoutubePlaylistWithVideos
 import com.allrecipes.presenters.HomeScreenPresenter
 import com.allrecipes.ui.BaseActivity
@@ -38,7 +40,6 @@ import com.allrecipes.ui.home.viewholders.HomeScreenItemFactory
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper
 import com.allrecipes.ui.home.viewholders.items.SwipeLaneChannelItem
 import com.allrecipes.ui.home.viewholders.items.YoutubeVideoItem
-import com.allrecipes.ui.home.viewholders.listeners.AdViewListener
 import com.allrecipes.ui.home.viewholders.listeners.SwipeLaneListener
 import com.allrecipes.ui.home.views.HomeScreenView
 import com.allrecipes.ui.videodetails.activity.VideoActivity
@@ -58,13 +59,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import it.sephiroth.android.library.tooltip.Tooltip
-import kotlinx.android.synthetic.main.activity_filters.*
 import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.item_swipelane_channel.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener, AdViewListener {
+class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
 
     private val DOUBLE_CLICK_TIMEOUT = 1000
     private var lastClickTime: Long = 0
@@ -470,8 +469,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener, AdViewLi
         list.layoutManager = layoutManager
 
         fastAdapter = FastAdapter()
-        homeScreenItemFactory = HomeScreenItemFactory(
-        )
+        homeScreenItemFactory = HomeScreenItemFactory()
 
         homeScreenItemAdapter = GenericItemAdapter<HomeScreenModelItemWrapper, BaseHomeScreenItem>(homeScreenItemFactory)
         footerAdapter = FooterAdapter<ProgressItem>()
@@ -623,9 +621,5 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener, AdViewLi
             .build()
         Tooltip.make(this, build)
             .show()
-    }
-
-    override fun getScrollState(): Int {
-        return videosRecyclerView.scrollState
     }
 }

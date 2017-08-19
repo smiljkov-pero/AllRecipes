@@ -21,17 +21,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_app_launcher_white_text"
-        android:layout_below="@+id/relativeLayout"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="49dp"/>
+        android:layout_marginTop="@dimen/d8"/>
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/d16"/>
 
-    <TextView
+    <com.allrecipes.custom.views.AllRecipesTextView
         android:id="@+id/skip_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,6 +41,8 @@
         android:layout_margin="@dimen/d2"
         android:text="@string/APP_CONTINUE"
         android:textColor="@color/white"
-        android:textSize="@dimen/s3"/>
+        android:textSize="@dimen/s3"
+        app:customFont="fonts/Roboto-Regular.ttf"
+        />
 
 </RelativeLayout>

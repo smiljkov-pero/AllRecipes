@@ -37,8 +37,9 @@ public class ChannelsDropdownItemViewHolder extends RecyclerView.ViewHolder {
         selectedChannelIcon
             .setVisibility(TextUtils.equals(channel.getChannelId(), currentChannelId) ? View.VISIBLE : View.GONE);
         Picasso.with(context)
-                .load(channel.getImage())
-                .config(Bitmap.Config.RGB_565)
-                .into(channelImage);
+            .load(channel.getImage())
+            .placeholder(R.drawable.ic_channel_selection_placeholder)
+            .config(Bitmap.Config.RGB_565)
+            .into(channelImage);
     }
 }

@@ -1,12 +1,10 @@
 package com.allrecipes.ui.home.viewholders.items;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.allrecipes.R;
 import com.allrecipes.ui.home.viewholders.BaseHomeScreenItem;
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper;
-import com.allrecipes.ui.home.viewholders.listeners.AdViewListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -17,20 +15,15 @@ import java.util.concurrent.Callable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class HomeAdItem extends BaseHomeScreenItem {
 
-    private AdViewListener listener;
-
-    public HomeAdItem(HomeScreenModelItemWrapper wrapper, AdViewListener listener) {
+    public HomeAdItem(HomeScreenModelItemWrapper wrapper) {
         super(wrapper);
-        this.listener = listener;
     }
 
     @Override
@@ -52,30 +45,28 @@ public class HomeAdItem extends BaseHomeScreenItem {
     public void bindView(BaseViewHolder holder, List payloads) {
         super.bindView(holder, payloads);
         HomeAdItem.ViewHolder viewHolder = ((HomeAdItem.ViewHolder) holder);
-        if(listener != null && listener.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
-            final WeakReference<HomeAdItem.ViewHolder> viewHolderWeakReference = new WeakReference<>(viewHolder);
-            Observable.fromCallable(new Callable<AdRequest>() {
+        final WeakReference<HomeAdItem.ViewHolder> viewHolderWeakReference = new WeakReference<>(viewHolder);
+        Observable.fromCallable(new Callable<AdRequest>() {
+            @Override
+            public AdRequest call() throws Exception {
+                AdRequest adRequest = new AdRequest.Builder()
+                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                    .addTestDevice("892B020FF18C6AB6C3F019DF8029AACE")
+                    .build();
+                return adRequest;
+            }
+        })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Consumer<AdRequest>() {
                 @Override
-                public AdRequest call() throws Exception {
-                    AdRequest adRequest = new AdRequest.Builder()
-                        .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                        .addTestDevice("892B020FF18C6AB6C3F019DF8029AACE")
-                        .build();
-                    return adRequest;
-                }
-            })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<AdRequest>() {
-                    @Override
-                    public void accept(@NonNull AdRequest adRequest) throws Exception {
-                        HomeAdItem.ViewHolder holder = viewHolderWeakReference.get();
-                        if(holder != null) {
-                            holder.adView.loadAd(adRequest);
-                        }
+                public void accept(@NonNull AdRequest adRequest) throws Exception {
+                    HomeAdItem.ViewHolder holder = viewHolderWeakReference.get();
+                    if(holder != null) {
+                        holder.adView.loadAd(adRequest);
                     }
-                });
-        }
+                }
+            });
     }
 
     protected static class ViewHolder extends BaseViewHolder {
