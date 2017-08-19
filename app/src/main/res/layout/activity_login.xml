@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_app_launcher_white_text"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/d8"/>
+        android:layout_marginTop="@dimen/d10"/>
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
