@@ -37,10 +37,6 @@ android {
         all {
             buildConfigField "String", "YOUTUBE_API_KEY", "${settings.YOUTUBE_API_KEY}"
             buildConfigField "String", "AD_MOB_ID", "${settings.admob_id}"
-
-            /*resValue "string", "admob_id", "${settings.admob_id}"
-            resValue "string", "ad_unit_id_item_home_swipelane_native", "${settings.ad_unit_id_item_home_swipelane_native}"
-            resValue "string", "ad_unit_id_item_home_bunner", "${settings.ad_unit_id_item_home_bunner}"*/
         }
         debug {
             applicationIdSuffix '.dev'
