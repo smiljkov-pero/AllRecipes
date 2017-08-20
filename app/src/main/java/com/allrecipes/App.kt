@@ -2,6 +2,7 @@ package com.allrecipes
 
 import android.app.Application
 import android.content.Context
+import android.os.Build
 import android.support.multidex.MultiDex
 import android.widget.ImageView
 import com.allrecipes.di.*
@@ -22,7 +23,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
-        MobileAds.initialize(this, getString(R.string.admob_id))
+        MobileAds.initialize(this, BuildConfig.AD_MOB_ID)
         DebugUtils.initDebugTools(this)
 
         appComponent = DaggerAppComponent.builder()

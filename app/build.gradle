@@ -7,13 +7,15 @@ apply plugin: 'com.jakewharton.butterknife'
 android {
     def VERSION_CODE = rootProject.versionCode
     def VERSION_NAME = "${rootProject.versionName}"
+    Properties settings = new Properties()
+    settings.load(new FileInputStream("project_settings.properties"))
 
     signingConfigs {
         config {
-            keyAlias 'AllRecipesKey'
-            keyPassword 'PerVlad#567'
-            storeFile file('../recipes.jks')
-            storePassword 'Ps567608'
+            keyAlias "${settings.recipesKeyAlias}"
+            keyPassword "${settings.recipesKeyPassword}"
+            storeFile file('../recipes_keystore.jks')
+            storePassword "${settings.recipesStorePassword}"
         }
     }
     compileSdkVersion 25
@@ -33,7 +35,12 @@ android {
     }
     buildTypes {
         all {
-            buildConfigField "String", "YOUTUBE_API_KEY", "\"AIzaSyBjbIL_VsrgXNmkJ5SODu1RBYZx4EHV7mE\""
+            buildConfigField "String", "YOUTUBE_API_KEY", "${settings.YOUTUBE_API_KEY}"
+            buildConfigField "String", "AD_MOB_ID", "${settings.admob_id}"
+
+            /*resValue "string", "admob_id", "${settings.admob_id}"
+            resValue "string", "ad_unit_id_item_home_swipelane_native", "${settings.ad_unit_id_item_home_swipelane_native}"
+            resValue "string", "ad_unit_id_item_home_bunner", "${settings.ad_unit_id_item_home_bunner}"*/
         }
         debug {
             applicationIdSuffix '.dev'

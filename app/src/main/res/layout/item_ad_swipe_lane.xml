@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         ads:adSize="290x163"
-        ads:adUnitId="@string/ad_unit_id_M001_280_132_item_homescreen">
+        ads:adUnitId="@string/ad_unit_id_item_home_swipelane_native">
     </com.google.android.gms.ads.NativeExpressAdView>
 
 </LinearLayout>
