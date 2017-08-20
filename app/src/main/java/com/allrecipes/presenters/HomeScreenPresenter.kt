@@ -128,58 +128,54 @@ class HomeScreenPresenter(
         val favoritesObservable: Observable<YoutubePlaylistWithVideos> = favoritesManager.getFavoriteVideos(currentChannel.channelId)
 
         Observable.zip(videosObservable, swipeLanesObservable, favoritesObservable,
-                       Function3 { youtubeVideos: SearchChannelVideosResponse,
-                                   swipeLanes: List<YoutubePlaylistWithVideos>,
-                                   favoriteVideos: YoutubePlaylistWithVideos ->
-                           val homeZipItems: HomeZipResult = HomeZipResult()
-                           homeZipItems.videos = youtubeVideos
-                           homeZipItems.swipeLanes = swipeLanes
-                           homeZipItems.favoriteVideos = favoriteVideos
-                           favoritesCount = favoriteVideos?.videosResponse?.items?.size!!
-                           homeZipItems
-                       })
+               Function3 { youtubeVideos: SearchChannelVideosResponse,
+                           swipeLanes: List<YoutubePlaylistWithVideos>,
+                           favoriteVideos: YoutubePlaylistWithVideos ->
+                   val homeZipItems: HomeZipResult = HomeZipResult()
+                   homeZipItems.videos = youtubeVideos
+                   homeZipItems.swipeLanes = swipeLanes
+                   homeZipItems.favoriteVideos = favoriteVideos
+                   favoritesCount = favoriteVideos?.videosResponse?.items?.size!!
+                   homeZipItems
+               })
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ homeZip ->
-                           if (isViewAvailable) {
-                               getView().hideLoading()
+                   if (isViewAvailable) {
+                       getView().hideLoading()
 
-                               if (currentPageToken == null) {
-                                   getView().clearAdapterItems()
-                               }
-                               getView().removeBottomListProgress()
-                               val items = homeZip.videos.items
-                               var position = 0
-                               items.forEach {
-                                   getView().addYoutubeItemToAdapter(it, position)
-                                   position++
-                               }
-                               pageToken = homeZip.videos.nextPageToken
+                       if (currentPageToken == null) {
+                           getView().clearAdapterItems()
+                       }
+                       getView().removeBottomListProgress()
+                       val items = homeZip.videos.items
+                       var position = 0
+                       items.forEach {
+                           getView().addYoutubeItemToAdapter(it, position)
+                           position++
+                       }
+                       pageToken = homeZip.videos.nextPageToken
 
-                               homeZip.swipeLanes.forEach {
-                                   getView().addSwapLaneChannelItemToAdapter(it, it.position)
-                               }
+                       homeZip.swipeLanes.forEach {
+                           getView().addSwapLaneChannelItemToAdapter(it, it.position)
+                       }
 
-                               val userHasFavVideos: Boolean? = homeZip.favoriteVideos?.videosResponse?.items?.isEmpty()
-                               if (userHasFavVideos != null && userHasFavVideos == false) {
-                                   getView().addSwapLaneChannelItemToAdapter(homeZip.favoriteVideos!!, 0)
-                               }
-                               showFiltersTooltip()
-                           }
-                       }, { t ->
-                           if (isViewAvailable) {
-                               getView().hideLoading()
-                               t.printStackTrace()
-                               getView().handleApiError(
-                                   t, {
-                                   fetchYoutubeChannelVideos(
-                                       currentPageToken,
-                                       searchCriteria,
-                                       currentFilterSettings
-                                   )
-                               })
-                           }
-                       })
+                       val userHasFavVideos: Boolean? = homeZip.favoriteVideos?.videosResponse?.items?.isEmpty()
+                       if (userHasFavVideos != null && userHasFavVideos == false) {
+                           getView().addSwapLaneChannelItemToAdapter(homeZip.favoriteVideos!!, 0)
+                       }
+                       showFiltersTooltip()
+                   }
+               }, { t ->
+                   if (isViewAvailable) {
+                       getView().hideLoading()
+                       t.printStackTrace()
+                       getView().handleApiError(
+                           t,
+                           { fetchYoutubeChannelVideos(currentPageToken, searchCriteria, currentFilterSettings) }
+                       )
+                   }
+               })
     }
 
     private fun showFiltersTooltip() {
@@ -221,15 +217,15 @@ class HomeScreenPresenter(
                            showFiltersTooltip()
                        }
                    }) { throwable ->
-                if (isViewAvailable) {
-                    getView().hideLoading()
-                    throwable.printStackTrace()
-                    getView().handleApiError(
-                        throwable,
-                        { fetchYoutubeChannelVideos(currentPageToken, searchCriteria, currentFilterSettings) }
-                    )
-                }
-            }
+                        if (isViewAvailable) {
+                            getView().hideLoading()
+                            throwable.printStackTrace()
+                            getView().handleApiError(
+                                throwable,
+                                { fetchYoutubeChannelVideos(currentPageToken, searchCriteria, currentFilterSettings) }
+                            )
+                        }
+                    }
     }
 
     fun onLoadMore(searchCriteria: String?, currentFilterSettings: FiltersAndSortSettings) {
