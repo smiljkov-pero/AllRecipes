@@ -121,14 +121,14 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.google.android.gms.ads.AdView
+            <com.google.android.gms.ads.NativeExpressAdView
                 xmlns:ads="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/adViewBelowImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 ads:adSize="SMART_BANNER"
                 ads:adUnitId="@string/ad_unit_id_item_home_bunner">
-            </com.google.android.gms.ads.AdView>
+            </com.google.android.gms.ads.NativeExpressAdView>
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
@@ -255,14 +255,14 @@
                 android:textSize="@dimen/s2"
                 app:customFont="fonts/Roboto-Regular.ttf"/>
 
-            <com.google.android.gms.ads.AdView
+            <com.google.android.gms.ads.NativeExpressAdView
                 xmlns:ads="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/adViewBelowTextDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 ads:adSize="SMART_BANNER"
                 ads:adUnitId="@string/ad_unit_id_item_home_bunner">
-            </com.google.android.gms.ads.AdView>
+            </com.google.android.gms.ads.NativeExpressAdView>
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

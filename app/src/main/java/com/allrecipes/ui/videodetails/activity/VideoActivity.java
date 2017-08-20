@@ -35,6 +35,7 @@ import com.allrecipes.ui.YoutubePlayerActivity;
 import com.allrecipes.ui.videodetails.views.VideoDetailsView;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.NativeExpressAdView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -86,9 +87,9 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
     @BindView(R.id.duration)
     TextView duration;
     @BindView(R.id.adViewBelowImage)
-    AdView adViewBelowImage;
+    NativeExpressAdView adViewBelowImage;
     @BindView(R.id.adViewBelowTextDescription)
-    AdView adViewBelowTextDescription;
+    NativeExpressAdView adViewBelowTextDescription;
 
     @Inject
     VideoDetailsScreenPresenter presenter;
