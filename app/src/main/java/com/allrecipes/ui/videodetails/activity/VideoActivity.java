@@ -312,15 +312,26 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
 
     @Override
     public void playVideoWithYoutubeInAppPlayer() {
-        startActivity(YoutubePlayerActivity.newIntent(this, video.id.videoId));
+        startActivity(YoutubePlayerActivity.newIntent(this, getVideoId()));
     }
 
     @Override
     public void playVideoWithYoutubeNativeAppPlayer() {
         startActivity(new Intent(
             Intent.ACTION_VIEW,
-            Uri.parse("http://www.youtube.com/watch?v=" + video.id.videoId
+            Uri.parse("http://www.youtube.com/watch?v=" + getVideoId()
         )));
+    }
+
+    private String getVideoId() {
+        String videoId;
+        if (video.id != null && video.id.videoId != null) {
+            videoId = video.id.videoId;
+        } else {
+            videoId = video.snippet.resourceId.videoId;
+        }
+
+        return videoId;
     }
 
     @Override
@@ -364,6 +375,9 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
         if (isFavoriteSaved) {
             favoriteIcon.setImageResource(R.drawable.ic_favorite_black_24dp);
             favoriteIcon.setTag("selected");
+        } else {
+            favoriteIcon.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+            favoriteIcon.setTag("notSelected");
         }
         setDurationValue(item.contentDetails.duration);
     }

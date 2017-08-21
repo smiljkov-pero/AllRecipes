@@ -5,6 +5,7 @@
     android:id="@+id/restaurantImageWrapper"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
     android:layout_marginBottom="@dimen/d1"
     android:layout_marginLeft="@dimen/d2"
     android:layout_marginRight="@dimen/d2"

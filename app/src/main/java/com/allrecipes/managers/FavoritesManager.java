@@ -2,6 +2,7 @@ package com.allrecipes.managers;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.allrecipes.App;
 import com.allrecipes.R;
@@ -74,29 +75,41 @@ public class FavoritesManager {
 
     public void removeChannelFavoriteVideo(YoutubeItem item) {
         List<YoutubeItem> favorites = getChannelFavorites(item.snippet.channelId);
-        YoutubeItem favoriteItem = null;
-        for (YoutubeItem favorite : favorites) {
-            if (item.id.videoId.equals(favorite.id.videoId)) {
-                favoriteItem = favorite;
-                break;
-            }
-        }
+        YoutubeItem favoriteItem = findYoutubeItemInFavoriteList(item, favorites);
         favorites.remove(favoriteItem);
         String favoritesString = new Gson().toJson(favorites);
         localStorageManager.putString(CHANNEL_FAVORITE_VIDEOS + item.snippet.channelId, favoritesString);
     }
 
     @Nullable
-    public YoutubeItem findItemInFavorites(YoutubeItem item) {
-        List<YoutubeItem> favorites = getChannelFavorites(item.snippet.channelId);
+    private YoutubeItem findYoutubeItemInFavoriteList(YoutubeItem item, List<YoutubeItem> favorites) {
         YoutubeItem favoriteItem = null;
+        String itemVideoId = getItemVideoId(item);
         for (YoutubeItem favorite : favorites) {
-            if (item.id.videoId.equals(favorite.id.videoId)) {
+            String favoriteVideoId = getItemVideoId(favorite);
+            if (TextUtils.equals(itemVideoId, favoriteVideoId)) {
                 favoriteItem = favorite;
                 break;
             }
         }
 
         return favoriteItem;
+    }
+
+    @Nullable
+    public YoutubeItem findItemInFavorites(YoutubeItem item) {
+        return findYoutubeItemInFavoriteList(item, getChannelFavorites(item.snippet.channelId));
+    }
+
+    @android.support.annotation.NonNull
+    private String getItemVideoId(YoutubeItem item) {
+        String itemVideoId = "";
+        if (item.id.videoId != null) {
+            itemVideoId = item.id.videoId;
+        } else if (item.snippet.resourceId.videoId != null) {
+            itemVideoId = item.snippet.resourceId.videoId;
+        }
+
+        return itemVideoId;
     }
 }
