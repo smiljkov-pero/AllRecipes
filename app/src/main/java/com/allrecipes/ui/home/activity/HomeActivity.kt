@@ -552,16 +552,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
         }
 
         if (position % 3 == 0) {
-            val adView: NativeExpressAdView = NativeExpressAdView(this)
-            adView.adUnitId = resources.getString(R.string.ad_unit_id_item_home_bunner)
-            adView.adSize = AdSize.SMART_BANNER
-            adView.loadAd(AdRequest.Builder()
-                  .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                  .addTestDevice("892B020FF18C6AB6C3F019DF8029AACE")
-                  .build()
-            )
-
-            homeScreenItemAdapter.addModel(HomeScreenModelItemWrapper(adView, R.id.home_ad_item, this))
+            homeScreenItemAdapter.addModel(HomeScreenModelItemWrapper(null, R.id.home_ad_item, this))
         }
     }
 
