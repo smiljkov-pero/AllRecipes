@@ -12,8 +12,8 @@
 
     <ImageView
         android:id="@+id/videoThumbnail"
-        android:layout_width="290dp"
-        android:layout_height="163dp"
+        android:layout_width="258dp"
+        android:layout_height="145dp"
         android:scaleType="centerCrop" />
 
     <com.allrecipes.custom.views.AllRecipesTextView
