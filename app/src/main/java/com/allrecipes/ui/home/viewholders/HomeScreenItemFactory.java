@@ -2,6 +2,7 @@ package com.allrecipes.ui.home.viewholders;
 
 
 import com.allrecipes.R;
+import com.allrecipes.ui.home.listener.ScrollStateListener;
 import com.allrecipes.ui.home.viewholders.items.HomeAdItem;
 import com.allrecipes.ui.home.viewholders.items.SwipeAdItem;
 import com.allrecipes.ui.home.viewholders.items.SwipeLaneChannelItem;

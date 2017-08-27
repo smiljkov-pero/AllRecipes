@@ -16,6 +16,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.util.Pair
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.TextUtils
@@ -35,6 +36,7 @@ import com.allrecipes.presenters.HomeScreenPresenter
 import com.allrecipes.ui.BaseActivity
 import com.allrecipes.ui.filters.FiltersActivity
 import com.allrecipes.ui.home.adapters.ChannelsListDropdownAdapter
+import com.allrecipes.ui.home.listener.ScrollStateListener
 import com.allrecipes.ui.home.viewholders.BaseHomeScreenItem
 import com.allrecipes.ui.home.viewholders.HomeScreenItemFactory
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper
@@ -45,9 +47,6 @@ import com.allrecipes.ui.home.views.HomeScreenView
 import com.allrecipes.ui.videodetails.activity.VideoActivity
 import com.allrecipes.util.Constants
 import com.allrecipes.util.KeyboardUtils
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.NativeExpressAdView
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.firebase.crash.FirebaseCrash
 import com.jakewharton.rxbinding2.view.RxView
@@ -66,7 +65,7 @@ import kotlinx.android.synthetic.main.activity_home.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
+class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener, ScrollStateListener {
 
     private val DOUBLE_CLICK_TIMEOUT = 1000
     private var lastClickTime: Long = 0
@@ -86,6 +85,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
     private lateinit var searchTextSubscription: Disposable
     private var currentFilterSettings: FiltersAndSortSettings = FiltersAndSortSettings()
     private var loggedInAccount: Account? = null
+    private var listScrollState: Int = 0
 
     @Inject
     lateinit var presenter: HomeScreenPresenter
@@ -519,6 +519,11 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
                     presenter.onLoadMore(searchCriteria, currentFilterSettings)
                 }
             }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                listScrollState = newState
+            }
         }
     }
 
@@ -624,5 +629,9 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener {
             .build()
         Tooltip.make(this, build)
             .show()
+    }
+
+    override fun getScrollState(): Int {
+        return listScrollState
     }
 }
