@@ -5,6 +5,7 @@ import android.net.ConnectivityManager
 import com.allrecipes.managers.LocalStorageManagerInterface
 import com.allrecipes.model.YoutubeId
 import com.allrecipes.network.HttpClientBuilder
+import com.allrecipes.network.RecipesNetworkInterceptor
 import com.allrecipes.network.RequestInterceptor
 import com.allrecipes.network.YoutubeItemIdDeserializer
 import com.google.gson.GsonBuilder
@@ -26,7 +27,8 @@ class NetworkModule(val mBaseUrl: String) {
     fun providesOkHttpClient(
         context: Context,
         localStorageManager: LocalStorageManagerInterface,
-        requestInterceptor: RequestInterceptor
+        requestInterceptor: RequestInterceptor,
+        recipesNetworkInterceptor: RecipesNetworkInterceptor
     ): OkHttpClient {
 
         val interceptor = HttpLoggingInterceptor()
@@ -36,6 +38,7 @@ class NetworkModule(val mBaseUrl: String) {
 
         val client = HttpClientBuilder(localStorageManager)
             .addInterceptor(interceptor)
+            .addInterceptor(recipesNetworkInterceptor)
             .addInterceptor(requestInterceptor)
             .setCache(Cache(context.cacheDir, CACHE_SIZE_BYTES.toLong()))
             .build()

@@ -3,13 +3,10 @@ package com.allrecipes.di
 import android.content.Context
 import android.net.ConnectivityManager
 import com.allrecipes.BuildConfig
-import com.allrecipes.managers.FirebaseDatabaseManager
-import com.allrecipes.managers.FavoritesManager
-import com.allrecipes.managers.GoogleYoutubeApiManager
-import com.allrecipes.managers.LocalStorageManager
-import com.allrecipes.managers.LocalStorageManagerInterface
+import com.allrecipes.managers.*
 import com.allrecipes.managers.remoteconfig.FirebaseConfig
 import com.allrecipes.managers.remoteconfig.RemoteConfigManager
+import com.allrecipes.network.RecipesNetworkInterceptor
 import com.allrecipes.tracking.providers.firebase.FirebaseTracker
 import com.allrecipes.tracking.providers.firebase.FirebaseTrackerImpl
 import com.allrecipes.tracking.providers.firebase.UserPropertiesManager
@@ -106,5 +103,11 @@ class AppModule(private val context: Context) {
     @Provides
     fun providesUserPropertiesManager(firebaseTracker: FirebaseTracker): UserPropertiesManager {
         return UserPropertiesManager(firebaseTracker)
+    }
+
+    @Singleton
+    @Provides
+    fun providesNetworkInterceptor(firebaseTracker: FirebaseTracker): RecipesNetworkInterceptor {
+        return RecipesNetworkInterceptor(firebaseTracker)
     }
 }
