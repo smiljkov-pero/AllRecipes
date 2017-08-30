@@ -20,8 +20,8 @@ buildscript {
 }
 
 ext {
-    versionCode = 5
-    versionName = '1.0.4'
+    versionCode = 6
+    versionName = '1.0.5'
 
     supportLibVersion = '25.3.1'
     googlePlayServicesVersion = '11.0.2'

@@ -30,6 +30,7 @@ import com.allrecipes.custom.LinkTransformationMethod;
 import com.allrecipes.model.YoutubeItem;
 import com.allrecipes.model.video.VideoItem;
 import com.allrecipes.presenters.VideoDetailsScreenPresenter;
+import com.allrecipes.tracking.providers.firebase.FirebaseTracker;
 import com.allrecipes.ui.BaseActivity;
 import com.allrecipes.ui.YoutubePlayerActivity;
 import com.allrecipes.ui.videodetails.views.VideoDetailsView;
@@ -93,6 +94,9 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
 
     @Inject
     VideoDetailsScreenPresenter presenter;
+
+    @Inject
+    FirebaseTracker firebaseTracker;
 
     CustomTabsClient mCustomTabsClient;
     CustomTabsSession mCustomTabsSession;
@@ -312,15 +316,33 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
 
     @Override
     public void playVideoWithYoutubeInAppPlayer() {
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putString("video_id", getVideoId());
+            bundle.putString("video_name", video.snippet.title);
+            bundle.putString("channel_name", video.snippet.channelTitle);
+            firebaseTracker.logEvent("yt_inapp_play", bundle);
+        } catch (Exception e) {
+        }
+
         startActivity(YoutubePlayerActivity.newIntent(this, getVideoId()));
     }
 
     @Override
     public void playVideoWithYoutubeNativeAppPlayer() {
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putString("video_id", getVideoId());
+            bundle.putString("video_name", video.snippet.title);
+            bundle.putString("channel_name", video.snippet.channelTitle);
+            firebaseTracker.logEvent("yt_native_play", bundle);
+        } catch (Exception e) {
+        }
+
         startActivity(new Intent(
             Intent.ACTION_VIEW,
-            Uri.parse("http://www.youtube.com/watch?v=" + getVideoId()
-        )));
+            Uri.parse("http://www.youtube.com/watch?v=" + getVideoId())
+        ));
     }
 
     private String getVideoId() {
