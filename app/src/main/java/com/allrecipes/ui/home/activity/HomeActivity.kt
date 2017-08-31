@@ -56,6 +56,7 @@ import com.mikepenz.fastadapter.adapters.FooterAdapter
 import com.mikepenz.fastadapter.adapters.GenericItemAdapter
 import com.mikepenz.fastadapter_extensions.items.ProgressItem
 import com.mikepenz.fastadapter_extensions.scroll.EndlessRecyclerOnScrollListener
+import de.foodora.android.networkutils.NetworkQuality
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -89,6 +90,9 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener, ScrollSt
 
     @Inject
     lateinit var presenter: HomeScreenPresenter
+
+    @Inject
+    lateinit var networkQuality: NetworkQuality
 
     companion object {
         val KEY_GOOGLE_ACCOUNT_USER = "KEY_GOOGLE_ACCOUNT_USER"
@@ -169,8 +173,8 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener, ScrollSt
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
         outState.putParcelable(KEY_GOOGLE_ACCOUNT_USER, loggedInAccount)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onPause() {
@@ -472,7 +476,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener, ScrollSt
         list.layoutManager = layoutManager
 
         fastAdapter = FastAdapter()
-        homeScreenItemFactory = HomeScreenItemFactory()
+        homeScreenItemFactory = HomeScreenItemFactory(networkQuality)
 
         homeScreenItemAdapter = GenericItemAdapter<HomeScreenModelItemWrapper, BaseHomeScreenItem>(homeScreenItemFactory)
         footerAdapter = FooterAdapter<ProgressItem>()

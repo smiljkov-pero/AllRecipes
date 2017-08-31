@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -53,8 +54,6 @@ public class YoutubePlayerActivity extends YouTubeBaseActivity implements YouTub
         } else {
             videoUrl = savedInstanceState.getString(KEY_VIDEO_URL);
         }
-        /** attaching layout xml **/
-
 
         /** Initializing YouTube player view **/
         YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
@@ -62,9 +61,18 @@ public class YoutubePlayerActivity extends YouTubeBaseActivity implements YouTub
     }
 
     @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        try {
+            super.onRestoreInstanceState(savedInstanceState);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
         outState.putString(KEY_VIDEO_URL, videoUrl);
+        super.onSaveInstanceState(outState);
     }
 
     @Override

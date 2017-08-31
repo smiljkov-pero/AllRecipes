@@ -16,14 +16,17 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.foodora.android.networkutils.NetworkQuality;
 
 public class YoutubeVideoItem extends BaseHomeScreenItem {
 
     private YoutubeItem item;
+    private final NetworkQuality networkQuality;
 
-    public YoutubeVideoItem(HomeScreenModelItemWrapper wrapper) {
+    public YoutubeVideoItem(HomeScreenModelItemWrapper wrapper, NetworkQuality networkQuality) {
         super(wrapper);
         this.item = (YoutubeItem) wrapper.getT();
+        this.networkQuality = networkQuality;
     }
 
     public com.allrecipes.model.YoutubeItem getItem() {
@@ -56,8 +59,11 @@ public class YoutubeVideoItem extends BaseHomeScreenItem {
     }
 
     private void adjustYoutubeImage(final ViewHolder holder, YoutubeItem item) {
+        String url = networkQuality.getNetworkQualityCoefficient() > 0.5
+            ? item.snippet.thumbnails.highThumbnail.url
+            : item.snippet.thumbnails.mediumThumbnail.url;
         Picasso.with(holder.context)
-            .load(item.snippet.thumbnails.highThumbnail.url)
+            .load(url)
             .fit()
             .centerCrop()
             .placeholder(R.drawable.ic_item_placeholder)

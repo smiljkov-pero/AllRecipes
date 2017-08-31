@@ -49,6 +49,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.foodora.android.networkutils.NetworkQuality;
 
 public class VideoActivity extends BaseActivity implements VideoDetailsView {
 
@@ -94,6 +95,9 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
 
     @Inject
     VideoDetailsScreenPresenter presenter;
+
+    @Inject
+    NetworkQuality networkQuality;
 
     @Inject
     FirebaseTracker firebaseTracker;
@@ -182,8 +186,12 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
         presenter.fetchVideo(video);
         initAds();
 
+        String url = networkQuality.getNetworkQualityCoefficient() > 0.5
+            ? video.snippet.thumbnails.highThumbnail.url
+            : video.snippet.thumbnails.mediumThumbnail.url;
+
         Picasso.with(this)
-            .load(video.snippet.thumbnails.highThumbnail.url)
+            .load(url)
             .placeholder(R.drawable.ic_item_placeholder)
             .noFade()
             .into(videoThumbnail, new Callback() {
@@ -264,8 +272,8 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
         outState.putParcelable(KEY_VIDEO, video);
+        super.onSaveInstanceState(outState);
     }
 
     @Override

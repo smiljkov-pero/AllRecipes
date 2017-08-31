@@ -21,8 +21,9 @@ import com.allrecipes.model.SearchChannelVideosResponse
 import com.allrecipes.ui.home.viewholders.HomeScreenItemFactory
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.adapters.GenericItemAdapter
+import de.foodora.android.networkutils.NetworkQuality
 
-class SwipeLaneChannelItem(wrapper: HomeScreenModelItemWrapper, private val listener: SwipeLaneListener?)
+class SwipeLaneChannelItem(wrapper: HomeScreenModelItemWrapper, private val listener: SwipeLaneListener?, val networkQuality: NetworkQuality)
     : BaseHomeScreenItem(wrapper) {
     val item: YoutubePlaylistWithVideos
     private var adapter: SwipeLaneChannelAdapter? = null
@@ -87,7 +88,7 @@ class SwipeLaneChannelItem(wrapper: HomeScreenModelItemWrapper, private val list
         videosRecyclerView.layoutManager = layoutManager
 
         fastAdapter = FastAdapter()
-        swipeLaneItemFactory = HomeScreenItemFactory()
+        swipeLaneItemFactory = HomeScreenItemFactory(networkQuality)
 
         swipeLineItemAdapter = GenericItemAdapter<HomeScreenModelItemWrapper, BaseHomeScreenItem>(swipeLaneItemFactory)
         videosRecyclerView.adapter = swipeLineItemAdapter.wrap(fastAdapter)
