@@ -10,6 +10,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.google.firebase:firebase-plugins:1.1.0'
         classpath 'com.google.gms:google-services:3.0.0'
         classpath 'com.jakewharton:butterknife-gradle-plugin:8.4.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
@@ -19,8 +20,8 @@ buildscript {
 }
 
 ext {
-    versionCode = 5
-    versionName = '1.0.4'
+    versionCode = 6
+    versionName = '1.0.5'
 
     supportLibVersion = '25.3.1'
     googlePlayServicesVersion = '11.0.2'

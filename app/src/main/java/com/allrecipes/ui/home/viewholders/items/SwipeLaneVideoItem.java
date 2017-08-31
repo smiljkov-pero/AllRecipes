@@ -15,14 +15,17 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.foodora.android.networkutils.NetworkQuality;
 
 public class SwipeLaneVideoItem extends BaseHomeScreenItem {
 
     private YoutubeItem item;
+    private final NetworkQuality networkQuality;
 
-    public SwipeLaneVideoItem(HomeScreenModelItemWrapper wrapper) {
+    public SwipeLaneVideoItem(HomeScreenModelItemWrapper wrapper, NetworkQuality networkQuality) {
         super(wrapper);
         this.item = (YoutubeItem) wrapper.getT();
+        this.networkQuality = networkQuality;
     }
 
     public YoutubeItem getItem() {
@@ -55,13 +58,18 @@ public class SwipeLaneVideoItem extends BaseHomeScreenItem {
     }
 
     private void adjustYoutubeImage(final SwipeLaneVideoItem.ViewHolder holder, YoutubeItem item) {
-        if (item.snippet != null && item.snippet.thumbnails != null)
+        if (item.snippet != null && item.snippet.thumbnails != null) {
+            String url = networkQuality.getNetworkQualityCoefficient() > 0.5
+                ? item.snippet.thumbnails.highThumbnail.url
+                : item.snippet.thumbnails.mediumThumbnail.url;
+
             Picasso.with(holder.videoThumbnail.getContext())
-                .load(item.snippet.thumbnails.mediumThumbnail.url)
+                .load(url)
                 .fit()
                 .centerCrop()
                 .config(Bitmap.Config.RGB_565)
                 .into(holder.videoThumbnail);
+        }
     }
     protected static class ViewHolder extends BaseViewHolder {
 

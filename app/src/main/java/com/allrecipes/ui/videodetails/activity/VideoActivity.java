@@ -30,6 +30,7 @@ import com.allrecipes.custom.LinkTransformationMethod;
 import com.allrecipes.model.YoutubeItem;
 import com.allrecipes.model.video.VideoItem;
 import com.allrecipes.presenters.VideoDetailsScreenPresenter;
+import com.allrecipes.tracking.providers.firebase.FirebaseTracker;
 import com.allrecipes.ui.BaseActivity;
 import com.allrecipes.ui.YoutubePlayerActivity;
 import com.allrecipes.ui.videodetails.views.VideoDetailsView;
@@ -48,6 +49,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.foodora.android.networkutils.NetworkQuality;
 
 public class VideoActivity extends BaseActivity implements VideoDetailsView {
 
@@ -93,6 +95,12 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
 
     @Inject
     VideoDetailsScreenPresenter presenter;
+
+    @Inject
+    NetworkQuality networkQuality;
+
+    @Inject
+    FirebaseTracker firebaseTracker;
 
     CustomTabsClient mCustomTabsClient;
     CustomTabsSession mCustomTabsSession;
@@ -178,8 +186,12 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
         presenter.fetchVideo(video);
         initAds();
 
+        String url = networkQuality.getNetworkQualityCoefficient() > 0.5
+            ? video.snippet.thumbnails.highThumbnail.url
+            : video.snippet.thumbnails.mediumThumbnail.url;
+
         Picasso.with(this)
-            .load(video.snippet.thumbnails.highThumbnail.url)
+            .load(url)
             .placeholder(R.drawable.ic_item_placeholder)
             .noFade()
             .into(videoThumbnail, new Callback() {
@@ -260,8 +272,8 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
         outState.putParcelable(KEY_VIDEO, video);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -312,15 +324,33 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
 
     @Override
     public void playVideoWithYoutubeInAppPlayer() {
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putString("video_id", getVideoId());
+            bundle.putString("video_name", video.snippet.title);
+            bundle.putString("channel_name", video.snippet.channelTitle);
+            firebaseTracker.logEvent("yt_inapp_play", bundle);
+        } catch (Exception e) {
+        }
+
         startActivity(YoutubePlayerActivity.newIntent(this, getVideoId()));
     }
 
     @Override
     public void playVideoWithYoutubeNativeAppPlayer() {
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putString("video_id", getVideoId());
+            bundle.putString("video_name", video.snippet.title);
+            bundle.putString("channel_name", video.snippet.channelTitle);
+            firebaseTracker.logEvent("yt_native_play", bundle);
+        } catch (Exception e) {
+        }
+
         startActivity(new Intent(
             Intent.ACTION_VIEW,
-            Uri.parse("http://www.youtube.com/watch?v=" + getVideoId()
-        )));
+            Uri.parse("http://www.youtube.com/watch?v=" + getVideoId())
+        ));
     }
 
     private String getVideoId() {
