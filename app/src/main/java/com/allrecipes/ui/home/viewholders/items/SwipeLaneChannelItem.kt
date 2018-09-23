@@ -60,7 +60,7 @@ class SwipeLaneChannelItem(wrapper: HomeScreenModelItemWrapper, private val list
 
         item.videosResponse.items.forEachIndexed { index, videoItem ->
             swipeLineItemAdapter.addModel(HomeScreenModelItemWrapper(videoItem, R.id.swipelane_video_item))
-            addAd(index, holder.context)
+            //addAd(index, holder.context)
         }
     }
 
@@ -75,7 +75,7 @@ class SwipeLaneChannelItem(wrapper: HomeScreenModelItemWrapper, private val list
     fun loadMore(youtubeVideoResponse: SearchChannelVideosResponse) {
         youtubeVideoResponse.items.forEachIndexed { index, videoItem ->
             swipeLineItemAdapter.addModel(HomeScreenModelItemWrapper(videoItem, R.id.swipelane_video_item))
-            addAd(index, null)
+            //addAd(index, null)
         }
         item.videosResponse.nextPageToken = youtubeVideoResponse.nextPageToken
     }

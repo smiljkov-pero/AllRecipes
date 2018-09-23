@@ -1,5 +1,6 @@
 package com.allrecipes.presenters
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -111,6 +112,7 @@ class HomeScreenPresenter(
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun fetchHomeYoutubeVideos(
         currentPageToken: String?,
         searchCriteria: String?,
@@ -131,7 +133,7 @@ class HomeScreenPresenter(
                Function3 { youtubeVideos: SearchChannelVideosResponse,
                            swipeLanes: List<YoutubePlaylistWithVideos>,
                            favoriteVideos: YoutubePlaylistWithVideos ->
-                   val homeZipItems: HomeZipResult = HomeZipResult()
+                   val homeZipItems = HomeZipResult()
                    homeZipItems.videos = youtubeVideos
                    homeZipItems.swipeLanes = swipeLanes
                    homeZipItems.favoriteVideos = favoriteVideos
@@ -170,10 +172,8 @@ class HomeScreenPresenter(
                    if (isViewAvailable) {
                        getView().hideLoading()
                        t.printStackTrace()
-                       getView().handleApiError(
-                           t,
-                           { fetchYoutubeChannelVideos(currentPageToken, searchCriteria, currentFilterSettings) }
-                       )
+                       getView().handleApiError(t)
+                       { fetchYoutubeChannelVideos(currentPageToken, searchCriteria, currentFilterSettings) }
                    }
                })
     }
@@ -220,10 +220,8 @@ class HomeScreenPresenter(
                         if (isViewAvailable) {
                             getView().hideLoading()
                             throwable.printStackTrace()
-                            getView().handleApiError(
-                                throwable,
-                                { fetchYoutubeChannelVideos(currentPageToken, searchCriteria, currentFilterSettings) }
-                            )
+                            getView().handleApiError(throwable)
+                            { fetchYoutubeChannelVideos(currentPageToken, searchCriteria, currentFilterSettings) }
                         }
                     }
     }
@@ -238,20 +236,20 @@ class HomeScreenPresenter(
             recommendedPlaylists.playlistId,
             remoteConfigManager.videoListItemsPerPage, null
         )
-            .flatMap({ youtubeVideoResponse ->
-                         val channelItem = YoutubeChannelItem()
-                         val youtubeSnipped = YoutubeSnipped()
-                         youtubeSnipped.title = channelName
-                         youtubeSnipped.channelId = recommendedPlaylists.playlistId
-                         youtubeSnipped.channelTitle = channelName
-                         channelItem.snippet = youtubeSnipped
-                         val response = YoutubePlaylistWithVideos(
-                             channelItem,
-                             youtubeVideoResponse,
-                             recommendedPlaylists.position
-                         )
-                         Observable.just(response)
-                     })
+            .flatMap { youtubeVideoResponse ->
+                val channelItem = YoutubeChannelItem()
+                val youtubeSnipped = YoutubeSnipped()
+                youtubeSnipped.title = channelName
+                youtubeSnipped.channelId = recommendedPlaylists.playlistId
+                youtubeSnipped.channelTitle = channelName
+                channelItem.snippet = youtubeSnipped
+                val response = YoutubePlaylistWithVideos(
+                        channelItem,
+                        youtubeVideoResponse,
+                        recommendedPlaylists.position
+                )
+                Observable.just(response)
+            }
 
         return s
     }
@@ -286,10 +284,10 @@ class HomeScreenPresenter(
             return Observable.just(emptyList())
         }
 
-        return Observable.zip(swipeLanesObservables, {
+        return Observable.zip(swipeLanesObservables) {
             t: Array<out Any> ->
             t.toList() as List<YoutubePlaylistWithVideos>
-        })
+        }
     }
 
     private fun initDefaultFilterAndSortSettings(): FiltersAndSortSettings {
@@ -306,7 +304,7 @@ class HomeScreenPresenter(
         return filtersAndSortSettings
     }
 
-    fun clearFilterAndSortSettings(filtersAndSortSettings: FiltersAndSortSettings) {
+    private fun clearFilterAndSortSettings(filtersAndSortSettings: FiltersAndSortSettings) {
         filtersAndSortSettings.sort = remoteConfigManager.defaultFilterSort
         for (filters in filtersAndSortSettings.filters) {
             filters.setIsChecked(false)

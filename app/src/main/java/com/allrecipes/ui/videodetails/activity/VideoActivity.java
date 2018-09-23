@@ -34,9 +34,6 @@ import com.allrecipes.tracking.providers.firebase.FirebaseTracker;
 import com.allrecipes.ui.BaseActivity;
 import com.allrecipes.ui.YoutubePlayerActivity;
 import com.allrecipes.ui.videodetails.views.VideoDetailsView;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.NativeExpressAdView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -88,10 +85,10 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
     ImageView favoriteIcon;
     @BindView(R.id.duration)
     TextView duration;
-    @BindView(R.id.adViewBelowImage)
+    /*@BindView(R.id.adViewBelowImage)
     NativeExpressAdView adViewBelowImage;
     @BindView(R.id.adViewBelowTextDescription)
-    NativeExpressAdView adViewBelowTextDescription;
+    NativeExpressAdView adViewBelowTextDescription;*/
 
     @Inject
     VideoDetailsScreenPresenter presenter;
@@ -128,54 +125,50 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
         setTransparentStatusBar(getWindow().getDecorView());
         supportPostponeEnterTransition();
 
-        if (isAtLeastLollipop()) {
-            getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
-                @Override
-                public void onTransitionStart(Transition transition) {
-                    isAnimationStarted = true;
-                }
+        getWindow().getSharedElementEnterTransition().addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+                isAnimationStarted = true;
+            }
 
-                @Override
-                public void onTransitionEnd(Transition transition) {
-                    AlphaAnimation tagAlphaAnimation = new AlphaAnimation(0.0f, 1.0f);
-                    tagAlphaAnimation.setInterpolator(new DecelerateInterpolator());
-                    tagAlphaAnimation.setDuration(300L);
-                    tagAlphaAnimation.setAnimationListener(new Animation.AnimationListener() {
-                        @Override
-                        public void onAnimationStart(Animation animation) {
+            @Override
+            public void onTransitionEnd(Transition transition) {
+                AlphaAnimation tagAlphaAnimation = new AlphaAnimation(0.0f, 1.0f);
+                tagAlphaAnimation.setInterpolator(new DecelerateInterpolator());
+                tagAlphaAnimation.setDuration(300L);
+                tagAlphaAnimation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        if (viewGrayOverlay != null) {
+                            viewGrayOverlay.setLayerType(View.LAYER_TYPE_NONE, null);
                         }
+                    }
 
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-                            if (viewGrayOverlay != null) {
-                                viewGrayOverlay.setLayerType(View.LAYER_TYPE_NONE, null);
-                            }
-                        }
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                });
+                viewGrayOverlay.setVisibility(View.VISIBLE);
+                viewGrayOverlay.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+                viewGrayOverlay.startAnimation(tagAlphaAnimation);
+            }
 
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {
-                        }
-                    });
-                    viewGrayOverlay.setVisibility(View.VISIBLE);
-                    viewGrayOverlay.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-                    viewGrayOverlay.startAnimation(tagAlphaAnimation);
-                }
+            @Override
+            public void onTransitionCancel(Transition transition) {
+            }
 
-                @Override
-                public void onTransitionCancel(Transition transition) {
-                }
+            @Override
+            public void onTransitionPause(Transition transition) {
+            }
 
-                @Override
-                public void onTransitionPause(Transition transition) {
-                }
-
-                @Override
-                public void onTransitionResume(Transition transition) {
-                }
-            });
-        } else {
-            viewGrayOverlay.setVisibility(View.VISIBLE);
-        }
+            @Override
+            public void onTransitionResume(Transition transition) {
+            }
+        });
 
         if (savedInstanceState == null) {
             video = getIntent().getParcelableExtra(KEY_VIDEO);
@@ -184,7 +177,7 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
         }
 
         presenter.fetchVideo(video);
-        initAds();
+        //initAds();
 
         String url = networkQuality.getNetworkQualityCoefficient() > 0.5
             ? video.snippet.thumbnails.highThumbnail.url
@@ -207,14 +200,9 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
             });
 
         setTitleToolbar(video.snippet.title);
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                titleText.setAlpha(
-                    Math.abs(verticalOffset / (float) appBarLayout.getTotalScrollRange())
-                );
-            }
-        });
+        appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> titleText.setAlpha(
+            Math.abs(verticalOffset / (float) appBarLayout.getTotalScrollRange())
+        ));
 
         mCustomTabsServiceConnection = new CustomTabsServiceConnection() {
             @Override
@@ -238,7 +226,7 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
     }
 
     private void initAds() {
-        AdRequest adViewBelowImageRequest = new AdRequest.Builder()
+        /*AdRequest adViewBelowImageRequest = new AdRequest.Builder()
             .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
             .addTestDevice("892B020FF18C6AB6C3F019DF8029AACE")
             .build();
@@ -248,7 +236,7 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
             .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
             .addTestDevice("892B020FF18C6AB6C3F019DF8029AACE")
             .build();
-        adViewBelowTextDescription.loadAd(adBlowTextDescriptionRequest);
+        adViewBelowTextDescription.loadAd(adBlowTextDescriptionRequest);*/
     }
 
     @Override
@@ -288,11 +276,9 @@ public class VideoActivity extends BaseActivity implements VideoDetailsView {
      * @param decorView the view obtained form {@code getWindow().getDecorView()}
      */
     public static void setTransparentStatusBar(View decorView) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            );
-        }
+        decorView.setSystemUiVisibility(
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        );
     }
 
     private void setTitleToolbar(String title) {

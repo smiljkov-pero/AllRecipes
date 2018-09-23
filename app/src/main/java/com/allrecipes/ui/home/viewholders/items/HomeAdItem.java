@@ -1,27 +1,16 @@
 package com.allrecipes.ui.home.viewholders.items;
 
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.allrecipes.R;
 import com.allrecipes.ui.home.listener.ScrollStateListener;
 import com.allrecipes.ui.home.viewholders.BaseHomeScreenItem;
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.NativeExpressAdView;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
-import java.util.concurrent.Callable;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 public class HomeAdItem extends BaseHomeScreenItem {
 
@@ -53,7 +42,7 @@ public class HomeAdItem extends BaseHomeScreenItem {
         HomeAdItem.ViewHolder viewHolder = ((HomeAdItem.ViewHolder) holder);
         if (scrollStateListener.getScrollState() != 2) {
             final WeakReference<ViewHolder> viewHolderWeakReference = new WeakReference<>(viewHolder);
-            Observable.fromCallable(new Callable<AdRequest>() {
+            /*Observable.fromCallable(new Callable<AdRequest>() {
                 @Override
                 public AdRequest call() throws Exception {
                     AdRequest adRequest = new AdRequest.Builder()
@@ -73,14 +62,14 @@ public class HomeAdItem extends BaseHomeScreenItem {
                             holder.adView.loadAd(adRequest);
                         }
                     }
-                });
+                });*/
         }
     }
 
     protected static class ViewHolder extends BaseViewHolder {
 
-        @BindView(R.id.adView)
-        NativeExpressAdView adView;
+        /*@BindView(R.id.adView)
+        NativeExpressAdView adView;*/
 
         public ViewHolder(View view) {
             super(view);

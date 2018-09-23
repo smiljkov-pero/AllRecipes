@@ -26,6 +26,7 @@ import android.view.View
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
+import android.widget.ImageView
 import com.allrecipes.R
 import com.allrecipes.custom.RoundedBackgroundSpan
 import com.allrecipes.model.Channel
@@ -47,8 +48,8 @@ import com.allrecipes.ui.home.views.HomeScreenView
 import com.allrecipes.ui.videodetails.activity.VideoActivity
 import com.allrecipes.util.Constants
 import com.allrecipes.util.KeyboardUtils
+import com.crashlytics.android.Crashlytics
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
-import com.google.firebase.crash.FirebaseCrash
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.mikepenz.fastadapter.FastAdapter
@@ -166,7 +167,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener, ScrollSt
 
     fun logCustomError(message: String) {
         try {
-            FirebaseCrash.log(message)
+            Crashlytics.log(message)
         } catch (e: Exception) {
         }
 
@@ -550,19 +551,19 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener, ScrollSt
     }
 
     private fun initSwipeRefresh() {
-        swipeContainer.setOnRefreshListener({
+        swipeContainer.setOnRefreshListener {
             presenter.fetchYoutubeChannelVideos(null, searchCriteria, currentFilterSettings)
-        })
+        }
     }
 
     override fun addYoutubeItemToAdapter(item: com.allrecipes.model.YoutubeItem, position: Int) {
-        if (TextUtils.equals(item?.id?.kind, "youtube#video")) {
+        if (TextUtils.equals(item.id?.kind, "youtube#video")) {
             homeScreenItemAdapter.addModel(HomeScreenModelItemWrapper(item, R.id.home_screen_video_item))
         }
 
-        if (position % 3 == 0) {
-            homeScreenItemAdapter.addModel(HomeScreenModelItemWrapper(null, R.id.home_ad_item, this))
-        }
+        /*if (position % 3 == 0) {
+           homeScreenItemAdapter.addModel(HomeScreenModelItemWrapper(null, R.id.home_ad_item, this))
+       }*/
     }
 
     override fun showLoading() {
@@ -574,16 +575,15 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener, ScrollSt
         title_text.text = value
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    internal fun startVideoActivityWithTransition(v: View, intent: Intent) {
-        val statusBar = findViewById(android.R.id.statusBarBackground)
-        val navigationBar = findViewById(android.R.id.navigationBarBackground)
+    private fun startVideoActivityWithTransition(v: View, intent: Intent) {
+        val statusBar = findViewById<View>(android.R.id.statusBarBackground)
+        val navigationBar = findViewById<View>(android.R.id.navigationBarBackground)
 
         val pairStatusBar = if (statusBar != null)
             Pair.create(statusBar, Window.STATUS_BAR_BACKGROUND_TRANSITION_NAME) else null
         val pairNavigationBar = if (navigationBar != null)
             Pair.create(navigationBar, Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME) else null
-        val pairVideoImage = Pair.create(v.findViewById(R.id.videoThumbnail), "VideoImageTransition")
+        val pairVideoImage = Pair.create(v.findViewById<ImageView>(R.id.videoThumbnail), "VideoImageTransition")
 
         val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
             this,

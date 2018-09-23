@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.TextView
 import com.allrecipes.App
 import com.allrecipes.R
 import com.allrecipes.network.OfflineException
@@ -62,16 +63,10 @@ open class BaseActivity : AppCompatActivity() {
         ToastUtils.showToast(baseContext, txt)
     }
 
-    fun isAtLeastLollipop(): Boolean {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-    }
-
     protected fun setStatusBarColor(colorRes: Int) {
-        if (isAtLeastLollipop()) {
-            val window = window
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = resources.getColor(colorRes)
-        }
+        val window = window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = resources.getColor(colorRes)
     }
 
     fun handleApiError(throwable: Throwable, predicate: () -> Unit) {
@@ -85,7 +80,7 @@ open class BaseActivity : AppCompatActivity() {
         val errorLayout = LayoutInflater.from(this).inflate(R.layout.error_connectivity_layout, null)
         val rootView = findViewById(android.R.id.content) as ViewGroup
         rootView.addView(errorLayout)
-        errorLayout.findViewById(R.id.retryButton).setOnClickListener {
+        errorLayout.findViewById<TextView>(R.id.retryButton).setOnClickListener {
             hideConnectivityError()
             predicate()
         }

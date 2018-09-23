@@ -8,8 +8,16 @@
 -dump build/class_files.txt
 -printseeds build/seeds.txt
 -printusage build/unused.txt
--printmapping build/mapping.txt
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
+
+-keep class com.crashlytics.** { *; }
+-dontwarn com.crashlytics.**
+
+-dontwarn com.shaded.fasterxml.**
+-dontwarn org.apache.**
+-dontwarn org.shaded.apache.**
+-keepnames class com.shaded.fasterxml.jackson.** { *; }
+-keepnames class org.shaded.apache.**
 
 -allowaccessmodification
 -keepattributes *Annotation*

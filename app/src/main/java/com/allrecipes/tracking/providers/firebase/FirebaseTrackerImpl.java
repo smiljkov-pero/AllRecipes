@@ -3,8 +3,8 @@ package com.allrecipes.tracking.providers.firebase;
 import android.app.Activity;
 import android.os.Bundle;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.crash.FirebaseCrash;
 
 public class FirebaseTrackerImpl implements FirebaseTracker {
 
@@ -36,11 +36,11 @@ public class FirebaseTrackerImpl implements FirebaseTracker {
 
     @Override
     public void logBreadCrumb(String breadCrumb) {
-        FirebaseCrash.log(breadCrumb);
+        Crashlytics.log(breadCrumb);
     }
 
     @Override
     public void logHandledException(Throwable throwable) {
-        FirebaseCrash.report(throwable);
+        Crashlytics.logException(throwable);
     }
 }

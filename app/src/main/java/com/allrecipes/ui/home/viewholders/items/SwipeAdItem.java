@@ -5,21 +5,11 @@ import android.view.View;
 import com.allrecipes.R;
 import com.allrecipes.ui.home.viewholders.BaseHomeScreenItem;
 import com.allrecipes.ui.home.viewholders.HomeScreenModelItemWrapper;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.NativeExpressAdView;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
-import java.util.concurrent.Callable;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 public class SwipeAdItem extends BaseHomeScreenItem {
 
@@ -48,7 +38,7 @@ public class SwipeAdItem extends BaseHomeScreenItem {
         SwipeAdItem.ViewHolder viewHolder = ((SwipeAdItem.ViewHolder) holder);
         final WeakReference<SwipeAdItem.ViewHolder> viewHolderWeakReference = new WeakReference<>(viewHolder);
 
-        Observable.fromCallable(new Callable<AdRequest>() {
+        /*Observable.fromCallable(new Callable<AdRequest>() {
             @Override
             public AdRequest call() throws Exception {
                 AdRequest adRequest = new AdRequest.Builder()
@@ -67,13 +57,13 @@ public class SwipeAdItem extends BaseHomeScreenItem {
                         holder.adView.loadAd(adRequest);
                     }
                 }
-            });
+            });*/
     }
 
     protected static class ViewHolder extends BaseViewHolder {
 
-        @BindView(R.id.adView)
-        NativeExpressAdView adView;
+        /*@BindView(R.id.adView)
+        NativeExpressAdView adView;*/
 
         public ViewHolder(View view) {
             super(view);

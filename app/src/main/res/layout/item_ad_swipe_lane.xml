@@ -10,7 +10,7 @@
     android:layout_marginTop="@dimen/d1"
     android:paddingBottom="@dimen/d1">
 
-    <com.google.android.gms.ads.NativeExpressAdView
+    <!--<com.google.android.gms.ads.NativeExpressAdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/adView"
         android:layout_centerInParent="true"
@@ -18,6 +18,6 @@
         android:layout_height="match_parent"
         ads:adSize="280x145"
         ads:adUnitId="@string/ad_unit_id_item_home_swipelane_native">
-    </com.google.android.gms.ads.NativeExpressAdView>
+    </com.google.android.gms.ads.NativeExpressAdView>-->
 
 </LinearLayout>

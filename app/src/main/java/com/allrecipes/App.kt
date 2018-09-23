@@ -9,7 +9,6 @@ import com.allrecipes.di.*
 import com.allrecipes.ui.home.views.HomeScreenView
 import com.allrecipes.ui.launcher.LauncherView
 import com.allrecipes.ui.videodetails.views.VideoDetailsView
-import com.google.android.gms.ads.MobileAds
 import com.google.firebase.FirebaseApp
 import com.squareup.picasso.Picasso
 
@@ -23,7 +22,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
-        MobileAds.initialize(this, BuildConfig.AD_MOB_ID)
+        //MobileAds.initialize(this, BuildConfig.AD_MOB_ID)
         DebugUtils.initDebugTools(this)
 
         appComponent = DaggerAppComponent.builder()

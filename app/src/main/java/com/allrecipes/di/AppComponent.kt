@@ -11,7 +11,7 @@ import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = arrayOf(NetworkModule::class, AppModule::class))
+@Component(modules = [(NetworkModule::class), (AppModule::class)])
 interface AppComponent {
 
     fun applicationContext(): Context

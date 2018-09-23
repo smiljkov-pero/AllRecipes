@@ -21,8 +21,7 @@
             android:minHeight="?attr/actionBarSize"
             android:transitionGroup="true"
             app:popupTheme="@style/AppTheme"
-            app:theme="@style/ToolbarNormalStyle"
-            tools:targetApi="lollipop">
+            app:theme="@style/ToolbarNormalStyle">
 
             <com.allrecipes.custom.views.AllRecipesTextView
                 android:id="@+id/title_text"
