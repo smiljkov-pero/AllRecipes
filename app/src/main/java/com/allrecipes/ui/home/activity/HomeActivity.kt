@@ -525,7 +525,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener, ScrollSt
                 }
             }
 
-            override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 listScrollState = newState
             }

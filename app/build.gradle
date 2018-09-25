@@ -19,12 +19,12 @@ android {
             storePassword "${settings.recipesStorePassword}"
         }
     }
-    compileSdkVersion 27
+    compileSdkVersion 28
     buildToolsVersion '28.0.2'
     defaultConfig {
         applicationId "com.allrecipes"
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode VERSION_CODE
         versionName VERSION_NAME
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
