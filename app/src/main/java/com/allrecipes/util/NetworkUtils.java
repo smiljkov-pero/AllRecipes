@@ -20,10 +20,4 @@ public class NetworkUtils {
 
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-
-    public String getNetworkCountryIso() {
-        TelephonyManager tel = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-
-        return tel.getNetworkCountryIso();
-    }
 }

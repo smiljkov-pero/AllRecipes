@@ -20,16 +20,6 @@ public class FirebaseTrackerImpl implements FirebaseTracker {
     }
 
     @Override
-    public void setUserProperty(String property, String value) {
-        firebaseAnalytics.setUserProperty(property, value);
-    }
-
-    @Override
-    public void setUserId(String userId) {
-        firebaseAnalytics.setUserId(userId);
-    }
-
-    @Override
     public void setCurrentScreen(Activity activity, String str, String str2) {
         firebaseAnalytics.setCurrentScreen(activity, str, str2);
     }

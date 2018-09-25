@@ -38,7 +38,6 @@ class LauncherScreenPresenter(
     }
 
     fun onCreate(reloadConfig: Boolean) {
-        userPropertiesManager.setUserCountry(networkUtils.networkCountryIso)
         if (remoteConfigManager.isRemoteConfigNotFetchYet || reloadConfig) {
             if (networkUtils.isNetworkAvailable) {
                 reloadFirebaseRemoteConfig(true)

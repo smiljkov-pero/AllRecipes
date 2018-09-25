@@ -92,7 +92,6 @@ class LauncherActivity : BaseActivity(), LauncherView, GoogleApiClient.OnConnect
     }
 
     fun startHomeActivityWithGoogleAccount() {
-        userPropertiesManager.setBasicUserProperties(account)
         val intent = HomeActivity.newIntent(this, account!!)
         startActivity(intent)
     }

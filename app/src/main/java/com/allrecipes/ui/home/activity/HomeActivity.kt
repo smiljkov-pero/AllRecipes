@@ -4,6 +4,7 @@ import android.accounts.Account
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -131,7 +132,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener, ScrollSt
         initSwipeRefresh()
         initRecyclerViewAdapter()
 
-        list.setOnTouchListener({ view: View, motionEvent: MotionEvent ->
+        list.setOnTouchListener { _: View, _: MotionEvent ->
             if (containerTopAddressList != null && containerTopAddressList.visibility == View.VISIBLE) {
                 closeAddressListOverlay()
             }
@@ -140,7 +141,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener, ScrollSt
             }
 
             false
-        })
+        }
 
         title_text.setOnClickListener {
             onClickToolbarText()
@@ -195,6 +196,7 @@ class HomeActivity : BaseActivity(), HomeScreenView, SwipeLaneListener, ScrollSt
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun getUserYoutubeToken() {
         if (loggedInAccount != null) {
             showLoading()

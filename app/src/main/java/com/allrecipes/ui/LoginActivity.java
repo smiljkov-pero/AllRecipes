@@ -211,7 +211,6 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
     }
 
     void startHomeActivityWithGoogleAccount() {
-        userPropertiesManager.setBasicUserProperties(account);
         Intent intent = HomeActivity.Companion.newIntent(this, account);
         startActivityForResult(intent, RC_HOME_SCREEN);
     }
